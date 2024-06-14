@@ -27,8 +27,8 @@ class Game:
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
-        self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
-        self.overlay.fill((0, 0, 0, 128))  # RGBA color, 128 alpha for 50% transparency
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+        overlay.fill((0, 0, 0, 128))  # RGBA color, 128 alpha for 50% transparency
 
         #Buttons
         self.start_button = pygame.image.load("graphics/menus/buttons/startbutton.png").convert_alpha()
@@ -67,22 +67,16 @@ class Game:
         if key == EXIT_KEY: #Chiude il gioco
             self.quit_game()
 
-    def handle_map_input(self, key): #Forse le condizioni booleane possono essere migliorate
-        if key == MAP_KEY:
-            self.game_state = GameState.MAP
-        if key == MAP_KEY and self.game_state == GameState.MAP : #Chiude la mappa
+    def handle_map_input(self, key):
+        if key == MAP_KEY: #Chiude la mappa
             self.game_state = GameState.GAMEPLAY
 
-    def handle_inventory_input(self, key): #Forse le condizioni booleane possono essere migliorate
-        if key == INVENTORY_KEY: #Apre l'inventario
-            self.game_state = GameState.INVENTORY
-        if key == INVENTORY_KEY and self.game_state == GameState.INVENTORY: #Chiude l'inventario
+    def handle_inventory_input(self, key):
+        if key == INVENTORY_KEY: #Chiude l'inventario
             self.game_state = GameState.GAMEPLAY
 
-    def handle_pokedex_input(self, key): #Forse le condizioni booleane possono essere migliorate
-        if key == POKEDEK_KEY: #Apre il PokèDex
-            self.game_state = GameState.POKEDEX
-        if key == POKEDEK_KEY and self.game_state == GameState.POKEDEX: #Chiude il PokèDex
+    def handle_pokedex_input(self, key):
+        if key == POKEDEK_KEY: #Chiude il PokèDex
             self.game_state = GameState.GAMEPLAY
 
     def update_logic(self):
@@ -99,50 +93,17 @@ class Game:
             self.player.move_right()
 
     def render(self):
-
-        # Pulisce la superficie falsa
         self.fake_screen.fill((0,0,0))
 
-        if self.game_state == GameState.GAMEPLAY:
-            self.render_gameplay()
-        elif self.game_state == GameState.PAUSE:
-            self.render_pause()
-        elif self.game_state == GameState.INVENTORY:
-            self.render_inventory()
-        elif self.game_state == GameState.POKEDEX:
-            self.render_pokedex()
-        elif self.game_state == GameState.MAP:
-            self.render_map()
-        elif self.game_state == GameState.START_MENU:
+        if self.game_state == GameState.START_MENU:
             self.render_start_menu()
-        
+
         # Ridimensiona la superficie falsa e la disegna sulla finestra
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
         pygame.display.flip() # Completly update the display
         self.clock.tick(MAX_FPS)
 
-    def render_gameplay(self):
-        print("Rendering gameplay")
-
-    def render_pause(self):
-        print("Rendering pause")
-
-    def render_inventory(self):
-        print("Rendering inventory")
-
-    def render_pokedex(self):
-        print("Rendering pokedex")
-
-    def render_map(self):
-        print("Rendering map")
-        self.fake_screen.fill(150,150,150)
-        self.fake_screen.blit(self.overlay, (0,0))
-        self.fake_screen.blit(self.map_image, self.map_rect)
-
-        #Disegna cursore sulla mappa
-
     def render_start_menu(self):
-        
         self.fake_screen.blit(self.start_background, (0,0))
         self.fake_screen.blit(self.start_button, self.start_button_rect)
 

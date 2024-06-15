@@ -15,8 +15,6 @@ class Game:
         pygame.display.set_caption("PokèScrauso")
         pygame.display.set_icon(pygame.image.load("graphics/menus/logo.png"))
 
-        
-
         #Variabili di gioco
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         self.inventory = {} #Inventario del giocatore
@@ -57,6 +55,7 @@ class Game:
             elif event.type == pygame.VIDEORESIZE:
                 self.screen = pygame.display.set_mode((event.w, event.h), flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:
+                #Game state specific events
                 if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: self.handle_start_menu_input(event.key)
                 elif self.game_state == GameState.GAMEPLAY: self.handle_gameplay_input(event.key)
@@ -64,6 +63,9 @@ class Game:
                 elif self.game_state == GameState.MAP: self.handle_map_input(event.key)
                 elif self.game_state == GameState.INVENTORY: self.handle_inventory_input(event.key)
                 elif self.game_state == GameState.POKEDEX: self.handle_pokedex_input(event.key)
+            
+        #Player controls related events
+        if self.game_state == GameState.GAMEPLAY: self.player.move()
 
     def handle_start_menu_input(self, key):
         if key == INTERACTION_KEY: self.game_state = GameState.GAMEPLAY #Chiude il menu iniziale
@@ -78,10 +80,6 @@ class Game:
             self.game_state = GameState.PAUSE #Apre il menu di pausa 
         elif key == INVENTORY_KEY: self.game_state = GameState.INVENTORY #Apre l'inventario
         elif key == POKEDEK_KEY: self.game_state = GameState.POKEDEX #Apre il PokèDex
-
-        keys = pygame.key.get_pressed()
-        wasd_keys = (keys[pygame.K_w], keys[pygame.K_a], keys[pygame.K_s], keys[pygame.K_d])
-        print(wasd_keys)
 
     def handle_map_input(self, key):
         if key == MAP_KEY: self.game_state = GameState.MAP if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
@@ -120,7 +118,7 @@ class Game:
         self.clock.tick(MAX_FPS)
 
     def render_gameplay(self):
-        #print("Rendering gameplay")
+        
         self.camera_group.custom_draw(self.player)
 
     def render_pause(self):
@@ -128,7 +126,7 @@ class Game:
         self.fake_screen.blit(self.pause_surface, (0,0))
         font = pygame.font.Font(None, 36)  # Choose the font for the text
         text = font.render("Pause", True, (255, 255, 255))  # Create a surface with the text
-        text_rect = text.get_rect(center=(self.fake_screen.get_width()/2, self.fake_screen.get_height()/2))  # Get the rectangle of the text surface
+        text_rect = text.get_rect(center=self.screen.get_rect().center)  # Get the rectangle of the text surface
         self.fake_screen.blit(text, text_rect)
 
     def render_inventory(self):

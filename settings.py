@@ -16,3 +16,9 @@ EXIT_KEY = pygame.K_n #Pulsante per uscire dal gioco
 INTERACTION_KEY = pygame.K_e #Pulsante per interagire con gli oggetti e confermare durante la battaglia
 MAP_KEY = pygame.K_m #Pulsante per aprire la mappa
 INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
+
+#Keybinds for movement
+FORWARD_KEY = pygame.K_w #Pulsante per muoversi in avanti
+LEFT_KEY = pygame.K_a #Pulsante per muoversi a sinistra
+BACKWARD_KEY = pygame.K_s #Pulsante per muoversi indietro
+RIGHT_KEY = pygame.K_d #Pulsante per muoversi a destra

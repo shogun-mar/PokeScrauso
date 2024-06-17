@@ -1,10 +1,24 @@
 import pygame
 
 #Screen settings
-SCREEN_WIDTH = 728
-SCREEN_HEIGHT = 455
+SCREEN_WIDTH = 720
+SCREEN_HEIGHT = 480
 flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
 MAX_FPS = 30
+BACKGROUND_COLOR = (0,0,0)
+
+#Camera keybinds
+ZOOM_UP_KEY = pygame.K_q
+ZOOM_DOWN_KEY = pygame.K_z
+
+#Camera settings
+ZOOM_SCALING_VELOCITY = 0.1
+ZOOM_SCALE_LIMITS = (1, 2) 
+INITIAL_ZOOM = 1.5
+INTERNAL_SURFACE_SIZE = (2500,2500)
+
+#Animation settings
+ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
 
 #Player settings
 PLAYER_SPEED = 5

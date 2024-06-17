@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 from settings import *
 from classes.player import Player
 from classes.gameState import GameState
@@ -13,7 +14,7 @@ class Game:
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PokèScrauso")
-        pygame.display.set_icon(pygame.image.load("graphics/menus/logo.png"))
+        pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
 
         #Variabili di gioco
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
@@ -27,13 +28,13 @@ class Game:
         #Images
         self.logo = pygame.image.load("graphics/menus/logo.png").convert_alpha()
         self.logo_rect = self.logo.get_rect(center = (self.screen.get_rect().centerx, self.screen.get_rect().centery - 100))
-        self.start_background = pygame.image.load("graphics/menus/backgrounds/startBackground.png").convert_alpha()
+        self.start_background = pygame.image.load("graphics/menus/backgrounds/startBackground" + str(randint(1,2)) + ".jpg").convert_alpha()
         self.map_image = pygame.image.load("graphics/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
         self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
-        self.overlay.fill((0, 0, 0, 128))  # RGBA color, 128 alpha for 50% transparency
+        #self.overlay.fill((0, 0, 0, 128))  # RGBA color, 128 alpha for 50% transparency
 
         #Frame oscurato per il menu di pausa
         self.pause_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -63,6 +64,8 @@ class Game:
                 elif self.game_state == GameState.MAP: self.handle_map_input(event.key)
                 elif self.game_state == GameState.INVENTORY: self.handle_inventory_input(event.key)
                 elif self.game_state == GameState.POKEDEX: self.handle_pokedex_input(event.key)
+            elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
+                self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
             
         #Player controls related events
         if self.game_state == GameState.GAMEPLAY: self.player.move()
@@ -103,7 +106,7 @@ class Game:
     def render(self):
 
         # Pulisce la superficie falsa
-        self.fake_screen.fill((0,0,0))
+        self.fake_screen.fill(BACKGROUND_COLOR)
 
         if self.game_state == GameState.GAMEPLAY: self.render_gameplay()
         elif self.game_state == GameState.PAUSE: self.render_pause()
@@ -156,6 +159,11 @@ class Game:
         #Controllo interazione con il pulsante
         mouse_pos = pygame.mouse.get_pos()
         if self.start_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]: self.game_state = GameState.GAMEPLAY
+
+        # Ridimensiona la superficie falsa e la disegna sulla finestra
+        self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
+        pygame.display.flip() # Completly update the display
+        self.clock.tick(MAX_FPS)
 
     def quit_game(self):
         pygame.quit()

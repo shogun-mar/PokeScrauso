@@ -108,6 +108,7 @@ class Game:
         if self.game_state == GameState.GAMEPLAY: self.player.move()
 
         #Update the pointer image if the mouse is over a button
+        self.update_pointer()
 
     def handle_start_menu_input(self, key):
         if key == INTERACTION_KEY: self.game_state = GameState.GAMEPLAY #Chiude il menu iniziale
@@ -277,7 +278,7 @@ class Game:
 
         pos = pygame.mouse.get_pos()
 
-        if self.game_state == GameState.SETTINGS:
+        if self.game_state == GameState.SETTINGS_MENU:
             buttons = [self.save_button_rect, self.restore_button_rect, self.discard_button_rect, self.mute_button_rect]
         elif self.game_state == GameState.START_MENU:
             buttons = [self.new_game_button_rect, self.load_save_button_rect, self.settings_button_rect]

@@ -44,6 +44,8 @@ MAP_KEY = pygame.K_m #Pulsante per aprire la mappa
 INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
 SAVE_SETTINGS_KEY = pygame.K_s #Pulsante per salvare le impostazioni quando nel menù delle impostazioni
 DISCARD_SETTINGS_KEY = pygame.K_d #Pulsante per scartare le impostazioni quando nel menù delle impostazioni
+RESTORE_SETTINGS_KEY = pygame.K_r #Pulsante per ripristinare le impostazioni di default
+MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle impostazioni)
 
 def get_pokedex_keybind(): return POKEDEX_KEY
 def get_pause_keybind(): return PAUSE_KEY
@@ -124,8 +126,6 @@ def save_configuration():
         f.write(f"INTERACTION_KEY = {INTERACTION_KEY}\n")
         f.write(f"MAP_KEY = {MAP_KEY}\n")
         f.write(f"INVENTORY_KEY = {INVENTORY_KEY}\n")
-        f.write(f"SAVE_SETTINGS_KEY = {SAVE_SETTINGS_KEY}\n")
-        f.write(f"DISCARD_SETTINGS_KEY = {DISCARD_SETTINGS_KEY}\n")
         f.write(f"FORWARD_KEY = {FORWARD_KEY}\n")
         f.write(f"LEFT_KEY = {LEFT_KEY}\n")
         f.write(f"BACKWARD_KEY = {BACKWARD_KEY}\n")
@@ -142,8 +142,6 @@ def load_configuration():
         global INTERACTION_KEY
         global MAP_KEY
         global INVENTORY_KEY
-        global SAVE_SETTINGS_KEY
-        global DISCARD_SETTINGS_KEY
         global FORWARD_KEY
         global LEFT_KEY
         global BACKWARD_KEY
@@ -160,8 +158,6 @@ def load_configuration():
             elif name == "INTERACTION_KEY": INTERACTION_KEY = int(value)
             elif name == "MAP_KEY": MAP_KEY = int(value)
             elif name == "INVENTORY_KEY": INVENTORY_KEY = int(value)
-            elif name == "SAVE_SETTINGS_KEY": SAVE_SETTINGS_KEY = int(value)
-            elif name == "DISCARD_SETTINGS_KEY": DISCARD_SETTINGS_KEY = int(value)
             elif name == "FORWARD_KEY": FORWARD_KEY = int(value)
             elif name == "LEFT_KEY": LEFT_KEY = int(value)
             elif name == "BACKWARD_KEY": BACKWARD_KEY = int(value)

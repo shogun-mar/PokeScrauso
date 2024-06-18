@@ -17,6 +17,8 @@ class Game:
         pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
 
         #Variabili di gioco
+        self.half_w = SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
+        self.half_h = SCREEN_HEIGHT // 2
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         self.inventory = {} #Inventario del giocatore
         self.pokedex = {} #PokèDex del giocatore
@@ -25,24 +27,47 @@ class Game:
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.player = Player((0,0), self.camera_group) #Parametri arbitrari per testing, da sistemare
 
-        #Images
-        self.logo = pygame.image.load("graphics/menus/logo.png").convert_alpha()
-        self.logo_rect = self.logo.get_rect(center = (self.screen.get_rect().centerx, self.screen.get_rect().centery - 100))
-        self.start_background = pygame.image.load("graphics/menus/backgrounds/startBackground" + str(randint(1,2)) + ".jpg").convert_alpha()
+        #Pointer images
+        self.pointer_image = pygame.image.load("graphics/menus/pointers/pointer.png").convert_alpha()
+        self.pointer_image_rect = self.pointer_image.get_rect(center = (0,0))
+        self.pointer_click_image = pygame.image.load("graphics/menus/pointers/pointer_click.png").convert_alpha()
+        self.pointer_click_image_rect = self.pointer_click_image.get_rect(center = (0,0))
+        self.current_pointer = self.pointer_image #Disegno sempre questa variabile ma cambio il suo valore in base alla posizione del mouse
+        self.current_pointer_rect = self.pointer_image_rect
+        pygame.mouse.set_visible(False) #Nasconde il cursore del mouse (sulla sua posizione verranno però disegnate le immagini dei puntatori personalizzati)   
+
+        #Start images
+        self.start_background = pygame.image.load("graphics/menus/backgrounds/start_background" + str(randint(1,2)) + ".jpg").convert_alpha()
+        self.start_text_image = pygame.image.load("graphics/menus/texts/start_menu_text.png").convert_alpha()
+        self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
+        self.new_game_button = pygame.image.load("graphics/menus/buttons/start_menu_new_game_text.png").convert_alpha()
+        self.new_game_button_rect = self.new_game_button.get_rect(center = (self.half_w, self.half_h + 50))
+        self.load_save_button = pygame.image.load("graphics/menus/buttons/start_menu_load_save_text.png").convert_alpha()
+        self.load_save_button_rect = self.load_save_button.get_rect(center = (self.half_w, self.half_h + 150))
+        self.settings_button = pygame.image.load("graphics/menus/buttons/settings_icon.png").convert_alpha()
+        self.settings_button_rect = self.settings_button.get_rect(center = (SCREEN_WIDTH - 40, SCREEN_HEIGHT - 40))
+
+        #Settings images
+        self.settings_background_image = pygame.image.load("graphics/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
+        self.save_button = pygame.image.load("graphics/menus/buttons/save_button.png").convert_alpha()
+        self.save_button_rect = self.save_button.get_rect(center = (self.half_w, SCREEN_HEIGHT - 50 ))
+        self.restore_button = pygame.image.load("graphics/menus/buttons/restore_button.png").convert_alpha()
+        self.restore_button_rect = self.restore_button.get_rect(center = (self.half_w - 32, SCREEN_HEIGHT - 50))
+        self.discard_button = pygame.image.load("graphics/menus/buttons/discard_button.png").convert_alpha()
+        self.discard_button_rect = self.discard_button.get_rect(center = (self.half_w + 32, SCREEN_HEIGHT - 50))
+
+        #Map images
         self.map_image = pygame.image.load("graphics/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
         self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
-        #self.overlay.fill((0, 0, 0, 128))  # RGBA color, 128 alpha for 50% transparency
 
         #Frame oscurato per il menu di pausa
         self.pause_surface = None #Vuoto in modo che venga inizializzato solo quando serve
 
-        #Buttons
-        self.start_button = pygame.image.load("graphics/menus/buttons/startbutton.png").convert_alpha()
-        self.start_button_rect = self.start_button.get_rect(); 
-        self.start_button_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
+        #Text
+        self.poke_font = pygame.font.Font("graphics/fonts/Pokemon Hollow.ttf", 50)
 
     def start(self):
         while True:
@@ -51,6 +76,9 @@ class Game:
             self.render()
 
     def handle_events(self):
+    
+        self.current_pointer_rect.center = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT: self.quit_game()  #Chiude il gioco
             elif event.type == pygame.VIDEORESIZE:
@@ -64,6 +92,7 @@ class Game:
                 elif self.game_state == GameState.MAP: self.handle_map_input(event.key)
                 elif self.game_state == GameState.INVENTORY: self.handle_inventory_input(event.key)
                 elif self.game_state == GameState.POKEDEX: self.handle_pokedex_input(event.key)
+                elif self.game_state == GameState.SETTINGS_MENU: self.handle_settings_input(event.key)
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
             
@@ -82,7 +111,7 @@ class Game:
             self.pause_surface.set_alpha(128)
             self.game_state = GameState.PAUSE #Apre il menu di pausa 
         elif key == INVENTORY_KEY: self.game_state = GameState.INVENTORY #Apre l'inventario
-        elif key == POKEDEK_KEY: self.game_state = GameState.POKEDEX #Apre il PokèDex
+        elif key == POKEDEX_KEY: self.game_state = GameState.POKEDEX #Apre il PokèDex
 
     def handle_map_input(self, key):
         if key == MAP_KEY: self.game_state = GameState.MAP if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
@@ -91,7 +120,7 @@ class Game:
         if key == INVENTORY_KEY: self.game_state = GameState.INVENTORY if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
 
     def handle_pokedex_input(self, key):
-        if key == POKEDEK_KEY: self.game_state = GameState.POKEDEX if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
+        if key == POKEDEX_KEY: self.game_state = GameState.POKEDEX if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
 
     def handle_pause_input(self, key):
         if key == PAUSE_KEY:
@@ -100,8 +129,18 @@ class Game:
             else:
                 self.game_state = GameState.GAMEPLAY
 
-    def update_logic(self):
-        pass
+    def handle_settings_input(self, key):
+        if key == PAUSE_KEY:
+            self.game_state = GameState.START_MENU
+        elif key == SAVE_SETTINGS_KEY or (pygame.mouse.get_pressed()[0] and self.save_button_rect.collidepoint(pygame.mouse.get_pos())):
+            #Salva le impostazioni
+            save_configuration()
+        #elif key == RESTORE_SETTINGS_KEY or (pygame.mouse.get_pressed()[0] and self.restore_button_rect.collidepoint(pygame.mouse.get_pos())):
+            #Ripristina le impostazioni
+            set_default_configuration()
+        elif key == DISCARD_SETTINGS_KEY or (pygame.mouse.get_pressed()[0] and self.discard_button_rect.collidepoint(pygame.mouse.get_pos())):
+            #Scarta le impostazioni
+            #TODO
 
     def render(self):
 
@@ -114,7 +153,11 @@ class Game:
         elif self.game_state == GameState.POKEDEX: self.render_pokedex()
         elif self.game_state == GameState.MAP: self.render_map()
         elif self.game_state == GameState.START_MENU: self.render_start_menu()
+        elif self.game_state == GameState.SETTINGS_MENU: self.render_settings_menu()
         
+        #Disegna il puntatore
+        self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
+
         # Ridimensiona la superficie falsa e la disegna sulla finestra
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
         pygame.display.flip() # Completly update the display
@@ -125,7 +168,6 @@ class Game:
         self.camera_group.custom_draw(self.player)
 
     def render_pause(self):
-        #print("Rendering pause")
         self.fake_screen.blit(self.pause_surface, (0,0))
         font = pygame.font.Font(None, 36)  # Choose the font for the text
         text = font.render("Pause", True, (255, 255, 255))  # Create a surface with the text
@@ -134,14 +176,11 @@ class Game:
 
     def render_inventory(self):
         pass
-        #print("Rendering inventory")
 
     def render_pokedex(self):
         pass
-        #print("Rendering pokedex")
 
     def render_map(self):
-        #print("Rendering map")
         self.fake_screen.fill((150,150,150))
         self.fake_screen.blit(self.overlay, (0,0))
         self.fake_screen.blit(self.map_image, self.map_rect)
@@ -153,18 +192,46 @@ class Game:
 
         #Disegno dei componenti
         self.fake_screen.blit(self.start_background, (0,0))
-        self.fake_screen.blit(self.logo, self.logo_rect)
-        self.fake_screen.blit(self.start_button, self.start_button_rect)
+        self.fake_screen.blit(self.start_text_image, self.start_text_image_rect)
+        self.fake_screen.blit(self.new_game_button, self.new_game_button_rect)
+        self.fake_screen.blit(self.load_save_button, self.load_save_button_rect)
+        self.fake_screen.blit(self.settings_button, self.settings_button_rect)
 
         #Controllo interazione con il pulsante
         mouse_pos = pygame.mouse.get_pos()
-        if self.start_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]: self.game_state = GameState.GAMEPLAY
+        if self.new_game_button_rect.collidepoint(mouse_pos)and pygame.mouse.get_pressed()[0]: 
+            #Start new game
+            #TODO
+            self.game_state = GameState.GAMEPLAY
 
-        # Ridimensiona la superficie falsa e la disegna sulla finestra
-        self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
-        pygame.display.flip() # Completly update the display
-        self.clock.tick(MAX_FPS)
+        if self.load_save_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+            #Load save
+            #TODO
+            self.game_state = GameState.GAMEPLAY
 
+        if self.settings_button_rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+            #Open settings
+            self.game_state = GameState.SETTINGS_MENU
+
+    def render_settings_menu(self):
+
+        self.fake_screen.blit(self.settings_background_image, (0,0))
+        self.fake_screen.blit(self.save_button, self.save_button_rect)
+        self.fake_screen.blit(self.restore_button, self.restore_button_rect)
+        self.fake_screen.blit(self.discard_button, self.discard_button_rect)
+    
+    def update_logic(self):
+        pass
+
+
+    def change_pointer(self):
+        if self.current_pointer == self.pointer_image:
+            self.current_pointer = self.pointer_click_image
+            self.current_pointer_rect = self.pointer_click_image_rect
+        else:
+            self.current_pointer = self.pointer_image
+            self.current_pointer_rect = self.pointer_image_rect
+    
     def quit_game(self):
         pygame.quit()
         quit()

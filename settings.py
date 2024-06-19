@@ -46,6 +46,7 @@ SAVE_SETTINGS_KEY = pygame.K_s #Pulsante per salvare le impostazioni quando nel 
 DISCARD_SETTINGS_KEY = pygame.K_d #Pulsante per scartare le impostazioni quando nel menù delle impostazioni
 RESTORE_SETTINGS_KEY = pygame.K_r #Pulsante per ripristinare le impostazioni di default
 MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle impostazioni)
+FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 
 def get_pokedex_keybind(): return POKEDEX_KEY
 def get_pause_keybind(): return PAUSE_KEY
@@ -53,6 +54,7 @@ def get_exit_keybind(): return EXIT_KEY
 def get_interaction_keybind(): return INTERACTION_KEY
 def get_map_keybind(): return MAP_KEY
 def get_inventory_keybind(): return INVENTORY_KEY
+def get_fullscreen_keybind(): return FULLSCREEN_KEY
 
 def set_pokedex_keybind(key): global POKEDEX_KEY; POKEDEX_KEY = key
 def set_pause_keybind(key): global PAUSE_KEY; PAUSE_KEY = key
@@ -60,6 +62,7 @@ def set_exit_keybind(key): global EXIT_KEY; EXIT_KEY = key
 def set_interaction_keybind(key): global INTERACTION_KEY; INTERACTION_KEY = key
 def set_map_keybind(key): global MAP_KEY; MAP_KEY = key
 def set_inventory_keybind(key): global INVENTORY_KEY; INVENTORY_KEY = key
+def set_fullscreen_keybind(key): global FULLSCREEN_KEY; FULLSCREEN_KEY = key
 
 #Keybinds for movement
 FORWARD_KEY = pygame.K_w #Pulsante per muoversi in avanti
@@ -130,6 +133,7 @@ def save_configuration():
         f.write(f"LEFT_KEY = {LEFT_KEY}\n")
         f.write(f"BACKWARD_KEY = {BACKWARD_KEY}\n")
         f.write(f"RIGHT_KEY = {RIGHT_KEY}\n")
+        f.write(f"FULLSCREEN_KEY = {FULLSCREEN_KEY}\n")
 #Funzione di caricamento delle impostazioni
 def load_configuration():
     with open("settings.txt", 'r') as f:
@@ -146,6 +150,7 @@ def load_configuration():
         global LEFT_KEY
         global BACKWARD_KEY
         global RIGHT_KEY
+        global FULLSCREEN_KEY
 
         for line in f:
             name, value = line.strip().split(' = ')
@@ -162,3 +167,4 @@ def load_configuration():
             elif name == "LEFT_KEY": LEFT_KEY = int(value)
             elif name == "BACKWARD_KEY": BACKWARD_KEY = int(value)
             elif name == "RIGHT_KEY": RIGHT_KEY = int(value)
+            elif name == "FULLSCREEN_KEY": FULLSCREEN_KEY = int(value)

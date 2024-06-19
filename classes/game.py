@@ -1,8 +1,8 @@
 import pygame
 import time
 from random import randint
-from os import listdir
-from os import path as os_path
+from os import listdir, environ, path
+from ctypes import windll
 from settings import *
 from classes.player import Player
 from classes.gameState import GameState
@@ -12,12 +12,20 @@ class Game:
     def __init__(self):
 
         #Inizializzazione di Pygame e impostazione dello schermo
+        # Center the Pygame window
+        environ['SDL_VIDEO_CENTERED'] = '1' #Comando di SDL per centrare la finestra
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PokèScrauso")
         pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
+        # Allow only specific events
+        pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
+        #Physical reolution of the screen
+        user32 = windll.user32
+        self.hw_screen_width = user32.GetSystemMetrics(0)
+        self.hw_screen_height = user32.GetSystemMetrics(1)
 
         #Variabili di gioco
         self.half_w = SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
@@ -98,6 +106,12 @@ class Game:
             elif event.type == pygame.VIDEORESIZE:
                 self.screen = pygame.display.set_mode((event.w, event.h), flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:
+                if event.key == FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
+                    if not pygame.display.get_surface().get_flags() & pygame.FULLSCREEN:
+                        self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), flags | pygame.NOFRAME)
+                else:
+                    self.scren = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags) 
+
                 #Game state specific events
                 if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: self.handle_start_menu_input(event.key)
@@ -303,7 +317,7 @@ class Game:
         images = []
         for filename in listdir(directory_path):
             if filename.endswith('.png') or filename.endswith('.jpg'):
-                image = pygame.image.load(os_path.join(directory_path, filename)).convert_alpha()
+                image = pygame.image.load(path.join(directory_path, filename)).convert_alpha()
                 images.append(image)
         return images
 

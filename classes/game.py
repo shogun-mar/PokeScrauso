@@ -305,17 +305,18 @@ class Game:
                 images.append(image)
         return images
 
-    def change_frame(self, animation, current_frame):
+    def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update):
 
         current_time = time.time()
-        print("current time: "+str(current_time)+ " last frame switch time: "+str(self.last_frame_switch_time) + " delay: "+str(self.background_frame_switch_delay))
-        if current_time - self.last_frame_switch_time >= self.background_frame_switch_delay: 
+        bool = current_time - self.last_frame_switch_time >= current_last_switch_time
+        print("*******************************************\n"+str(bool) + "\ncurrent time: "+str(current_time)+ "\nlast frame switch time: "+str(self.last_frame_switch_time) + "\ndifference: "+str(current_time - current_last_switch_time))
+        if current_time - self.background_last_switch_time >= current_last_switch_time: 
             current_frame += 1
-            if current_frame == len(animation): 
+            if current_frame == len(current_animation): 
                 current_frame = 0
             
-            self.background_image = animation[current_frame]
-            self.last_frame_switch_time = current_time # Reset the last frame switch time
+            image_to_update = current_animation[current_frame]
+            self.background_last_switch_time = current_time # Reset the last frame switch time
 
     def quit_game(self):
         pygame.quit()

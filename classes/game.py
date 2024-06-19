@@ -117,21 +117,18 @@ class Game:
         #Controllo interazione con il pulsante
         mouse_pos = pygame.mouse.get_pos()
         if self.new_game_button_rect.collidepoint(mouse_pos):
-            self.change_pointer()
             if pygame.mouse.get_pressed()[0]: 
                 #Start new game
                 #TODO
                 self.game_state = GameState.GAMEPLAY
 
         elif self.load_save_button_rect.collidepoint(mouse_pos):
-            self.change_pointer()
             if pygame.mouse.get_pressed()[0]:
                 #Load save
                 #TODO
                 self.game_state = GameState.GAMEPLAY
         
         elif self.settings_button_rect.collidepoint(mouse_pos):
-            self.change_pointer()
             if pygame.mouse.get_pressed()[0]:
                 #Open settings
                 self.game_state = GameState.SETTINGS_MENU
@@ -164,7 +161,7 @@ class Game:
                 self.game_state = GameState.GAMEPLAY
 
     def handle_settings_input(self, key):
-        print(pygame.mouse.get_pressed()[0] and self.mute_button_rect.collidepoint(pygame.mouse.get_pos()))
+        
         if key == PAUSE_KEY:
             self.game_state = GameState.START_MENU
         elif key == SAVE_SETTINGS_KEY:
@@ -266,13 +263,13 @@ class Game:
     def update_logic(self):
         pass
 
-    def change_pointer(self):
-        if self.current_pointer == self.pointer_image:
-            self.current_pointer = self.pointer_click_image
-            self.current_pointer_rect = self.pointer_click_image_rect
-        else:
-            self.current_pointer = self.pointer_image
-            self.current_pointer_rect = self.pointer_image_rect
+    def set_pointer_click(self):
+        self.current_pointer = self.pointer_click_image
+        self.current_pointer_rect = self.pointer_click_image_rect
+
+    def set_pointer_normal(self):
+        self.current_pointer = self.pointer_image
+        self.current_pointer_rect = self.pointer_image_rect
     
     def update_pointer(self):
 
@@ -284,7 +281,9 @@ class Game:
             buttons = [self.new_game_button_rect, self.load_save_button_rect, self.settings_button_rect]
 
         if any(button.collidepoint(pos) for button in buttons):
-            self.change_pointer()
+            self.set_pointer_click()
+        else:
+            self.set_pointer_normal()
 
     def quit_game(self):
         pygame.quit()

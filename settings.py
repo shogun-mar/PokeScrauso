@@ -3,10 +3,10 @@ import pygame
 #Screen and video settings
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
-flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.NOFRAME
-MAX_FPS = 1 #30
+flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
+MAX_FPS = 60 #30
 BACKGROUND_COLOR = (0,0,0)
-BACKGROUND_ANIMATION_DELAY = 0.1
+BACKGROUND_ANIMATION_DELAY = 0.16
 
 #def get_screen_width(): return SCREEN_WIDTH Tutta il gioco è progettato per andare a 720x480 ma sarebbe carino che se il giocatore volesse cambiare la risoluzione potesse farlo
 #def get_screen_height(): return SCREEN_HEIGHT e che quindi tutto il gioco venisse scalato di conseguenza, ed eventualmente scalato una seconda volta se ridimensiona la finestra

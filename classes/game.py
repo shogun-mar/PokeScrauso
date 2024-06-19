@@ -45,7 +45,7 @@ class Game:
         #self.start_background = self.import_frames("graphics/menus/backgrounds/start_menu_background"+str(randint(1,2)))
         self.start_menu_current_frame = 0
         self.background_frame_switch_delay = BACKGROUND_ANIMATION_DELAY
-        self.last_frame_switch_time = time.time()
+        self.background_last_switch_time = time.time()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
         self.start_text_image = pygame.image.load("graphics/menus/texts/start_menu_text.png").convert_alpha()
         self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
@@ -260,9 +260,6 @@ class Game:
         self.fake_screen.blit(self.load_save_button, self.load_save_button_rect)
         self.fake_screen.blit(self.settings_button, self.settings_button_rect)
 
-        #Cambio frame dello sfondo
-        self.change_frame(self.start_background_images, self.start_menu_current_frame)
-
     def render_settings_menu(self):
 
         self.fake_screen.blit(self.settings_background_image, (0,0))
@@ -272,7 +269,11 @@ class Game:
         self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
     
     def update_logic(self):
-        pass
+        if self.game_state == GameState.START_MENU:
+            #Cambio frame dello sfondo
+            change_frame_values = self.change_frame(current_animation = self.start_background_images, current_frame = self.start_menu_current_frame, current_last_switch_time = self.background_last_switch_time, image_to_update = self.start_background_image, animation_delay = self.background_frame_switch_delay)
+            self.start_background_image = change_frame_values[0]
+            self.start_menu_current_frame = change_frame_values[1]
 
     def set_pointer_click(self):
         self.current_pointer = self.pointer_click_image
@@ -305,18 +306,20 @@ class Game:
                 images.append(image)
         return images
 
-    def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update):
-
-        current_time = time.time()
-        bool = current_time - self.last_frame_switch_time >= current_last_switch_time
-        print("*******************************************\n"+str(bool) + "\ncurrent time: "+str(current_time)+ "\nlast frame switch time: "+str(self.last_frame_switch_time) + "\ndifference: "+str(current_time - current_last_switch_time))
-        if current_time - self.background_last_switch_time >= current_last_switch_time: 
+    def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update, animation_delay): 
+        #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
+        current_time = time.time() #e quindi avere un return perchè in python i parametri sono passati per assegnamento e non riferimento
+        bool = current_time - current_last_switch_time >= animation_delay
+        print("*******************************************\n"+str(bool) + "     Frame:" + str(current_frame)+ "\ndifference: "+str(current_time - current_last_switch_time))
+        if current_time - self.background_last_switch_time >= animation_delay: 
             current_frame += 1
             if current_frame == len(current_animation): 
                 current_frame = 0
             
             image_to_update = current_animation[current_frame]
             self.background_last_switch_time = current_time # Reset the last frame switch time
+
+        return image_to_update, current_frame
 
     def quit_game(self):
         pygame.quit()

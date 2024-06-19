@@ -41,10 +41,11 @@ class Game:
         pygame.mouse.set_visible(False) #Nasconde il cursore del mouse (sulla sua posizione verranno però disegnate le immagini dei puntatori personalizzati)   
 
         #Start images
-        self.start_background_images = self.import_frames("graphics/menus/backgrounds/start_menu_background1")
-        #self.start_background = self.import_frames("graphics/menus/backgrounds/start_menu_background"+str(randint(1,2)))
+        randomint = randint(1,2)
+        self.start_background_images = self.import_frames("graphics/menus/backgrounds/start_menu_background"+str(randomint))
         self.start_menu_current_frame = 0
-        self.background_frame_switch_delay = BACKGROUND_ANIMATION_DELAY
+        if randomint == 1: self.background_frame_switch_delay = 0.16 #Il delay fra i frame cambia in base allo sfondo
+        elif randomint == 2: self.background_frame_switch_delay = 0.06
         self.background_last_switch_time = time.time()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
         self.start_text_image = pygame.image.load("graphics/menus/texts/start_menu_text.png").convert_alpha()
@@ -309,8 +310,7 @@ class Game:
     def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update, animation_delay): 
         #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
         current_time = time.time() #e quindi avere un return perchè in python i parametri sono passati per assegnamento e non riferimento
-        bool = current_time - current_last_switch_time >= animation_delay
-        print("*******************************************\n"+str(bool) + "     Frame:" + str(current_frame)+ "\ndifference: "+str(current_time - current_last_switch_time))
+        
         if current_time - self.background_last_switch_time >= animation_delay: 
             current_frame += 1
             if current_frame == len(current_animation): 

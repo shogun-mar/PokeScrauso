@@ -17,13 +17,15 @@ pygame.display.set_caption(SCREEN_TITLE)
 name_gioc="DITTO"
 player_pokemon_img = pygame.image.load('graphics/Gen 4 Pokemon Back/3 HGSS-B.png')
 player_pokemon_rect = player_pokemon_img.get_rect(center=(130, 400))
-player_info_img=pygame.image.load('graphics/UI/Battle/databox_normal.png')
-player_info_rect=player_info_img.get_rect(center=(60,260))
+player_riq_img=pygame.image.load('graphics/UI/Battle/databox_normal.png')
+player_riq_rect=player_riq_img.get_rect(center=(129,260))
 
 
 name_enemy="PIKACHU"
 enemy_pokemon_img = pygame.image.load('graphics/HGSS/25 HGSS.png ')
 enemy_pokemon_rect = enemy_pokemon_img.get_rect(center=(580, 220))
+enemy_riq_img=pygame.image.load('graphics/UI/Battle/databox_normal_foe.png')
+enemy_riq_rect=enemy_riq_img.get_rect(center=(599,60))
 
 # Carica lo sfondo della battaglia
 battle_background = pygame.image.load('graphics/battle/Background_battle.png')
@@ -142,9 +144,13 @@ while running:
     screen.blit(battle_background, (0, 0))
 
     # Disegna i Pokémon
-    screen.blit(player_info_img,player_info_rect)
-    pygame.draw.rect(screen, (0,255,0), (55, 268, 97, 7))
+    screen.blit(player_riq_img,player_riq_rect)
+    pygame.draw.rect(screen, (0,255,0), (100, 257, 98, 7))
+    pygame.draw.rect(screen, (72, 139, 240), (6.5, 290, 192, 6))
     screen.blit(player_pokemon_img,player_pokemon_rect)
+
+    screen.blit(enemy_riq_img,enemy_riq_rect)
+    pygame.draw.rect(screen, (0,255,0), (607, 68, 97, 7))
     screen.blit(enemy_pokemon_img,enemy_pokemon_rect)
  #alt+11 = ♂  alt+12 = ♀
     # Disegna i pulsanti
@@ -166,32 +172,32 @@ while running:
         draw_button(pokemon5_button, 'Pokémon 5',(71, 82, 99))
         draw_button(pokemon6_button, 'Pokémon 6',(71, 82, 99))
     elif poke1_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare...  \n Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)
     elif poke2_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare... \n  Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)
     elif poke3_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare... \n Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)
     elif poke4_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare... \n Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)
     elif poke5_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare...  \n Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)
     elif poke6_mode:
-        message = f"{name_gioc} è il momento di rientrare...  Pietro scelgote!"
+        message = f"{name_gioc} è il momento di rientrare... \n Pietro scelgote!"
         panel = font.render(message, True, (0, 0, 0))
         panel_rect = panel.get_rect(center = (400, 360))
         screen.blit(panel, panel_rect)

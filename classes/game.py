@@ -22,11 +22,10 @@ class Game:
         pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
         # Allow only specific events
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
-        #Physical reolution of the screen
-        user32 = windll.user32
-        self.hw_screen_width = user32.GetSystemMetrics(0)
-        self.hw_screen_height = user32.GetSystemMetrics(1)
-
+        # Get physical resolution
+        self.hw_screen_width = self.get_hw_resolution()[0]  # HORIZONTAL RES
+        self.hw_screen_height = self.get_hw_resolution()[1]  # VERTICAL RES
+        
         #Variabili di gioco
         self.half_w = SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = SCREEN_HEIGHT // 2
@@ -107,10 +106,12 @@ class Game:
                 self.screen = pygame.display.set_mode((event.w, event.h), flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:
                 if event.key == FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
-                    if not pygame.display.get_surface().get_flags() & pygame.FULLSCREEN:
+                    if not pygame.display.get_surface().get_flags() & pygame.NOFRAME: #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
                         self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), flags | pygame.NOFRAME)
-                else:
-                    self.scren = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags) 
+                        
+                    else:
+                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags) 
+                        
 
                 #Game state specific events
                 if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
@@ -334,6 +335,19 @@ class Game:
             self.background_last_switch_time = current_time # Reset the last frame switch time
 
         return image_to_update, current_frame
+
+    def get_hw_resolution(self):
+        # Get a handle to the desktop window
+        desktop = windll.user32.GetDesktopWindow()
+        # Get a handle to the device context for the desktop window
+        dc = windll.user32.GetWindowDC(desktop)
+        # Get the physical resolution
+        hw_screen_width = windll.gdi32.GetDeviceCaps(dc, 8)  # HORIZONTAL RES
+        hw_screen_height = windll.gdi32.GetDeviceCaps(dc, 10)  # VERTICAL RES
+        # Release the device context
+        windll.user32.ReleaseDC(desktop, dc)
+
+        return hw_screen_width, hw_screen_height
 
     def quit_game(self):
         pygame.quit()

@@ -1,5 +1,8 @@
 import pygame
+import time
 from random import randint
+from os import listdir
+from os import path as os_path
 from settings import *
 from classes.player import Player
 from classes.gameState import GameState
@@ -38,7 +41,11 @@ class Game:
         pygame.mouse.set_visible(False) #Nasconde il cursore del mouse (sulla sua posizione verranno però disegnate le immagini dei puntatori personalizzati)   
 
         #Start images
-        self.start_background = pygame.image.load("graphics/menus/backgrounds/start_background" + str(randint(1,2)) + ".jpg").convert_alpha()
+        self.start_background = self.import_frames("graphics/menus/backgrounds/start_menu_background1")
+        #self.start_background = self.import_frames("graphics/menus/backgrounds/start_menu_background"+str(randint(1,2)))
+        self.current_frame = 0
+        self.background_frame_switch_delay = BACKGROUND_ANIMATION_DELAY
+        self.start_background_image = self.start_background[self.current_frame]
         self.start_text_image = pygame.image.load("graphics/menus/texts/start_menu_text.png").convert_alpha()
         self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
         self.new_game_button = pygame.image.load("graphics/menus/buttons/start_menu_new_game_text.png").convert_alpha()
@@ -245,8 +252,10 @@ class Game:
 
     def render_start_menu(self):
 
+        print("current frame"+ str(self.current_frame))
+
         #Disegno dei componenti
-        self.fake_screen.blit(self.start_background, (0,0))
+        self.fake_screen.blit(self.start_background_image, (0,0))
         self.fake_screen.blit(self.start_text_image, self.start_text_image_rect)
         self.fake_screen.blit(self.new_game_button, self.new_game_button_rect)
         self.fake_screen.blit(self.load_save_button, self.load_save_button_rect)
@@ -274,6 +283,7 @@ class Game:
     def update_pointer(self):
 
         pos = pygame.mouse.get_pos()
+        buttons = []
 
         if self.game_state == GameState.SETTINGS_MENU:
             buttons = [self.save_button_rect, self.restore_button_rect, self.discard_button_rect, self.mute_button_rect]
@@ -284,6 +294,25 @@ class Game:
             self.set_pointer_click()
         else:
             self.set_pointer_normal()
+
+    def import_frames(self, directory_path):
+        images = []
+        for filename in listdir(directory_path):
+            if filename.endswith('.png') or filename.endswith('.jpg'):
+                image = pygame.image.load(os_path.join(directory_path, filename)).convert_alpha()
+                images.append(image)
+        return images
+
+    def change_frame(self):
+        current_time = time.time()
+
+        if current_time - self.last_frame_switch_time >= self.background_frame_switch_delay: 
+            self.current_frame += 1
+            if self.current_frame == len(self.start_background): 
+                self.current_frame = 1 #Se il giocatore continua a muoversi ciclo solamente fra i due frame di camminata
+            
+            self.background_image = self.start_background[self.current_frame]
+            self.last_frame_switch_time = current_time # Reset the last frame switch time
 
     def quit_game(self):
         pygame.quit()

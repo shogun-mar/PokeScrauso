@@ -1,11 +1,12 @@
 import pygame
 
-#Screen settings
+#Screen and video settings
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
 flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
 MAX_FPS = 60 #30
 BACKGROUND_COLOR = (0,0,0)
+BACKGROUND_ANIMATION_DELAY = 0.3
 
 #def get_screen_width(): return SCREEN_WIDTH Tutta il gioco è progettato per andare a 720x480 ma sarebbe carino che se il giocatore volesse cambiare la risoluzione potesse farlo
 #def get_screen_height(): return SCREEN_HEIGHT e che quindi tutto il gioco venisse scalato di conseguenza, ed eventualmente scalato una seconda volta se ridimensiona la finestra
@@ -33,7 +34,7 @@ INTERNAL_SURFACE_SIZE = (2500,2500) #2500, 2500
 
 #Player settings
 PLAYER_SPEED = 5
-ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
+PLAYER_ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
 
 #Keybinds
 POKEDEX_KEY = pygame.K_p #Pulsante per aprire il PokèDex

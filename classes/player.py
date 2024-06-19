@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = PLAYER_SPEED # pixels per frame
 
         #Animation variables
-        self.frame_switch_delay = ANIMATION_DELAY
+        self.frame_switch_delay = PLAYER_ANIMATION_DELAY
         self.last_frame_switch_time = time.time()
 
         #Player images

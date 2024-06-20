@@ -12,8 +12,7 @@ class Game:
     def __init__(self):
 
         #Inizializzazione di Pygame e impostazione dello schermo
-        # Center the Pygame window
-        environ['SDL_VIDEO_CENTERED'] = '1' #Comando di SDL per centrare la finestra
+        environ['SDL_VIDEO_CENTERED'] = '1' #Center the Pygame window Comando di SDL per centrare la finestra
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
         self.fake_screen = self.screen.copy()
@@ -84,11 +83,11 @@ class Game:
         #Overlay for map
         self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
 
-        #Frame oscurato per il menu di pausa
-        self.pause_surface = None #Vuoto in modo che venga inizializzato solo quando serve
+        #Frame oscurato per il menu di pausa e di aiuto
+        self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
 
-        #Text
-        self.poke_font = pygame.font.Font("graphics/fonts/Pokemon Hollow.ttf", 50)
+        #Font
+        #self.help_font = pygame.font.Font("graphics/fonts/Pokemon Hollow.ttf", 50)
 
     def start(self):
         while True:
@@ -108,11 +107,9 @@ class Game:
                 if event.key == FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
                     if not pygame.display.get_surface().get_flags() & pygame.NOFRAME: #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
                         self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), flags | pygame.NOFRAME)
-                        
                     else:
                         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags) 
                         
-
                 #Game state specific events
                 if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: self.handle_start_menu_input(event.key)
@@ -122,6 +119,7 @@ class Game:
                 elif self.game_state == GameState.INVENTORY: self.handle_inventory_input(event.key)
                 elif self.game_state == GameState.POKEDEX: self.handle_pokedex_input(event.key)
                 elif self.game_state == GameState.SETTINGS_MENU: self.handle_settings_input(event.key)
+                elif self.game_state == GameState.HELP_MENU: self.handle_help_screen_input(event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 if self.game_state == GameState.SETTINGS_MENU: self.handle_settings_input_mouse()
                 if self.game_state == GameState.START_MENU: self.handle_start_menu_input_mouse()
@@ -161,12 +159,18 @@ class Game:
         if key == MAP_KEY: self.game_state = GameState.MAP #Apre la mappa
         elif key == PAUSE_KEY:
             #Prende screenshot dell'attuale schermata di gioco e la oscura
-            self.pause_surface = pygame.Surface(self.screen.get_size())
-            self.pause_surface.blit(self.fake_screen, (0,0))
-            self.pause_surface.set_alpha(128)
+            self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
+            self.darkened_surface.blit(self.fake_screen, (0,0))
+            self.darkened_surface.set_alpha(128)
             self.game_state = GameState.PAUSE #Apre il menu di pausa 
         elif key == INVENTORY_KEY: self.game_state = GameState.INVENTORY #Apre l'inventario
         elif key == POKEDEX_KEY: self.game_state = GameState.POKEDEX #Apre il PokèDex
+        elif key == HELP_KEY:
+            #Prende screenshot dell'attuale schermata di gioco e la oscura
+            self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
+            self.darkened_surface.blit(self.fake_screen, (0,0))
+            self.darkened_surface.set_alpha(128) 
+            self.game_state = GameState.HELP_MENU
 
     def handle_map_input(self, key):
         if key == MAP_KEY: self.game_state = GameState.MAP if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
@@ -204,6 +208,10 @@ class Game:
             #Muta il gioco
             self.current_volume_status = not self.current_volume_status
 
+    def handle_help_screen_input(self, key):
+        if key == HELP_KEY:
+            self.game_state = GameState.GAMEPLAY
+
     def handle_settings_input_mouse(self):
         if self.save_button_rect.collidepoint(pygame.mouse.get_pos()):
             #Salva le impostazioni
@@ -233,6 +241,7 @@ class Game:
         elif self.game_state == GameState.MAP: self.render_map()
         elif self.game_state == GameState.START_MENU: self.render_start_menu()
         elif self.game_state == GameState.SETTINGS_MENU: self.render_settings_menu()
+        elif self.game_state == GameState.HELP_MENU: self.render_help_menu()
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
         if self.game_state != GameState.GAMEPLAY: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
@@ -247,7 +256,7 @@ class Game:
         self.camera_group.custom_draw(self.player)
 
     def render_pause(self):
-        self.fake_screen.blit(self.pause_surface, (0,0))
+        self.fake_screen.blit(self.darkened_surface, (0,0))
         font = pygame.font.Font(None, 36)  # Choose the font for the text
         text = font.render("Pause", True, (255, 255, 255))  # Create a surface with the text
         text_rect = text.get_rect(center=self.screen.get_rect().center)  # Get the rectangle of the text surface
@@ -284,6 +293,9 @@ class Game:
         self.fake_screen.blit(self.discard_button, self.discard_button_rect)
         self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
     
+    def render_help_menu(self):
+        self.fake_screen.blit(self.darkened_surface, (0,0))
+
     def update_logic(self):
         if self.game_state == GameState.START_MENU:
             #Cambio frame dello sfondo

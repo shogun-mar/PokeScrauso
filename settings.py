@@ -47,6 +47,7 @@ DISCARD_SETTINGS_KEY = pygame.K_d #Pulsante per scartare le impostazioni quando 
 RESTORE_SETTINGS_KEY = pygame.K_r #Pulsante per ripristinare le impostazioni di default
 MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle impostazioni)
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
+HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
 
 def get_pokedex_keybind(): return POKEDEX_KEY
 def get_pause_keybind(): return PAUSE_KEY

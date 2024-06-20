@@ -30,7 +30,7 @@ class Game:
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         #Font
-        self.menu_font = pygame.font.Font("graphics/fonts/menu_font.ttf", 24)  # Choose the font for the text
+        self.menu_font = pygame.font.Font("graphics/fonts/menu_font.ttf", 10)  # Choose the font for the text
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
@@ -81,34 +81,31 @@ class Game:
         self.current_keybinds = get_current_configuration()
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
         self.modified_keybinds_images = self.get_configuration_images(self.modified_keybinds) 
+        self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
 
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
-        self.key_images_rect = {key: self.key_images[key].get_rect(center = (self.half_w, self.half_h + 50)) for key in self.key_images}
-        
+        key_images_values = list(self.key_images.values())
+        self.
+
+        self.settings_menu_images_rects = self.get_settings_menu_rects(key_images_values)
+
         keybinds_text = [
-            "Move forwards",
-            "Muove backwards",
-            "Move to the left",
-            "Move to the right",
-            "Open the map",
-            "Open the pause menu",
-            "Open the inventory",
-            "Opens the PokèDex",
-            "Opens the help menu",
-            "Toggles fullscreen mode",
-            "Interacts with objects",
-            "Closes the game",
-            "Zoom in",
-            "Zoom out",
+            "Move forwards", "Move to the left", 
+            "Move backwards", "Move to the right", 
+            "Toggle fullscreen", "Open the Pokèdex",
+            "Closes the game", "Interact with objects",
+            "Open the map", "Open the inventory",
+            "Open the help menu", #"Pause the game",
+            "Zoom in", "Zoom out"
+        
             #Text field for max fps
             #Dropdown della risoluzione?
             #Salvataggio rapido
             #Caricamento rapido
         ]
-        #Renderizzi i tasti e ne ottiene i rettangoli
-        self.rendered_texts, self.rendered_texts_rects = self.render_texts(keybinds_text, self.menu_font, (255,255,255))
-
-        self.settings_menu_rects = self.get_settings_menu_rects(len(keybinds_text))
+        self.settings_menu_rendered_texts = self.render_texts(keybinds_text, self.menu_font, (0,0,0))
+        self.settings_menu_rendered_texts_rects = self.get_settings_menu_texts_rects(self.settings_menu_rendered_texts)
+        
 
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
@@ -240,10 +237,6 @@ class Game:
             #Muta il gioco
             self.current_volume_status = not self.current_volume_status
 
-    def handle_help_screen_input(self, key):
-        if key == HELP_KEY:
-            self.game_state = GameState.GAMEPLAY
-
     def handle_settings_input_mouse(self):
         if self.save_button_rect.collidepoint(pygame.mouse.get_pos()):
             #Salva le impostazioni
@@ -260,6 +253,19 @@ class Game:
             print("Muta il gioco")
             #Muta il gioco
             self.current_volume_status = not self.current_volume_status
+        else:
+            for i in range(len(self.settings_menu_images_rects)):
+                if self.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
+                    clicked_image = self.modified_keybinds_images_values[i]
+                    clicked_image.set_alpha(128)
+                    #Cambia il tasto
+                    #TODO
+                    print("Cambia il tasto") #Placeholder
+                    break
+
+    def handle_help_screen_input(self, key):
+        if key == HELP_KEY:
+            self.game_state = GameState.GAMEPLAY
 
     def render(self):
 
@@ -325,9 +331,9 @@ class Game:
         self.fake_screen.blit(self.discard_button, self.discard_button_rect)
         self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
 
-        for key, image in self.modified_keybinds_images.items():
-            print(f"{key}: {image}")
-            
+        for i in range(len(self.modified_keybinds_images_values)):
+            self.fake_screen.blit(self.modified_keybinds_images_values[i], self.settings_menu_images_rects[i])
+            self.fake_screen.blit(self.settings_menu_rendered_texts[i], self.settings_menu_rendered_texts_rects[i]) 
 
     def render_help_menu(self):
         self.fake_screen.blit(self.darkened_surface, (0,0))
@@ -357,7 +363,6 @@ class Game:
             buttons = [self.save_button_rect, self.restore_button_rect, self.discard_button_rect, self.mute_button_rect]
         elif self.game_state == GameState.START_MENU:
             buttons = [self.new_game_button_rect, self.load_save_button_rect, self.settings_button_rect]
-
         if any(button.collidepoint(pos) for button in buttons):
             self.set_pointer_click()
         else:
@@ -395,15 +400,6 @@ class Game:
 
         return image_to_update, current_frame, current_last_switch_time
 
-    def render_texts(self, texts, font, color):
-        rendered_texts = []
-        rendered_texts_rects = []
-        for text in texts:
-            rendered_text = font.render(text, True, color)
-            rendered_texts.append(rendered_text)
-            rendered_texts_rects.append(rendered_text.get_rect())
-        return rendered_texts, rendered_texts_rects
-
     def get_configuration_images(self, keybinds):
         images = {}  # Dictionary with key names as keys and images as values
         for key, value in keybinds.items():
@@ -419,14 +415,30 @@ class Game:
                 images[key] = image
         return images
 
-    def get_settings_menu_rects(self, num_keybinds):
+    def render_texts(self, texts, font, color):
+        settings_menu_rendered_texts = []
+        for text in texts:
+            rendered_text = font.render(text, True, color)
+            settings_menu_rendered_texts.append(rendered_text)
+        return settings_menu_rendered_texts
+
+    def get_settings_menu_texts_rects(self, settings_menu_rendered_texts):
         rects = []
-        column = 0
-        row = 0
-        for i in range(num_keybinds):
-            rects.append(pygame.Rect(row*i+50, column*i+100, 13, 12)) #13x12 è la dimensione delle immagini dei tasti
+        for i in range(len(settings_menu_rendered_texts)):
+            corresponding_midright = self.settings_menu_images_rects[i].midright
+            new_midleft = (corresponding_midright[0] + 10, corresponding_midright[1])
+            rects.append(settings_menu_rendered_texts[i].get_rect(midleft = new_midleft)) 
         return rects
 
+    def get_settings_menu_rects(self, keybind_images):
+        rects = []
+        for i in range(len(keybind_images)):
+            if i%2!=0: x_coord = self.half_w
+            else: x_coord = 50 
+            if i%2==0: y_coord = i*25 + 50
+            rects.append(keybind_images[i].get_rect(topleft = (x_coord, y_coord)))
+        return rects
+    
     def get_hw_resolution(self):
         # Get a handle to the desktop window
         desktop = windll.user32.GetDesktopWindow()

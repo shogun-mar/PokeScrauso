@@ -181,19 +181,18 @@ def load_configuration():
 
 def get_current_configuration():
     return {
-        "ZOOM_UP_KEY": ZOOM_UP_KEY,
-        "ZOOM_DOWN_KEY": ZOOM_DOWN_KEY,
-        "MAX_FPS": MAX_FPS,
+        "FORWARD_KEY": FORWARD_KEY,
+        "LEFT_KEY": LEFT_KEY,
+        "BACKWARD_KEY": BACKWARD_KEY,
+        "RIGHT_KEY": RIGHT_KEY,
+        "FULLSCREEN_KEY": FULLSCREEN_KEY,
         "POKEDEX_KEY": POKEDEX_KEY,
         "PAUSE_KEY": PAUSE_KEY,
         "EXIT_KEY": EXIT_KEY,
         "INTERACTION_KEY": INTERACTION_KEY,
         "MAP_KEY": MAP_KEY,
         "INVENTORY_KEY": INVENTORY_KEY,
-        "FORWARD_KEY": FORWARD_KEY,
-        "LEFT_KEY": LEFT_KEY,
-        "BACKWARD_KEY": BACKWARD_KEY,
-        "RIGHT_KEY": RIGHT_KEY,
-        "FULLSCREEN_KEY": FULLSCREEN_KEY,
-        "HELP_KEY": HELP_KEY
+        "HELP_KEY": HELP_KEY,
+        "ZOOM_UP_KEY": ZOOM_UP_KEY,
+        "ZOOM_DOWN_KEY": ZOOM_DOWN_KEY,
     }

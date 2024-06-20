@@ -3,15 +3,15 @@ from os import path
 from classes.gameState import GameState
 from settings import *
 
-def render_settings_menu(self):
-    self.fake_screen.blit(self.settings_background_image, (0,0))
-    self.fake_screen.blit(self.save_button, self.save_button_rect)
-    self.fake_screen.blit(self.restore_button, self.restore_button_rect)
-    self.fake_screen.blit(self.discard_button, self.discard_button_rect)
-    self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
-    for i in range(len(self.modified_keybinds_images_values)):
-        self.fake_screen.blit(self.modified_keybinds_images_values[i], self.settings_menu_images_rects[i])
-        self.fake_screen.blit(self.settings_menu_rendered_texts[i], self.settings_menu_rendered_texts_rects[i])
+def render_settings_menu(game):
+    game.fake_screen.blit(game.settings_background_image, (0,0))
+    game.fake_screen.blit(game.save_button, game.save_button_rect)
+    game.fake_screen.blit(game.restore_button, game.restore_button_rect)
+    game.fake_screen.blit(game.discard_button, game.discard_button_rect)
+    game.fake_screen.blit(game.mute_button, game.mute_button_rect) if game.current_volume_status else game.fake_screen.blit(game.unmute_button, game.unmute_button_rect)
+    for i in range(len(game.modified_keybinds_images_values)):
+        game.fake_screen.blit(game.modified_keybinds_images_values[i], game.settings_menu_images_rects[i])
+        game.fake_screen.blit(game.settings_menu_rendered_texts[i], game.settings_menu_rendered_texts_rects[i])
 
 def get_configuration_images(keybinds):
         images = {}  # Dictionary with key names as keys and images as values
@@ -28,48 +28,58 @@ def get_configuration_images(keybinds):
                 images[key] = image
         return images
 
-def handle_settings_input(self, key):   
-    if key == PAUSE_KEY:
-        self.game_state = GameState.START_MENU
-    elif key == SAVE_SETTINGS_KEY:
-        #Salva le impostazioni
-        save_configuration()
-    elif key == RESTORE_SETTINGS_KEY:
-        #Ripristina le impostazioni
-        set_default_configuration()
-    elif key == DISCARD_SETTINGS_KEY:
-        #Scarta le impostazioni
-        #TODO
-        print("Scarta le impostazioni") #Placeholder
-        #discard_configuration()
-    elif key == MUTE_KEY:
-        print("Muta il gioco")
-        #Muta il gioco
-        self.current_volume_status = not self.current_volume_status
-
-def handle_settings_input_mouse(self):
-    if self.save_button_rect.collidepoint(pygame.mouse.get_pos()):
-        #Salva le impostazioni
-        save_configuration()
-    elif self.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
-        #Ripristina le impostazioni
-        set_default_configuration()
-    elif self.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
-        #Scarta le impostazioni
-        #TODO
-        print("Scarta le impostazioni") #Placeholder
-        #discard_configuration()
-    elif self.mute_button_rect.collidepoint(pygame.mouse.get_pos()):
-        print("Muta il gioco")
-        #Muta il gioco
-        self.current_volume_status = not self.current_volume_status
+def handle_settings_input(game, key):
+    if not game.modyfing_keybind:   
+        if key == PAUSE_KEY:
+            game.game_state = GameState.START_MENU
+        elif key == SAVE_SETTINGS_KEY:
+            #Salva le impostazioni
+            save_configuration()
+        elif key == RESTORE_SETTINGS_KEY:
+            #Ripristina le impostazioni
+            set_default_configuration()
+        elif key == DISCARD_SETTINGS_KEY:
+            #Scarta le impostazioni
+            #TODO
+            print("Scarta le impostazioni") #Placeholder
+            #discard_configuration()
+        elif key == MUTE_KEY:
+            print("Muta il gioco")
+            #Muta il gioco
+            game.current_volume_status = not game.current_volume_status
     else:
-        for i in range(len(self.settings_menu_images_rects)):
-            if self.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
-                clicked_image = self.modified_keybinds_images_values[i]
-                clicked_image.set_alpha(128)
-                #Cambia il tasto
-                #TODO
+        if key in ACCEPTABLE_KEYBINDS:
+            game.new_proposed_key = key
+            print(game.new_proposed_key)
+            game.modyfing_keybind = False
+            if True: #Controlla che non ci siano conflitti
+                
+
+
+def handle_settings_input_mouse(game):
+    if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
+        #Salva le impostazioni
+        save_configuration()
+    elif game.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
+        #Ripristina le impostazioni
+        set_default_configuration()
+    elif game.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
+        #Scarta le impostazioni
+        #TODO
+        print("Scarta le impostazioni") #Placeholder
+        #discard_configuration()
+    elif game.mute_button_rect.collidepoint(pygame.mouse.get_pos()):
+        print("Muta il gioco")
+        #Muta il gioco
+        game.current_volume_status = not game.current_volume_status
+    else:
+        for i in range(len(game.settings_menu_images_rects)):
+            if game.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
+                if (game.last_clicked_index is not None and game.last_clicked_index != i) or game.modifyng_keybind == False: # Se c'è una Surface precedentemente selezionata, ripristina la sua opacità
+                    game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
+                game.modified_keybinds_images_values[i].set_alpha(128) # Imposta l'opacità della Surface appena selezionata
+                game.last_clicked_index = i # Aggiorna l'indice dell'ultima Surface cliccata
+                game.modyfing_keybind = True
                 print("Cambia il tasto") #Placeholder
                 break
 

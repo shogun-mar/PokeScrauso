@@ -93,7 +93,9 @@ class Game:
 
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
         key_images_values = list(self.key_images.values())
+        self.last_clicked_index = None #Indice dell'ultima immagine cliccata
         self.modifying_keybind = False
+        self.new_proposed_key = None
 
         self.settings_menu_images_rects = get_settings_menu_rects(self, key_images_values)
 

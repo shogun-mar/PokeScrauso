@@ -8,17 +8,23 @@ pygame.init()
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
 SCREEN_TITLE = "Pokémon Battle Menu" 
+HEALTH_BAR_WIDTH=98
+HEALTH_BAR_HEIGHT=7
 
 # Crea lo schermo
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
-
+font=pygame.font.Font("graphics/fonts/PressStart2P.ttf",12)
 # Carica le immagini dei Pokémon
 name_gioc="DITTO"
-player_pokemon_img = pygame.image.load('graphics/Gen 4 Pokemon Back/3 HGSS-B.png')
+life_point=100
+poke_life=100
+player_pokemon_img = pygame.image.load('graphics/Gen 4 Pokemon Back/132 HGSS-B.png')
 player_pokemon_rect = player_pokemon_img.get_rect(center=(130, 400))
 player_riq_img=pygame.image.load('graphics/UI/Battle/databox_normal.png')
 player_riq_rect=player_riq_img.get_rect(center=(129,260))
+player_info_text = font.render(f"{name_gioc} Lvl {1000} ", True, (0, 0, 0))
+
 
 
 name_enemy="PIKACHU"
@@ -26,6 +32,7 @@ enemy_pokemon_img = pygame.image.load('graphics/HGSS/25 HGSS.png ')
 enemy_pokemon_rect = enemy_pokemon_img.get_rect(center=(580, 220))
 enemy_riq_img=pygame.image.load('graphics/UI/Battle/databox_normal_foe.png')
 enemy_riq_rect=enemy_riq_img.get_rect(center=(599,60))
+enemy_info_text = font.render(f"{name_enemy} Lvl {104} ", True, (0, 0, 0))
 
 # Carica lo sfondo della battaglia
 battle_background = pygame.image.load('graphics/battle/Background_battle.png')
@@ -51,7 +58,7 @@ pokemon6_button = pygame.Rect(570, 420, 150, 50)
 health_button = pygame.Rect(400, 360, 150, 100)
 pokeballz_button = pygame.Rect(560, 360, 150, 100)
 
-font=pygame.font.Font(None,24)
+
 
 def draw_button(button, text, color):
     
@@ -61,7 +68,7 @@ def draw_button(button, text, color):
     surface.fill(color)
 
     # Disegna il testo del pulsante
-    font = pygame.font.Font(None, 32)
+    font = pygame.font.Font("graphics/fonts/PressStart2P.ttf",12)
     text_surface = font.render(text, True, (255,255,255))
     surface.blit(text_surface, (10, 10))
 
@@ -138,20 +145,47 @@ while running:
                 print("fuga")
                 
                 run_mode=True
-    
-    
+        elif event.type==pygame.KEYDOWN and event.key==pygame.K_ESCAPE:
+            battle_mode=False
+            pokemon_mode=False
+            bag_mode=False
+            run_mode=False
+            health_mode=False
+            pokeballz_mode=False
+            poke1_mode=False
+            poke2_mode=False
+            poke3_mode=False
+            poke4_mode=False
+            poke5_mode=False
+            poke6_mode=False
+
+    player_life=font.render(f"{life_point}/{poke_life}", True,(0,0,0))
     # Disegna lo sfondo
     screen.blit(battle_background, (0, 0))
 
     # Disegna i Pokémon
     screen.blit(player_riq_img,player_riq_rect)
-    pygame.draw.rect(screen, (0,255,0), (100, 257, 98, 7))
+    #pygame.draw.rect(screen, (0,255,0), (100, 257, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
+    health_bar_color = (0,255,0)
+    if life_point< 50:
+        health_bar_color = (255, 128, 0)  # arancione
+    if life_point< 20:
+        health_bar_color = (255,0,0)
+
+    health_bar_surface = pygame.Surface((HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
+    health_bar_surface.fill(health_bar_color)
+    health_bar_surface.fill((0,0,0), (0, 0, HEALTH_BAR_WIDTH - (life_point / poke_life) * HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
+    screen.blit(health_bar_surface, (100, 257))
+
     pygame.draw.rect(screen, (72, 139, 240), (6.5, 290, 192, 6))
     screen.blit(player_pokemon_img,player_pokemon_rect)
+    screen.blit(player_info_text, (50, 238))
+    screen.blit(player_life,(104,272))
 
     screen.blit(enemy_riq_img,enemy_riq_rect)
-    pygame.draw.rect(screen, (0,255,0), (607, 68, 97, 7))
+    pygame.draw.rect(screen, (0,255,0), (607, 68, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
     screen.blit(enemy_pokemon_img,enemy_pokemon_rect)
+    screen.blit(enemy_info_text, (500, 44))
  #alt+11 = ♂  alt+12 = ♀
     # Disegna i pulsanti
     if not battle_mode and not pokemon_mode and not bag_mode and not run_mode and not health_mode and not pokeballz_mode and not poke1_mode and not poke2_mode and not poke3_mode and not poke4_mode and not poke5_mode and not poke6_mode:
@@ -230,9 +264,21 @@ while running:
     # screen.blit(enemy_info_text, (500, 60))
     # pygame.draw.rect(screen, (0,255,0), (500, 80, 104, 10))
     
-    pygame.time.Clock().tick(60)
+    pygame.time.Clock().tick(10)
 
     pygame.display.update()
+    life_point -= 1
+
+    if life_point < 0:
+        life_point = 0
+        message = "MORTO X_X"
+        panel = font.render(message, True, (0, 0, 0))
+        
+        
+        screen.fill((255,255,255),(400,360,310,120))
+        screen.blit(panel, (400, 360,300,100))
+        running = False
+        pygame.display.update()
 
 pygame.time.delay(1000)
 pygame.quit()

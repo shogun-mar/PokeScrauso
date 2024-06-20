@@ -46,11 +46,14 @@ class Game:
         pygame.mouse.set_visible(False) #Nasconde il cursore del mouse (sulla sua posizione verranno però disegnate le immagini dei puntatori personalizzati)   
 
         #Start menu
-        randomint = randint(1,2)
+        randomint = randint(1,6)
         self.start_background_images = self.import_frames("graphics/UI/menus/backgrounds/start_menu_background"+str(randomint))
         self.start_menu_current_frame = 0
         if randomint == 1: self.background_frame_switch_delay = 0.16 #Il delay fra i frame cambia in base allo sfondo
-        elif randomint == 2: self.background_frame_switch_delay = 0.06
+        elif randomint == 2 or randomint == 3: self.background_frame_switch_delay = 0.06
+        elif randomint == 4: self.background_frame_switch_delay = 0.1
+        elif randomint == 5: self.background_frame_switch_delay = 0.2
+        elif randomint == 6: self.background_frame_switch_delay = 0.25
         self.background_last_switch_time = time.time()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
         self.start_text_image = pygame.image.load("graphics/UI/menus/texts/start_menu_text.png").convert_alpha()
@@ -77,23 +80,24 @@ class Game:
 
         self.current_keybinds = get_current_configuration()
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
-        self.modified_keybinds_images, self.modified_keybinds_rects = self.get_configuration_images(self.modified_keybinds) 
+        self.modified_keybinds_images = self.get_configuration_images(self.modified_keybinds) 
 
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
         self.key_images_rect = {key: self.key_images[key].get_rect(center = (self.half_w, self.half_h + 50)) for key in self.key_images}
+        
         keybinds_text = [
-            "Muove avanti",
-            "Muove indietro",
-            "Muove a sinistra",
-            "Muove a destra",
-            "Apre la mappa",
-            "Apre il menu di pausa",
-            "Apre l'inventario",
-            "Apre il PokèDex",
-            "Apre il menu di aiuto",
-            "Schermo intero",
-            "Interagisci",
-            "Chiude il gioco",
+            "Move forwards",
+            "Muove backwards",
+            "Move to the left",
+            "Move to the right",
+            "Open the map",
+            "Open the pause menu",
+            "Open the inventory",
+            "Opens the PokèDex",
+            "Opens the help menu",
+            "Toggles fullscreen mode",
+            "Interacts with objects",
+            "Closes the game",
             "Zoom in",
             "Zoom out",
             #Text field for max fps
@@ -104,12 +108,14 @@ class Game:
         #Renderizzi i tasti e ne ottiene i rettangoli
         self.rendered_texts, self.rendered_texts_rects = self.render_texts(keybinds_text, self.menu_font, (255,255,255))
 
+        self.settings_menu_rects = self.get_settings_menu_rects(len(keybinds_text))
+
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
-        #self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+        self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -319,13 +325,10 @@ class Game:
         self.fake_screen.blit(self.discard_button, self.discard_button_rect)
         self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
 
-        for i in range(0, len(self.)-1):
-            self.fake_screen.blit(self.key_images[i], self.key_images_rect[i])
-        
-        for i in range(0, len(self.rendered_texts)-1):
-            self.fake_screen.blit(self.rendered_texts[i], self.rendered_texts_rects[i])
+        for key, image in self.modified_keybinds_images.items():
+            print(f"{key}: {image}")
+            
 
-    
     def render_help_menu(self):
         self.fake_screen.blit(self.darkened_surface, (0,0))
 
@@ -402,12 +405,27 @@ class Game:
         return rendered_texts, rendered_texts_rects
 
     def get_configuration_images(self, keybinds):
-        images = {} #Dizionario con i nomi dei tasti come chiavi e le immagini come valori
-        rects = []
-        for key in keybinds:
-            image[] = pygame.load.image("graphics\UI\menus\icons\keys\"+ +".png").convert_alpha()
+        images = {}  # Dictionary with key names as keys and images as values
+        for key, value in keybinds.items():
+            #Convert the pygame key constant to its string representation
+            key_name = pygame.key.name(value)
+            #Construct the file path
+            file_path = path.join("graphics", "UI", "menus", "icons", "keys", f"{key_name}.png")
+            # Check if the file exists
+            if path.isfile(file_path):
+                # Load the image and convert it to a format suitable for fast blitting
+                image = pygame.image.load(file_path).convert_alpha()
+                # Add the image to the dictionary
+                images[key] = image
+        return images
 
-        return images, rects
+    def get_settings_menu_rects(self, num_keybinds):
+        rects = []
+        column = 0
+        row = 0
+        for i in range(num_keybinds):
+            rects.append(pygame.Rect(row*i+50, column*i+100, 13, 12)) #13x12 è la dimensione delle immagini dei tasti
+        return rects
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

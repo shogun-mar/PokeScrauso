@@ -19,7 +19,7 @@ class Game:
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PokèScrauso")
-        pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
+        pygame.display.set_icon(pygame.image.load("graphics/UI/menus/logo_small.png"))
         # Allow only specific events
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
         # Get physical resolution
@@ -31,17 +31,15 @@ class Game:
         self.half_h = SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
-        self.inventory = {} #Inventario del giocatore
-        self.pokedex = {} #PokèDex del giocatore
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.player = Player((0,0), self.camera_group) #Parametri arbitrari per testing, da sistemare
 
         #Pointer images
-        self.pointer_image = pygame.image.load("graphics/menus/pointers/pointer.png").convert_alpha()
+        self.pointer_image = pygame.image.load("graphics/UI/menus/pointers/pointer.png").convert_alpha()
         self.pointer_image_rect = self.pointer_image.get_rect(center = (0,0))
-        self.pointer_click_image = pygame.image.load("graphics/menus/pointers/pointer_click.png").convert_alpha()
+        self.pointer_click_image = pygame.image.load("graphics/UI/menus/pointers/pointer_click.png").convert_alpha()
         self.pointer_click_image_rect = self.pointer_click_image.get_rect(center = (0,0))
         self.current_pointer = self.pointer_image #Disegno sempre questa variabile ma cambio il suo valore in base alla posizione del mouse
         self.current_pointer_rect = self.pointer_image_rect
@@ -49,36 +47,38 @@ class Game:
 
         #Start images
         randomint = randint(1,2)
-        self.start_background_images = self.import_frames("graphics/menus/backgrounds/start_menu_background"+str(randomint))
+        self.start_background_images = self.import_frames("graphics/UI/menus/backgrounds/start_menu_background"+str(randomint))
         self.start_menu_current_frame = 0
         if randomint == 1: self.background_frame_switch_delay = 0.16 #Il delay fra i frame cambia in base allo sfondo
         elif randomint == 2: self.background_frame_switch_delay = 0.06
         self.background_last_switch_time = time.time()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
-        self.start_text_image = pygame.image.load("graphics/menus/texts/start_menu_text.png").convert_alpha()
+        self.start_text_image = pygame.image.load("graphics/UI/menus/texts/start_menu_text.png").convert_alpha()
         self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
-        self.new_game_button = pygame.image.load("graphics/menus/buttons/start_menu_new_game_text.png").convert_alpha()
+        self.new_game_button = pygame.image.load("graphics/UI/menus/buttons/start_menu_new_game_text.png").convert_alpha()
         self.new_game_button_rect = self.new_game_button.get_rect(center = (self.half_w, self.half_h + 50))
-        self.load_save_button = pygame.image.load("graphics/menus/buttons/start_menu_load_save_text.png").convert_alpha()
+        self.load_save_button = pygame.image.load("graphics/UI/menus/buttons/start_menu_load_save_text.png").convert_alpha()
         self.load_save_button_rect = self.load_save_button.get_rect(center = (self.half_w, self.half_h + 150))
-        self.settings_button = pygame.image.load("graphics/menus/buttons/settings_icon.png").convert_alpha()
+        self.settings_button = pygame.image.load("graphics/UI/menus/buttons/settings_icon.png").convert_alpha()
         self.settings_button_rect = self.settings_button.get_rect(center = (SCREEN_WIDTH - 40, SCREEN_HEIGHT - 40))
 
         #Settings images
-        self.settings_background_image = pygame.image.load("graphics/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
-        self.save_button = pygame.image.load("graphics/menus/buttons/save_button.png").convert_alpha()
+        self.settings_background_image = pygame.image.load("graphics/UI/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
+        self.save_button = pygame.image.load("graphics/UI/menus/buttons/save_button.png").convert_alpha()
         self.save_button_rect = self.save_button.get_rect(center = (self.half_w + 16, SCREEN_HEIGHT - 50 ))
-        self.restore_button = pygame.image.load("graphics/menus/buttons/restore_button.png").convert_alpha()
+        self.restore_button = pygame.image.load("graphics/UI/menus/buttons/restore_button.png").convert_alpha()
         self.restore_button_rect = self.restore_button.get_rect(center = (self.half_w - 16, SCREEN_HEIGHT - 50))
-        self.discard_button = pygame.image.load("graphics/menus/buttons/discard_button.png").convert_alpha()
+        self.discard_button = pygame.image.load("graphics/UI/menus/buttons/discard_button.png").convert_alpha()
         self.discard_button_rect = self.discard_button.get_rect(center = (self.half_w - 48, SCREEN_HEIGHT - 50))
-        self.mute_button = pygame.image.load("graphics/menus/buttons/mute_button.png").convert_alpha()
+        self.mute_button = pygame.image.load("graphics/UI/menus/buttons/mute_button.png").convert_alpha()
         self.mute_button_rect = self.mute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
-        self.unmute_button = pygame.image.load("graphics/menus/buttons/unmute_button.png").convert_alpha()
+        self.unmute_button = pygame.image.load("graphics/UI/menus/buttons/unmute_button.png").convert_alpha()
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
+
+        self.key_images = self.import_frames("graphics/UI/menus/icon/keys")
         
         #Map images
-        self.map_image = pygame.image.load("graphics/menus/maps/map.png").convert_alpha()
+        self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
@@ -290,6 +290,7 @@ class Game:
             change_frame_values = self.change_frame(current_animation = self.start_background_images, current_frame = self.start_menu_current_frame, current_last_switch_time = self.background_last_switch_time, image_to_update = self.start_background_image, animation_delay = self.background_frame_switch_delay)
             self.start_background_image = change_frame_values[0]
             self.start_menu_current_frame = change_frame_values[1]
+            self.background_last_switch_time = change_frame_values[2]
 
     def set_pointer_click(self):
         self.current_pointer = self.pointer_click_image
@@ -314,13 +315,15 @@ class Game:
         else:
             self.set_pointer_normal()
 
-    def import_frames(self, directory_path):
+    def import_frames(self, directory_path): #Importa i frame per una animazione
         images = []
         for filename in listdir(directory_path):
             if filename.endswith('.png') or filename.endswith('.jpg'):
                 image = pygame.image.load(path.join(directory_path, filename)).convert_alpha()
                 images.append(image)
         return images
+    
+    def import_sequence_images(self, directory_path): #Importa una serie di immagini come quelle dei tasti per le impostazioni per esempio
 
     def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update, animation_delay): 
         #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
@@ -332,9 +335,9 @@ class Game:
                 current_frame = 0
             
             image_to_update = current_animation[current_frame]
-            self.background_last_switch_time = current_time # Reset the last frame switch time
+            current_last_switch_time = current_time # Reset the last frame switch time
 
-        return image_to_update, current_frame
+        return image_to_update, current_frame, current_last_switch_time
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

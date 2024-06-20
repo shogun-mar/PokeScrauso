@@ -7,6 +7,14 @@ from settings import *
 from classes.player import Player
 from classes.gameState import GameState
 from classes.cameraGroup import CameraGroup
+from classes.gameplayState import *
+from classes.helpMenuState import *
+from classes.pokedexState import *
+from classes.inventoryMenuState import *
+from classes.mapState import *
+from classes.pauseState import *
+from classes.settingsMenuState import *
+from classes.startMenuState import *
 
 class Game:
     def __init__(self):
@@ -80,14 +88,14 @@ class Game:
 
         self.current_keybinds = get_current_configuration()
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
-        self.modified_keybinds_images = self.get_configuration_images(self.modified_keybinds) 
+        self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
         self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
 
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
         key_images_values = list(self.key_images.values())
-        self.
+        self.modifying_keybind = False
 
-        self.settings_menu_images_rects = self.get_settings_menu_rects(key_images_values)
+        self.settings_menu_images_rects = get_settings_menu_rects(self, key_images_values)
 
         keybinds_text = [
             "Move forwards", "Move to the left", 
@@ -103,9 +111,8 @@ class Game:
             #Salvataggio rapido
             #Caricamento rapido
         ]
-        self.settings_menu_rendered_texts = self.render_texts(keybinds_text, self.menu_font, (0,0,0))
-        self.settings_menu_rendered_texts_rects = self.get_settings_menu_texts_rects(self.settings_menu_rendered_texts)
-        
+        self.settings_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (0,0,0))
+        self.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(self, self.settings_menu_rendered_texts)
 
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
@@ -116,7 +123,6 @@ class Game:
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
-
 
     def start(self):
         while True:
@@ -141,17 +147,17 @@ class Game:
                         
                 #Game state specific events
                 if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
-                elif self.game_state == GameState.START_MENU: self.handle_start_menu_input(event.key)
-                elif self.game_state == GameState.GAMEPLAY: self.handle_gameplay_input(event.key)
-                elif self.game_state == GameState.PAUSE: self.handle_pause_input(event.key)
-                elif self.game_state == GameState.MAP: self.handle_map_input(event.key)
-                elif self.game_state == GameState.INVENTORY: self.handle_inventory_input(event.key)
-                elif self.game_state == GameState.POKEDEX: self.handle_pokedex_input(event.key)
-                elif self.game_state == GameState.SETTINGS_MENU: self.handle_settings_input(event.key)
-                elif self.game_state == GameState.HELP_MENU: self.handle_help_screen_input(event.key)
+                elif self.game_state == GameState.START_MENU: handle_start_menu_input(self, event.key)
+                elif self.game_state == GameState.GAMEPLAY: handle_gameplay_input(self, event.key)
+                elif self.game_state == GameState.PAUSE: handle_pause_input(self, event.key)
+                elif self.game_state == GameState.MAP: handle_map_input(self, event.key)
+                elif self.game_state == GameState.INVENTORY: handle_inventory_input(self, event.key)
+                elif self.game_state == GameState.POKEDEX: handle_pokedex_input(self, event.key)
+                elif self.game_state == GameState.SETTINGS_MENU: handle_settings_input(self, event.key)
+                elif self.game_state == GameState.HELP_MENU: handle_help_screen_input(self, event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
-                if self.game_state == GameState.SETTINGS_MENU: self.handle_settings_input_mouse()
-                if self.game_state == GameState.START_MENU: self.handle_start_menu_input_mouse()
+                if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
+                if self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
             
@@ -161,125 +167,19 @@ class Game:
         #Update the pointer image if the mouse is over a button
         self.update_pointer()
 
-    def handle_start_menu_input(self, key):
-        if key == INTERACTION_KEY: self.game_state = GameState.GAMEPLAY #Chiude il menu iniziale
-
-    def handle_start_menu_input_mouse(self):
-        #Controllo interazione con il pulsante
-        mouse_pos = pygame.mouse.get_pos()
-        if self.new_game_button_rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0]: 
-                #Start new game
-                #TODO
-                self.game_state = GameState.GAMEPLAY
-
-        elif self.load_save_button_rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0]:
-                #Load save
-                #TODO
-                self.game_state = GameState.GAMEPLAY
-        
-        elif self.settings_button_rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0]:
-                #Open settings
-                self.game_state = GameState.SETTINGS_MENU
-
-    def handle_gameplay_input(self, key):
-        if key == MAP_KEY: self.game_state = GameState.MAP #Apre la mappa
-        elif key == PAUSE_KEY:
-            #Prende screenshot dell'attuale schermata di gioco e la oscura
-            self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
-            self.darkened_surface.blit(self.fake_screen, (0,0))
-            self.darkened_surface.set_alpha(128)
-            self.game_state = GameState.PAUSE #Apre il menu di pausa 
-        elif key == INVENTORY_KEY: self.game_state = GameState.INVENTORY #Apre l'inventario
-        elif key == POKEDEX_KEY: self.game_state = GameState.POKEDEX #Apre il PokèDex
-        elif key == HELP_KEY:
-            #Prende screenshot dell'attuale schermata di gioco e la oscura
-            self.darkened_surface = pygame.Surface(self.fake_screen.get_size())
-            self.darkened_surface.blit(self.fake_screen, (0,0))
-            self.darkened_surface.set_alpha(128) 
-            self.game_state = GameState.HELP_MENU
-
-    def handle_map_input(self, key):
-        if key == MAP_KEY: self.game_state = GameState.MAP if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
-
-    def handle_inventory_input(self, key):
-        if key == INVENTORY_KEY: self.game_state = GameState.INVENTORY if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
-
-    def handle_pokedex_input(self, key):
-        if key == POKEDEX_KEY: self.game_state = GameState.POKEDEX if self.game_state == GameState.GAMEPLAY else GameState.GAMEPLAY
-
-    def handle_pause_input(self, key):
-        if key == PAUSE_KEY:
-            if self.game_state == GameState.GAMEPLAY:
-                self.game_state = GameState.PAUSE
-            else:
-                self.game_state = GameState.GAMEPLAY
-
-    def handle_settings_input(self, key):
-        
-        if key == PAUSE_KEY:
-            self.game_state = GameState.START_MENU
-        elif key == SAVE_SETTINGS_KEY:
-            #Salva le impostazioni
-            save_configuration()
-        elif key == RESTORE_SETTINGS_KEY:
-            #Ripristina le impostazioni
-            set_default_configuration()
-        elif key == DISCARD_SETTINGS_KEY:
-            #Scarta le impostazioni
-            #TODO
-            print("Scarta le impostazioni") #Placeholder
-            #discard_configuration()
-        elif key == MUTE_KEY:
-            print("Muta il gioco")
-            #Muta il gioco
-            self.current_volume_status = not self.current_volume_status
-
-    def handle_settings_input_mouse(self):
-        if self.save_button_rect.collidepoint(pygame.mouse.get_pos()):
-            #Salva le impostazioni
-            save_configuration()
-        elif self.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
-            #Ripristina le impostazioni
-            set_default_configuration()
-        elif self.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
-            #Scarta le impostazioni
-            #TODO
-            print("Scarta le impostazioni") #Placeholder
-            #discard_configuration()
-        elif self.mute_button_rect.collidepoint(pygame.mouse.get_pos()):
-            print("Muta il gioco")
-            #Muta il gioco
-            self.current_volume_status = not self.current_volume_status
-        else:
-            for i in range(len(self.settings_menu_images_rects)):
-                if self.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
-                    clicked_image = self.modified_keybinds_images_values[i]
-                    clicked_image.set_alpha(128)
-                    #Cambia il tasto
-                    #TODO
-                    print("Cambia il tasto") #Placeholder
-                    break
-
-    def handle_help_screen_input(self, key):
-        if key == HELP_KEY:
-            self.game_state = GameState.GAMEPLAY
-
     def render(self):
 
         # Pulisce la superficie falsa
         self.fake_screen.fill(BACKGROUND_COLOR)
 
-        if self.game_state == GameState.GAMEPLAY: self.render_gameplay()
-        elif self.game_state == GameState.PAUSE: self.render_pause()
-        elif self.game_state == GameState.INVENTORY: self.render_inventory()
-        elif self.game_state == GameState.POKEDEX: self.render_pokedex()
-        elif self.game_state == GameState.MAP: self.render_map()
-        elif self.game_state == GameState.START_MENU: self.render_start_menu()
-        elif self.game_state == GameState.SETTINGS_MENU: self.render_settings_menu()
-        elif self.game_state == GameState.HELP_MENU: self.render_help_menu()
+        if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
+        elif self.game_state == GameState.PAUSE: render_pause(self)
+        elif self.game_state == GameState.INVENTORY: render_inventory(self)
+        elif self.game_state == GameState.POKEDEX: render_pokedex(self)
+        elif self.game_state == GameState.MAP: render_map(self)
+        elif self.game_state == GameState.START_MENU: render_start_menu(self)
+        elif self.game_state == GameState.SETTINGS_MENU: render_settings_menu(self)
+        elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
         if self.game_state != GameState.GAMEPLAY: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
@@ -288,55 +188,6 @@ class Game:
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
         pygame.display.flip() # Completly update the display
         self.clock.tick(MAX_FPS)
-
-    def render_gameplay(self):
-        
-        self.camera_group.custom_draw(self.player)
-
-    def render_pause(self):
-        self.fake_screen.blit(self.darkened_surface, (0,0))
-        font = pygame.font.Font(None, 36)  # Choose the font for the text
-        text = font.render("Pause", True, (255, 255, 255))  # Create a surface with the text
-        text_rect = text.get_rect(center=self.screen.get_rect().center)  # Get the rectangle of the text surface
-        self.fake_screen.blit(text, text_rect)
-
-    def render_inventory(self):
-        pass
-
-    def render_pokedex(self):
-        pass
-
-    def render_map(self):
-        self.fake_screen.fill((150,150,150))
-        self.fake_screen.blit(self.overlay, (0,0))
-        self.fake_screen.blit(self.map_image, self.map_rect)
-
-        #Disegna cursore sulla mappa
-        #...
-
-    def render_start_menu(self):
-
-        #Disegno dei componenti
-        self.fake_screen.blit(self.start_background_image, (0,0))
-        self.fake_screen.blit(self.start_text_image, self.start_text_image_rect)
-        self.fake_screen.blit(self.new_game_button, self.new_game_button_rect)
-        self.fake_screen.blit(self.load_save_button, self.load_save_button_rect)
-        self.fake_screen.blit(self.settings_button, self.settings_button_rect)
-
-    def render_settings_menu(self):
-
-        self.fake_screen.blit(self.settings_background_image, (0,0))
-        self.fake_screen.blit(self.save_button, self.save_button_rect)
-        self.fake_screen.blit(self.restore_button, self.restore_button_rect)
-        self.fake_screen.blit(self.discard_button, self.discard_button_rect)
-        self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
-
-        for i in range(len(self.modified_keybinds_images_values)):
-            self.fake_screen.blit(self.modified_keybinds_images_values[i], self.settings_menu_images_rects[i])
-            self.fake_screen.blit(self.settings_menu_rendered_texts[i], self.settings_menu_rendered_texts_rects[i]) 
-
-    def render_help_menu(self):
-        self.fake_screen.blit(self.darkened_surface, (0,0))
 
     def update_logic(self):
         if self.game_state == GameState.START_MENU:
@@ -399,45 +250,6 @@ class Game:
             current_last_switch_time = current_time # Reset the last frame switch time
 
         return image_to_update, current_frame, current_last_switch_time
-
-    def get_configuration_images(self, keybinds):
-        images = {}  # Dictionary with key names as keys and images as values
-        for key, value in keybinds.items():
-            #Convert the pygame key constant to its string representation
-            key_name = pygame.key.name(value)
-            #Construct the file path
-            file_path = path.join("graphics", "UI", "menus", "icons", "keys", f"{key_name}.png")
-            # Check if the file exists
-            if path.isfile(file_path):
-                # Load the image and convert it to a format suitable for fast blitting
-                image = pygame.image.load(file_path).convert_alpha()
-                # Add the image to the dictionary
-                images[key] = image
-        return images
-
-    def render_texts(self, texts, font, color):
-        settings_menu_rendered_texts = []
-        for text in texts:
-            rendered_text = font.render(text, True, color)
-            settings_menu_rendered_texts.append(rendered_text)
-        return settings_menu_rendered_texts
-
-    def get_settings_menu_texts_rects(self, settings_menu_rendered_texts):
-        rects = []
-        for i in range(len(settings_menu_rendered_texts)):
-            corresponding_midright = self.settings_menu_images_rects[i].midright
-            new_midleft = (corresponding_midright[0] + 10, corresponding_midright[1])
-            rects.append(settings_menu_rendered_texts[i].get_rect(midleft = new_midleft)) 
-        return rects
-
-    def get_settings_menu_rects(self, keybind_images):
-        rects = []
-        for i in range(len(keybind_images)):
-            if i%2!=0: x_coord = self.half_w
-            else: x_coord = 50 
-            if i%2==0: y_coord = i*25 + 50
-            rects.append(keybind_images[i].get_rect(topleft = (x_coord, y_coord)))
-        return rects
     
     def get_hw_resolution(self):
         # Get a handle to the desktop window

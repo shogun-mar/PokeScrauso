@@ -56,6 +56,7 @@ def get_interaction_keybind(): return INTERACTION_KEY
 def get_map_keybind(): return MAP_KEY
 def get_inventory_keybind(): return INVENTORY_KEY
 def get_fullscreen_keybind(): return FULLSCREEN_KEY
+def get_help_keybind(): return HELP_KEY
 
 def set_pokedex_keybind(key): global POKEDEX_KEY; POKEDEX_KEY = key
 def set_pause_keybind(key): global PAUSE_KEY; PAUSE_KEY = key
@@ -64,6 +65,7 @@ def set_interaction_keybind(key): global INTERACTION_KEY; INTERACTION_KEY = key
 def set_map_keybind(key): global MAP_KEY; MAP_KEY = key
 def set_inventory_keybind(key): global INVENTORY_KEY; INVENTORY_KEY = key
 def set_fullscreen_keybind(key): global FULLSCREEN_KEY; FULLSCREEN_KEY = key
+def set_help_keybind(key): global HELP_KEY; HELP_KEY = key
 
 #Keybinds for movement
 FORWARD_KEY = pygame.K_w #Pulsante per muoversi in avanti
@@ -99,6 +101,8 @@ def set_default_configuration():
     global LEFT_KEY
     global BACKWARD_KEY
     global RIGHT_KEY
+    global FULLSCREEN_KEY
+    global HELP_KEY
     #Camera keybinds
     ZOOM_UP_KEY = pygame.K_q
     ZOOM_DOWN_KEY = pygame.K_z
@@ -118,6 +122,8 @@ def set_default_configuration():
     LEFT_KEY = pygame.K_a #To move to the left
     BACKWARD_KEY = pygame.K_s #To move backwards
     RIGHT_KEY = pygame.K_d #To move to the right
+    FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
+    HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
 #Funzione di salvataggio delle impostazioni
 def save_configuration():
     with open("settings.txt", 'w') as f:
@@ -135,6 +141,7 @@ def save_configuration():
         f.write(f"BACKWARD_KEY = {BACKWARD_KEY}\n")
         f.write(f"RIGHT_KEY = {RIGHT_KEY}\n")
         f.write(f"FULLSCREEN_KEY = {FULLSCREEN_KEY}\n")
+        f.write(f"HELP_KEY = {HELP_KEY}\n")
 #Funzione di caricamento delle impostazioni
 def load_configuration():
     with open("settings.txt", 'r') as f:
@@ -152,6 +159,7 @@ def load_configuration():
         global BACKWARD_KEY
         global RIGHT_KEY
         global FULLSCREEN_KEY
+        global HELP_KEY
 
         for line in f:
             name, value = line.strip().split(' = ')
@@ -169,3 +177,23 @@ def load_configuration():
             elif name == "BACKWARD_KEY": BACKWARD_KEY = int(value)
             elif name == "RIGHT_KEY": RIGHT_KEY = int(value)
             elif name == "FULLSCREEN_KEY": FULLSCREEN_KEY = int(value)
+            elif name == "HELP_KEY": HELP_KEY = int(value)
+
+def get_current_configuration():
+    return {
+        "ZOOM_UP_KEY": ZOOM_UP_KEY,
+        "ZOOM_DOWN_KEY": ZOOM_DOWN_KEY,
+        "MAX_FPS": MAX_FPS,
+        "POKEDEX_KEY": POKEDEX_KEY,
+        "PAUSE_KEY": PAUSE_KEY,
+        "EXIT_KEY": EXIT_KEY,
+        "INTERACTION_KEY": INTERACTION_KEY,
+        "MAP_KEY": MAP_KEY,
+        "INVENTORY_KEY": INVENTORY_KEY,
+        "FORWARD_KEY": FORWARD_KEY,
+        "LEFT_KEY": LEFT_KEY,
+        "BACKWARD_KEY": BACKWARD_KEY,
+        "RIGHT_KEY": RIGHT_KEY,
+        "FULLSCREEN_KEY": FULLSCREEN_KEY,
+        "HELP_KEY": HELP_KEY
+    }

@@ -22,14 +22,15 @@ class Game:
         # Allow only specific events
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
         # Get physical resolution
-        self.hw_screen_width = self.get_hw_resolution()[0]  # HORIZONTAL RES
-        self.hw_screen_height = self.get_hw_resolution()[1]  # VERTICAL RES
+        self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
         #Variabili di gioco
         self.half_w = SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
+        #Font
+        self.menu_font = pygame.font.Font("graphics/fonts/menu_font.ttf", 24)  # Choose the font for the text
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
@@ -44,7 +45,7 @@ class Game:
         self.current_pointer_rect = self.pointer_image_rect
         pygame.mouse.set_visible(False) #Nasconde il cursore del mouse (sulla sua posizione verranno però disegnate le immagini dei puntatori personalizzati)   
 
-        #Start images
+        #Start menu
         randomint = randint(1,2)
         self.start_background_images = self.import_frames("graphics/UI/menus/backgrounds/start_menu_background"+str(randomint))
         self.start_menu_current_frame = 0
@@ -61,7 +62,7 @@ class Game:
         self.settings_button = pygame.image.load("graphics/UI/menus/buttons/settings_icon.png").convert_alpha()
         self.settings_button_rect = self.settings_button.get_rect(center = (SCREEN_WIDTH - 40, SCREEN_HEIGHT - 40))
 
-        #Settings images
+        #Settings menu
         self.settings_background_image = pygame.image.load("graphics/UI/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
         self.save_button = pygame.image.load("graphics/UI/menus/buttons/save_button.png").convert_alpha()
         self.save_button_rect = self.save_button.get_rect(center = (self.half_w + 16, SCREEN_HEIGHT - 50 ))
@@ -74,20 +75,45 @@ class Game:
         self.unmute_button = pygame.image.load("graphics/UI/menus/buttons/unmute_button.png").convert_alpha()
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
 
-        self.key_images = self.import_frames("graphics/UI/menus/icon/keys")
-        
+        self.current_keybinds = get_current_configuration()
+        self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
+        self.modified_keybinds_images, self.modified_keybinds_rects = self.get_configuration_images(self.modified_keybinds) 
+
+        self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
+        self.key_images_rect = {key: self.key_images[key].get_rect(center = (self.half_w, self.half_h + 50)) for key in self.key_images}
+        keybinds_text = [
+            "Muove avanti",
+            "Muove indietro",
+            "Muove a sinistra",
+            "Muove a destra",
+            "Apre la mappa",
+            "Apre il menu di pausa",
+            "Apre l'inventario",
+            "Apre il PokèDex",
+            "Apre il menu di aiuto",
+            "Schermo intero",
+            "Interagisci",
+            "Chiude il gioco",
+            "Zoom in",
+            "Zoom out",
+            #Text field for max fps
+            #Dropdown della risoluzione?
+            #Salvataggio rapido
+            #Caricamento rapido
+        ]
+        #Renderizzi i tasti e ne ottiene i rettangoli
+        self.rendered_texts, self.rendered_texts_rects = self.render_texts(keybinds_text, self.menu_font, (255,255,255))
+
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         
         #Overlay for map
-        self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+        #self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
 
-        #Font
-        #self.help_font = pygame.font.Font("graphics/fonts/Pokemon Hollow.ttf", 50)
 
     def start(self):
         while True:
@@ -292,6 +318,13 @@ class Game:
         self.fake_screen.blit(self.restore_button, self.restore_button_rect)
         self.fake_screen.blit(self.discard_button, self.discard_button_rect)
         self.fake_screen.blit(self.mute_button, self.mute_button_rect) if self.current_volume_status else self.fake_screen.blit(self.unmute_button, self.unmute_button_rect)
+
+        for i in range(0, len(self.)-1):
+            self.fake_screen.blit(self.key_images[i], self.key_images_rect[i])
+        
+        for i in range(0, len(self.rendered_texts)-1):
+            self.fake_screen.blit(self.rendered_texts[i], self.rendered_texts_rects[i])
+
     
     def render_help_menu(self):
         self.fake_screen.blit(self.darkened_surface, (0,0))
@@ -336,6 +369,14 @@ class Game:
         return images
     
     def import_sequence_images(self, directory_path): #Importa una serie di immagini come quelle dei tasti per le impostazioni per esempio
+        images_dict = {}
+        for filename in listdir(directory_path):
+            if filename.endswith('.png') or filename.endswith('.jpg'):
+                image = pygame.image.load(path.join(directory_path, filename)).convert_alpha()
+                # Use os.path.splitext to remove the file extension
+                file_name_without_extension = path.splitext(filename)[0]
+                images_dict[file_name_without_extension] = image
+        return images_dict
 
     def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update, animation_delay): 
         #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
@@ -350,6 +391,23 @@ class Game:
             current_last_switch_time = current_time # Reset the last frame switch time
 
         return image_to_update, current_frame, current_last_switch_time
+
+    def render_texts(self, texts, font, color):
+        rendered_texts = []
+        rendered_texts_rects = []
+        for text in texts:
+            rendered_text = font.render(text, True, color)
+            rendered_texts.append(rendered_text)
+            rendered_texts_rects.append(rendered_text.get_rect())
+        return rendered_texts, rendered_texts_rects
+
+    def get_configuration_images(self, keybinds):
+        images = {} #Dizionario con i nomi dei tasti come chiavi e le immagini come valori
+        rects = []
+        for key in keybinds:
+            image[] = pygame.load.image("graphics\UI\menus\icons\keys\"+ +".png").convert_alpha()
+
+        return images, rects
 
     def get_hw_resolution(self):
         # Get a handle to the desktop window

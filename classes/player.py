@@ -91,13 +91,13 @@ class Player(pygame.sprite.Sprite):
             self.direction.y = 0
             self.direction.x = 0
 
-        elif self.keys[BACKWARD_KEY]:
+        elif self.keys[BACKWARD_KEY] and not self.keys[LEFT_KEY] and not self.keys[RIGHT_KEY]:
             self.change_animation_verse("down")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = -1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
             
-        elif self.keys[FORWARD_KEY]:
+        elif self.keys[FORWARD_KEY] and not self.keys[LEFT_KEY] and not self.keys[RIGHT_KEY]:
             self.change_animation_verse("up")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = 1

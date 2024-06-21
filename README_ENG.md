@@ -1,4 +1,7 @@
 # PokèScrauso
+[ITA](./README.md)
+
+
 PokèScrauso is a project relized by 5 students on their 4th year of highschool during the PCTO experience at the company AddValue.
 This consists in a game strongly inspired by Pokemon games made by GameFreak, but with customizations added.
 

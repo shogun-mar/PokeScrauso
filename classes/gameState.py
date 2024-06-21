@@ -9,4 +9,5 @@ class GameState(Enum):
     MAP = 4
     START_MENU = 5
     SETTINGS_MENU = 6
+    HELP_MENU = 7
     

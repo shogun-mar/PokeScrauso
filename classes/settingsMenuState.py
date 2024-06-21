@@ -32,17 +32,6 @@ def handle_settings_input(game, key):
     if game.modyfing_keybind == False:   
         if key == PAUSE_KEY:
             game.game_state = GameState.START_MENU
-        elif key == SAVE_SETTINGS_KEY:
-            #Salva le impostazioni
-            save_configuration()
-        elif key == RESTORE_SETTINGS_KEY:
-            #Ripristina le impostazioni
-            set_default_configuration(game.modified_keybinds)
-        elif key == DISCARD_SETTINGS_KEY:
-            #Scarta le impostazioni
-            #TODO
-            print("Scarta le impostazioni") #Placeholder
-            #discard_configuration()
         elif key == MUTE_KEY:
             print("Muta il gioco")
             #Muta il gioco
@@ -60,17 +49,15 @@ def handle_settings_input(game, key):
 def handle_settings_input_mouse(game):
     if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Salva le impostazioni
-        save_configuration()
+        save_configuration(game.modified_keybinds)
+        game.GameState = GameState.START_MENU
     elif game.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
-        #Ripristina le impostazioni
+        #Ripristina le impostazioni ai valori di default
         game.modified_keybinds = set_default_configuration()
     elif game.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Scarta le impostazioni
-        #TODO
-        print("Scarta le impostazioni") #Placeholder
-        #discard_configuration()
+        game.modified_keybinds = game.current_keybinds.copy() #Bisogna fare il copy se no passa per riferemento
     elif game.mute_button_rect.collidepoint(pygame.mouse.get_pos()):
-        print("Muta il gioco")
         #Muta il gioco
         game.current_volume_status = not game.current_volume_status
     else:

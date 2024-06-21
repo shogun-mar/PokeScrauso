@@ -1,8 +1,8 @@
 from logic.gameState import GameState
-from settings import *
+import settings
 
 def handle_help_screen_input(self, key):
-    if key == HELP_KEY:
+    if key == settings.HELP_KEY or settings.ESCAPE_KEY:
         self.game_state = GameState.GAMEPLAY
 
 def render_help_menu(self):

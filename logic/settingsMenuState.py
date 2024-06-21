@@ -1,7 +1,7 @@
 import pygame
 from os import path
 from logic.gameState import GameState
-from settings import *
+import settings
 
 def render_settings_menu(game):
     game.fake_screen.blit(game.settings_background_image, (0,0))
@@ -30,17 +30,15 @@ def get_configuration_images(keybinds):
 
 def handle_settings_input(game, key):
     if game.modifying_keybind == False:   
-        if key == PAUSE_KEY:
+        if key == settings.PAUSE_KEY:
             game.game_state = GameState.START_MENU
-        elif key == MUTE_KEY:
-            print("Muta il gioco")
-            #Muta il gioco
-            game.current_volume_status = not game.current_volume_status
-    else:
-        if key == PAUSE_KEY: # If the user presses the escape key, the process is interrupted
+        elif key == settings.MUTE_KEY:
+            game.current_volume_status = not game.current_volume_status #Muta il gioco
+    else: 
+        if key == settings.PAUSE_KEY: # If the user presses the escape key, the process is interrupted
             game.modIfying_keybind = False
             game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
-        elif key in ACCEPTABLE_KEYBINDS:
+        elif key in settings.ACCEPTABLE_KEYBINDS:
             desired_dict_key = list(game.modified_keybinds.keys())[game.last_clicked_index] # This line gets the key of the dictionary that corresponds to the last clicked index
             game.modified_keybinds_images_values[game.last_clicked_index] = game.key_images[pygame.key.name(key)] # This line updates the image of the keybind at the last clicked index with the new key
             game.modified_keybinds[desired_dict_key] = key # This line updates the dictionary with the new key
@@ -49,11 +47,11 @@ def handle_settings_input(game, key):
 def handle_settings_input_mouse(game):
     if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Salva le impostazioni
-        save_configuration(game.modified_keybinds)
+        settings.save_configuration(game.modified_keybinds)
         game.GameState = GameState.START_MENU
     elif game.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Ripristina le impostazioni ai valori di default
-        game.modified_keybinds = set_default_configuration()
+        game.modified_keybinds = settings.set_default_configuration()
         for i, keybind in enumerate(game.modified_keybinds.values()):
             key_name = pygame.key.name(keybind)  # Get the name of the key
             if key_name in game.key_images:  # Check if there is an image for this key

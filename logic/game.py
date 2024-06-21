@@ -1,9 +1,9 @@
 import pygame
 import time
+import settings #Bisogna importare così perchè from ... import * clona le variabili
 from random import randint
 from os import listdir, environ, path
 from ctypes import windll
-from settings import *
 from logic.player import Player
 from logic.gameState import GameState
 from logic.cameraGroup import CameraGroup
@@ -22,7 +22,7 @@ class Game:
         #Inizializzazione di Pygame e impostazione dello schermo
         environ['SDL_VIDEO_CENTERED'] = '1' #Center the Pygame window Comando di SDL per centrare la finestra
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags, vsync=1)
+        self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags, vsync=1)
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PokèScrauso")
@@ -33,8 +33,8 @@ class Game:
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
         #Variabili di gioco
-        self.half_w = SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
-        self.half_h = SCREEN_HEIGHT // 2
+        self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
+        self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         #Font
@@ -67,23 +67,22 @@ class Game:
         self.load_save_button = pygame.image.load("graphics/UI/menus/buttons/start_menu_load_save_text.png").convert_alpha()
         self.load_save_button_rect = self.load_save_button.get_rect(center = (self.half_w, self.half_h + 150))
         self.settings_button = pygame.image.load("graphics/UI/menus/buttons/settings_icon.png").convert_alpha()
-        self.settings_button_rect = self.settings_button.get_rect(center = (SCREEN_WIDTH - 40, SCREEN_HEIGHT - 40))
+        self.settings_button_rect = self.settings_button.get_rect(center = (settings.SCREEN_WIDTH - 40, settings.SCREEN_HEIGHT - 40))
 
         #Settings menu
         self.settings_background_image = pygame.image.load("graphics/UI/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
         self.save_button = pygame.image.load("graphics/UI/menus/buttons/save_button.png").convert_alpha()
-        self.save_button_rect = self.save_button.get_rect(center = (self.half_w + 16, SCREEN_HEIGHT - 50 ))
+        self.save_button_rect = self.save_button.get_rect(center = (self.half_w + 16, settings.SCREEN_HEIGHT - 50 ))
         self.restore_button = pygame.image.load("graphics/UI/menus/buttons/restore_button.png").convert_alpha()
-        self.restore_button_rect = self.restore_button.get_rect(center = (self.half_w - 16, SCREEN_HEIGHT - 50))
+        self.restore_button_rect = self.restore_button.get_rect(center = (self.half_w - 16, settings.SCREEN_HEIGHT - 50))
         self.discard_button = pygame.image.load("graphics/UI/menus/buttons/discard_button.png").convert_alpha()
-        self.discard_button_rect = self.discard_button.get_rect(center = (self.half_w - 48, SCREEN_HEIGHT - 50))
+        self.discard_button_rect = self.discard_button.get_rect(center = (self.half_w - 48, settings.SCREEN_HEIGHT - 50))
         self.mute_button = pygame.image.load("graphics/UI/menus/buttons/mute_button.png").convert_alpha()
-        self.mute_button_rect = self.mute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
+        self.mute_button_rect = self.mute_button.get_rect(center = (self.half_w + 48, settings.SCREEN_HEIGHT - 50))
         self.unmute_button = pygame.image.load("graphics/UI/menus/buttons/unmute_button.png").convert_alpha()
-        self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
+        self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, settings.SCREEN_HEIGHT - 50))
 
-        self.current_keybinds = load_configuration()
-        print(FORWARD_KEY, self.current_keybinds["FORWARD_KEY"])
+        self.current_keybinds = settings.load_configuration() #Carica le impostazioni attuali
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
         self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
         self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
@@ -116,7 +115,7 @@ class Game:
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         #Overlay for map
-        self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+        self.overlay = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
@@ -138,16 +137,16 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT and self.modifying_keybind == False: self.quit_game()  #Chiude il gioco seconda condizione per rendere disponibile il tasto associato quando si stanno modificando le impostazioni
             elif event.type == pygame.VIDEORESIZE:
-                self.screen = pygame.display.set_mode((event.w, event.h), flags, vsync=1) # Ridimensiona la superficie dello schermo
+                self.screen = pygame.display.set_mode((event.w, event.h), settings.flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:
-                if event.key == FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
+                if event.key == settings.FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
                     if not pygame.display.get_surface().get_flags() & pygame.NOFRAME: #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
-                        self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), flags | pygame.NOFRAME)
+                        self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME)
                     else:
-                        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), flags) 
+                        self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags) 
                         
                 #Game state specific events
-                if event.key == EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
+                if event.key == settings.EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input(self, event.key)
                 elif self.game_state == GameState.GAMEPLAY: handle_gameplay_input(self, event.key)
                 elif self.game_state == GameState.PAUSE: handle_pause_input(self, event.key)
@@ -160,7 +159,7 @@ class Game:
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
                 if self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
-                self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
+                self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY
             
         #Player controls related events
         if self.game_state == GameState.GAMEPLAY: self.player.move()
@@ -171,7 +170,7 @@ class Game:
     def render(self):
 
         # Pulisce la superficie falsa
-        self.fake_screen.fill(BACKGROUND_COLOR)
+        self.fake_screen.fill(settings.BACKGROUND_COLOR)
 
         if self.game_state == GameState.GAMEPLAY: render_gameplay(self)
         elif self.game_state == GameState.PAUSE: render_pause(self)
@@ -188,7 +187,7 @@ class Game:
         # Ridimensiona la superficie falsa e la disegna sulla finestra
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))
         pygame.display.flip() # Completly update the display
-        self.clock.tick(MAX_FPS)
+        self.clock.tick(settings.MAX_FPS)
 
     def update_logic(self):
         if self.game_state == GameState.START_MENU:

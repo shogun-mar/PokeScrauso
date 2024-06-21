@@ -147,8 +147,6 @@ def load_configuration():
             elif name == "ZOOM_OUT_KEY":
                 ZOOM_OUT_KEY = keybinds[name] = value
 
-    print(FORWARD_KEY)
-
     return keybinds       
     
 def print_configuration():

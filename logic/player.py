@@ -1,7 +1,6 @@
 import pygame
 import time
-import importlib
-from settings import *
+import settings #Bisogna importare così perchè from ... import * clona le variabili
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group, keybinds):
@@ -10,10 +9,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__(group)
         self.pos = pos
         self.direction = pygame.math.Vector2()
-        self.speed = PLAYER_SPEED # pixels per frame
+        self.speed = settings.PLAYER_SPEED # pixels per frame
 
         #Animation variables
-        self.frame_switch_delay = PLAYER_ANIMATION_DELAY
+        self.frame_switch_delay = settings.PLAYER_ANIMATION_DELAY
         self.last_frame_switch_time = time.time()
 
         #Player images
@@ -89,32 +88,30 @@ class Player(pygame.sprite.Sprite):
     def input(self):
         
         keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
-        #print(self.keybinds)
-        #print(f"forward: {pygame.key.name(FORWARD_KEY)}, left: {pygame.key.name(LEFT_KEY)}, backward: {pygame.key.name(BACKWARD_KEY)}, right: {pygame.key.name(RIGHT_KEY)}")
 
-        if (keys[self.keybinds['FORWARD_KEY']] and keys[self.keybinds['BACKWARD_KEY']]) or (keys[self.keybinds['LEFT_KEY']] and keys[self.keybinds['RIGHT_KEY']]): #Se vengono premuti entrambi i tasti assieme non accade nessun movimento
+        if (keys[settings.BACKWARD_KEY] and keys[settings.FORWARD_KEY]) or (keys[settings.LEFT_KEY] and keys[settings.RIGHT_KEY]): #Se vengono premuti
             self.direction.y = 0
             self.direction.x = 0
 
-        elif keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['RIGHT_KEY']]:
+        elif keys[settings.FORWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
             self.change_animation_verse("up")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = 1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
 
-        elif keys[self.keybinds['BACKWARD_KEY']] and not keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['RIGHT_KEY']]:
+        elif keys[settings.BACKWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
             self.change_animation_verse("down")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = -1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
 
-        elif keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['BACKWARD_KEY']]:  
+        elif keys[settings.LEFT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:  
             self.change_animation_verse("left")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = 1
             self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
-            
-        elif keys[self.keybinds['RIGHT_KEY']] and not keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['BACKWARD_KEY']]:
+
+        elif keys[settings.RIGHT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:    
             self.change_animation_verse("right")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = -1

@@ -1,9 +1,9 @@
 import pygame
 from logic.gameState import GameState
-from settings import *
+import settings
 
 def handle_pause_input(self, key):
-    if key == PAUSE_KEY:
+    if key == settings.PAUSE_KEY:
         if self.game_state == GameState.GAMEPLAY:
             self.game_state = GameState.PAUSE
         else:

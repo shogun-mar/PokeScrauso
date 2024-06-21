@@ -38,7 +38,7 @@ class Game:
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         #Font
-        self.menu_font = pygame.font.Font("graphics/fonts/menu_font.ttf", 10)  # Choose the font for the text
+        self.menu_font = pygame.font.Font("graphics/fonts/standard_font.ttf", 10)  # Choose the font for the text
 
         #Pointer images
         self.pointer_image = pygame.image.load("graphics/UI/menus/pointers/pointer.png").convert_alpha()
@@ -111,6 +111,12 @@ class Game:
         self.settings_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (0,0,0))
         self.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(self, self.settings_menu_rendered_texts)
 
+        #Help menu
+        self.help_keybinds_images_values = list(get_configuration_images(self.current_keybinds).values())
+        self.help_menu_images_rects = self.settings_menu_images_rects #Le posizioni delle immagini sono le stesse di quelle del menu delle impostazioni
+        self.help_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
+        self.help_menu_rendered_texts_rects = self.settings_menu_rendered_texts_rects #Le posizioni dei testi sono le stesse di quelle del menu delle impostazioni
+
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
@@ -182,7 +188,7 @@ class Game:
         elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
-        if self.game_state != GameState.GAMEPLAY: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
+        if self.game_state != GameState.GAMEPLAY and self.game_state != GameState.HELP_MENU: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
 
         # Ridimensiona la superficie falsa e la disegna sulla finestra
         self.screen.blit(pygame.transform.scale(self.fake_screen, self.screen.get_rect().size), (0, 0))

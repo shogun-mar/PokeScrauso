@@ -2,9 +2,9 @@ from PIL import Image
 from settings import  *
 
 #Load images
-first_level_first_zone = Image.open("graphics/first_level/1_1.png")
-first_level_second_zone = Image.open("graphics/first_level/1_2.png")
-first_level_third_zone = Image.open("graphics/first_level/1_3.png")
+first_level_first_zone = Image.open("graphics/collision_maps/1_1.png")
+first_level_second_zone = Image.open("graphics/collision_maps/1_2.png")
+first_level_third_zone = Image.open("graphics/collision_maps/1_3.png")
 first_level_images = [first_level_first_zone, first_level_second_zone, first_level_third_zone]
 
 def allow_movement(desired_coord, level_num, zone_num):
@@ -19,8 +19,10 @@ def allow_movement(desired_coord, level_num, zone_num):
     elif zone_num == 3: zone = level[2]
     else: raise Exception("Zone not found") #Da togliere messe per debugging
 
-    x_coord = desired_coord[0] + PLAYER_SPEED
-    y_coord = desired_coord[1] + PLAYER_SPEED
+    x_coord = (desired_coord[0] - 720) + PLAYER_SPEED
+    y_coord = (desired_coord[1] - 490) + PLAYER_SPEED
+    print(x_coord, y_coord)
+    print(zone.getpixel((x_coord, y_coord)))
 
     if zone.getpixel((x_coord, y_coord)) == (0,0,0,0) or zone.getpixel((x_coord, y_coord)) == (0,0,0,255): #Se il pixel è trasparente o nero
         return False

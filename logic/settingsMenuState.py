@@ -1,7 +1,7 @@
 import pygame
+import settings
 from os import path
 from logic.gameState import GameState
-import settings
 
 def render_settings_menu(game):
     game.fake_screen.blit(game.settings_background_image, (0,0))
@@ -16,16 +16,12 @@ def render_settings_menu(game):
 def get_configuration_images(keybinds):
         images = {}  # Dictionary with key names as keys and images as values
         for key, value in keybinds.items():
-            #Convert the pygame key constant to its string representation
-            key_name = pygame.key.name(value)
-            #Construct the file path
-            file_path = path.join("graphics", "UI", "menus", "icons", "keys", f"{key_name}.png")
-            # Check if the file exists
-            if path.isfile(file_path):
-                # Load the image and convert it to a format suitable for fast blitting
-                image = pygame.image.load(file_path).convert_alpha()
-                # Add the image to the dictionary
-                images[key] = image
+            key_name = pygame.key.name(value) #Convert the pygame key constant to its string representation
+            file_path = path.join("graphics", "UI", "menus", "icons", "keys", f"{key_name}.png") #Construct the file path
+            # Check if the file exists (not necessary, but good practice)
+            #if path.isfile(file_path):
+            image = pygame.image.load(file_path).convert_alpha() # Load the image
+            images[key] = image # Add the image to the dictionary
         return images
 
 def handle_settings_input(game, key):

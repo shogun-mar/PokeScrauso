@@ -20,7 +20,7 @@ INITIAL_ZOOM = 1.5
 INTERNAL_SURFACE_SIZE = (2500,2500) #2500, 2500
 
 #Player settings
-PLAYER_SPEED = 3
+PLAYER_SPEED = 1
 PLAYER_ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
 
 #Keybinds

@@ -14,7 +14,7 @@ HEALTH_BAR_HEIGHT=7
 # Crea lo schermo
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
-font=pygame.font.Font("graphics/fonts/PressStart2P.ttf",12)
+font=pygame.font.Font("graphics/fonts/standard_font.ttf",12)
 
 
 # Carica le immagini dei Pokémon

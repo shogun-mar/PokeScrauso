@@ -1,10 +1,10 @@
 import pygame
 import time
+import importlib
 from settings import *
-from game import Game
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, group):
+    def __init__(self, pos, group, keybinds):
 
         # Call the parent class (Sprite) constructor
         super().__init__(group)
@@ -51,6 +51,8 @@ class Player(pygame.sprite.Sprite):
         self.squad = []
         self.medals = []
 
+        self.keybinds = keybinds
+
     def change_frame(self):
         current_time = time.time()
 
@@ -84,35 +86,35 @@ class Player(pygame.sprite.Sprite):
             self.current_animation = self.right_sprites
             self.verse = "right"
             
-    def input(self, game):
+    def input(self):
         
         keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
-        print(game.current_keybinds)
-        print(f"forward: {pygame.key.name(FORWARD_KEY)}, left: {pygame.key.name(LEFT_KEY)}, backward: {pygame.key.name(BACKWARD_KEY)}, right: {pygame.key.name(RIGHT_KEY)}")
+        #print(self.keybinds)
+        #print(f"forward: {pygame.key.name(FORWARD_KEY)}, left: {pygame.key.name(LEFT_KEY)}, backward: {pygame.key.name(BACKWARD_KEY)}, right: {pygame.key.name(RIGHT_KEY)}")
 
-        if (keys[BACKWARD_KEY] and keys[FORWARD_KEY]) or (keys[LEFT_KEY] and keys[RIGHT_KEY]): #Se vengono premuti entrambi i tasti assieme non accade nessun movimento
+        if (keys[self.keybinds['FORWARD_KEY']] and keys[self.keybinds['BACKWARD_KEY']]) or (keys[self.keybinds['LEFT_KEY']] and keys[self.keybinds['RIGHT_KEY']]): #Se vengono premuti entrambi i tasti assieme non accade nessun movimento
             self.direction.y = 0
             self.direction.x = 0
 
-        elif keys[BACKWARD_KEY] and not keys[LEFT_KEY] and not keys[RIGHT_KEY]:
-            self.change_animation_verse("down")
-            self.change_frame() #Cambia il frame del giocatore
-            self.direction.y = -1
-            self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
-            
-        #elif  and not keys[LEFT_KEY] and not keys[RIGHT_KEY]:
+        elif keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['RIGHT_KEY']]:
             self.change_animation_verse("up")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = 1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
-            
-        elif keys[LEFT_KEY]:
+
+        elif keys[self.keybinds['BACKWARD_KEY']] and not keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['RIGHT_KEY']]:
+            self.change_animation_verse("down")
+            self.change_frame() #Cambia il frame del giocatore
+            self.direction.y = -1
+            self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+
+        elif keys[self.keybinds['LEFT_KEY']] and not keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['BACKWARD_KEY']]:  
             self.change_animation_verse("left")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = 1
             self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
             
-        elif keys[RIGHT_KEY]:
+        elif keys[self.keybinds['RIGHT_KEY']] and not keys[self.keybinds['FORWARD_KEY']] and not keys[self.keybinds['BACKWARD_KEY']]:
             self.change_animation_verse("right")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = -1
@@ -125,7 +127,7 @@ class Player(pygame.sprite.Sprite):
         if self.direction.x == 0 and self.direction.y == 0: #Se il giocatore non si sta muovendo disegno il frame che lo rappresenta come fermo
             #self.current_frame = 0 #Non necessario perchè se in movimento cicla fra frame 1 e 2 ma "teoricamente" corretto
             self.image = self.current_animation[0] 
-
-    def move(self, game):
-        self.input(game) #Gestisce l'input del giocatore
+            
+    def move(self):
+        self.input() #Gestisce l'input del giocatore
         self.rect.center += self.direction * self.speed

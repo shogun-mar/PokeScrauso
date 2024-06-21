@@ -83,6 +83,7 @@ class Game:
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
 
         self.current_keybinds = load_configuration()
+        print(FORWARD_KEY, self.current_keybinds["FORWARD_KEY"])
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
         self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
         self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
@@ -119,7 +120,7 @@ class Game:
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
-        self.player = Player((0,0), self.camera_group)
+        self.player = Player((0,0), self.camera_group, self.current_keybinds)
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -162,7 +163,7 @@ class Game:
                 self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
             
         #Player controls related events
-        if self.game_state == GameState.GAMEPLAY: self.player.move(self)
+        if self.game_state == GameState.GAMEPLAY: self.player.move()
 
         #Update the pointer image if the mouse is over a button
         self.update_pointer()

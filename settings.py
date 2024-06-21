@@ -114,7 +114,6 @@ def load_configuration():
            HELP_KEY, ZOOM_IN_KEY, ZOOM_OUT_KEY
 
     keybinds = {}
-
     with open("settings.txt", 'r') as f:
         for line in f:
             name, value = line.strip().split(' = ')
@@ -148,8 +147,10 @@ def load_configuration():
             elif name == "ZOOM_OUT_KEY":
                 ZOOM_OUT_KEY = keybinds[name] = value
 
-    return keybinds
-            
+    print(FORWARD_KEY)
+
+    return keybinds       
+    
 def print_configuration():
     print("FORWARD_KEY:", pygame.key.name(FORWARD_KEY))
     print("LEFT_KEY:", pygame.key.name(LEFT_KEY))

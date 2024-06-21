@@ -1,0 +1,13 @@
+1.1
+rattata,pidgey,budew,zigzagoon,sentret,starly
+1.2
+caterpie,hoothoot,weedle,Wurmple,Spearow,Kricketot
+1.3
+odish,Mankey,nidoran,buneary,ekans
+1.4
+zubat,geodude,paras,jigglypuff,onix
+2.1
+abra,eevee,beedrill,psyduck,gloom,growlithe
+2.2
+gastly, mime-jr,drifloon, venovat, combee, joltik
+

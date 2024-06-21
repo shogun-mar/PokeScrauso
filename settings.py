@@ -16,14 +16,14 @@ def get_max_fps(): return MAX_FPS #Accetta però solamente dimensioni conosciute
 def set_max_fps(fps): global MAX_FPS; MAX_FPS = fps
 
 #Camera keybinds
-ZOOM_UP_KEY = pygame.K_q
-ZOOM_DOWN_KEY = pygame.K_z
+ZOOM_OUT_KEY = pygame.K_q
+ZOOM_IN_KEY = pygame.K_z
 
-def get_zoom_up_keybind(): return ZOOM_UP_KEY
-def get_zoom_down_keybind(): return ZOOM_DOWN_KEY
+def get_zoom_out_keybind(): return ZOOM_OUT_KEY
+def get_zoom_in_keybind(): return ZOOM_IN_KEY
 
-def set_zoom_up_keybind(key): global ZOOM_UP_KEY; ZOOM_UP_KEY = key
-def set_zoom_down_keybind(key): global ZOOM_DOWN_KEY; ZOOM_DOWN_KEY = key
+def set_zoom_out_keybind(key): global ZOOM_OUT_KEY; ZOOM_OUT_KEY = key
+def set_zoom_in_keybind(key): global ZOOM_IN_KEY; ZOOM_IN_KEY = key
 
 #Camera settings
 ZOOM_SCALING_VELOCITY = 0.1
@@ -42,9 +42,6 @@ EXIT_KEY = pygame.K_n #Pulsante per uscire dal gioco
 INTERACTION_KEY = pygame.K_e #Pulsante per interagire con gli oggetti e confermare durante la battaglia
 MAP_KEY = pygame.K_m #Pulsante per aprire la mappa
 INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
-SAVE_SETTINGS_KEY = pygame.K_s #Pulsante per salvare le impostazioni quando nel menù delle impostazioni
-DISCARD_SETTINGS_KEY = pygame.K_d #Pulsante per scartare le impostazioni quando nel menù delle impostazioni
-RESTORE_SETTINGS_KEY = pygame.K_r #Pulsante per ripristinare le impostazioni di default
 MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle impostazioni)
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
@@ -86,50 +83,31 @@ def set_right_keybind(key): global RIGHT_KEY; RIGHT_KEY = key
 
 #Funzione di ripristino a valori di default
 def set_default_configuration():
-    #Global declarations
-    global ZOOM_UP_KEY
-    global ZOOM_DOWN_KEY
-    global MAX_FPS
-    global POKEDEX_KEY
-    global PAUSE_KEY
-    global EXIT_KEY
-    global INTERACTION_KEY
-    global MAP_KEY
-    global INVENTORY_KEY
-    global SAVE_SETTINGS_KEY
-    global DISCARD_SETTINGS_KEY
-    global FORWARD_KEY
-    global LEFT_KEY
-    global BACKWARD_KEY
-    global RIGHT_KEY
-    global FULLSCREEN_KEY
-    global HELP_KEY
-    #Camera keybinds
-    ZOOM_UP_KEY = pygame.K_q
-    ZOOM_DOWN_KEY = pygame.K_z
-    #Video settings
-    MAX_FPS = 60 #30
-    #Keybinds
-    POKEDEX_KEY = pygame.K_p #Pulsante per aprire il PokèDex
-    PAUSE_KEY = pygame.K_ESCAPE #Pulsante per mettere in pausa il gioco ed uscire dal menu delle impostazioni
-    EXIT_KEY = pygame.K_n #Pulsante per uscire dal gioco
-    INTERACTION_KEY = pygame.K_e #Pulsante per interagire con gli oggetti e confermare durante la battaglia
-    MAP_KEY = pygame.K_m #Pulsante per aprire la mappa
-    INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
-    SAVE_SETTINGS_KEY = pygame.K_s #Pulsante per salvare le impostazioni quando nel menù delle impostazioni
-    DISCARD_SETTINGS_KEY = pygame.K_d #Pulsante per scartare le impostazioni quando nel menù delle impostazioni
-    #Keybinds for movement
-    FORWARD_KEY = pygame.K_w #To move forward
-    LEFT_KEY = pygame.K_a #To move to the left
-    BACKWARD_KEY = pygame.K_s #To move backwards
-    RIGHT_KEY = pygame.K_d #To move to the right
-    FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
-    HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
+    # Default configuration settings
+    default_config = {
+        "ZOOM_OUT_KEY": pygame.K_q,
+        "ZOOM_IN_KEY": pygame.K_e,
+        "MAX_FPS": 60,
+        "POKEDEX_KEY": pygame.K_p,
+        "PAUSE_KEY": pygame.K_escape,
+        "EXIT_KEY": pygame.K_x,
+        "INTERACTION_KEY": pygame.K_f,
+        "MAP_KEY": pygame.K_m,
+        "INVENTORY_KEY": pygame.K_i,
+        "FORWARD_KEY": pygame.K_w,
+        "LEFT_KEY": pygame.K_a,
+        "BACKWARD_KEY": pygame.K_s,
+        "RIGHT_KEY": pygame.K_d,
+        "FULLSCREEN_KEY": pygame.K_f11,
+        "HELP_KEY": pygame.K_h
+    }
+    
+    return default_config
 #Funzione di salvataggio delle impostazioni
-def save_configuration():
+def save_configuration_to_file():
     with open("settings.txt", 'w') as f:
-        f.write(f"ZOOM_UP_KEY = {ZOOM_UP_KEY}\n")
-        f.write(f"ZOOM_DOWN_KEY = {ZOOM_DOWN_KEY}\n")
+        f.write(f"ZOOM_OUT_KEY = {ZOOM_OUT_KEY}\n")
+        f.write(f"ZOOM_IN_KEY = {ZOOM_IN_KEY}\n")
         f.write(f"MAX_FPS = {MAX_FPS}\n")
         f.write(f"POKEDEX_KEY = {POKEDEX_KEY}\n")
         f.write(f"PAUSE_KEY = {PAUSE_KEY}\n")
@@ -143,12 +121,45 @@ def save_configuration():
         f.write(f"RIGHT_KEY = {RIGHT_KEY}\n")
         f.write(f"FULLSCREEN_KEY = {FULLSCREEN_KEY}\n")
         f.write(f"HELP_KEY = {HELP_KEY}\n")
+
+def save_configuration(new_configuration):
+    global ZOOM_OUT_KEY
+    global ZOOM_IN_KEY
+    global MAX_FPS
+    global POKEDEX_KEY
+    global PAUSE_KEY
+    global EXIT_KEY
+    global INTERACTION_KEY
+    global MAP_KEY
+    global INVENTORY_KEY
+    global FORWARD_KEY
+    global LEFT_KEY
+    global BACKWARD_KEY
+    global RIGHT_KEY
+    global FULLSCREEN_KEY
+    global HELP_KEY
+    ZOOM_OUT_KEY = new_configuration["ZOOM_OUT_KEY"]
+    ZOOM_IN_KEY = new_configuration["ZOOM_IN_KEY"]
+    MAX_FPS = new_configuration["MAX_FPS"]
+    POKEDEX_KEY = new_configuration["POKEDEX_KEY"]
+    PAUSE_KEY = new_configuration["PAUSE_KEY"]
+    EXIT_KEY = new_configuration["EXIT_KEY"]
+    INTERACTION_KEY = new_configuration["INTERACTION_KEY"]
+    MAP_KEY = new_configuration["MAP_KEY"]
+    INVENTORY_KEY = new_configuration["INVENTORY_KEY"]
+    FORWARD_KEY = new_configuration["FORWARD_KEY"]
+    LEFT_KEY = new_configuration["LEFT_KEY"]
+    BACKWARD_KEY = new_configuration["BACKWARD_KEY"]
+    RIGHT_KEY = new_configuration["RIGHT_KEY"]
+    FULLSCREEN_KEY = new_configuration["FULLSCREEN_KEY"]
+    HELP_KEY = new_configuration["HELP_KEY"]
+    save_configuration_to_file()
+
 #Funzione di caricamento delle impostazioni
 def load_configuration():
     with open("settings.txt", 'r') as f:
-        global ZOOM_UP_KEY
-        global ZOOM_DOWN_KEY
-        global MAX_FPS
+        global ZOOM_OUT_KEY
+        global ZOOM_IN_KEY
         global POKEDEX_KEY
         global PAUSE_KEY
         global EXIT_KEY
@@ -164,9 +175,8 @@ def load_configuration():
 
         for line in f:
             name, value = line.strip().split(' = ')
-            if name == "ZOOM_UP_KEY": ZOOM_UP_KEY = int(value)
-            elif name == "ZOOM_DOWN_KEY": ZOOM_DOWN_KEY = int(value)
-            elif name == "MAX_FPS": MAX_FPS = int(value)
+            if name == "ZOOM_OUT_KEY": ZOOM_OUT_KEY = int(value)
+            elif name == "ZOOM_IN_KEY": ZOOM_IN_KEY = int(value)
             elif name == "POKEDEX_KEY": POKEDEX_KEY = int(value)
             elif name == "PAUSE_KEY": PAUSE_KEY = int(value)
             elif name == "EXIT_KEY": EXIT_KEY = int(value)
@@ -188,12 +198,11 @@ def get_current_configuration():
         "RIGHT_KEY": RIGHT_KEY,
         "FULLSCREEN_KEY": FULLSCREEN_KEY,
         "POKEDEX_KEY": POKEDEX_KEY,
-        "PAUSE_KEY": PAUSE_KEY,
         "EXIT_KEY": EXIT_KEY,
         "INTERACTION_KEY": INTERACTION_KEY,
         "MAP_KEY": MAP_KEY,
         "INVENTORY_KEY": INVENTORY_KEY,
         "HELP_KEY": HELP_KEY,
-        "ZOOM_UP_KEY": ZOOM_UP_KEY,
-        "ZOOM_DOWN_KEY": ZOOM_DOWN_KEY,
+        "ZOOM_IN_KEY": ZOOM_IN_KEY,
+        "ZOOM_OUT_KEY": ZOOM_OUT_KEY
     }

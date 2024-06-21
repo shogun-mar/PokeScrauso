@@ -94,8 +94,7 @@ class Game:
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
         key_images_values = list(self.key_images.values())
         self.last_clicked_index = None #Indice dell'ultima immagine cliccata
-        self.modifying_keybind = False
-        self.new_proposed_key = None
+        self.modifying_keybind = True #Logicamente sarebbe False ma messo a True nel primo ciclo per semplificare la logica settingsMenuState
 
         self.settings_menu_images_rects = get_settings_menu_rects(self, key_images_values)
 
@@ -137,7 +136,7 @@ class Game:
         if self.game_state != GameState.GAMEPLAY: self.current_pointer_rect.topleft = pygame.mouse.get_pos() #Non è necessario aggiornare la posizione del cursore se si è in GAMEPLAY in quanto non viene disegnato
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: self.quit_game()  #Chiude il gioco
+            if event.type == pygame.QUIT and self.modifying_keybind == False: self.quit_game()  #Chiude il gioco seconda condizione per rendere disponibile il tasto associato quando si stanno modificando le impostazioni
             elif event.type == pygame.VIDEORESIZE:
                 self.screen = pygame.display.set_mode((event.w, event.h), flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:

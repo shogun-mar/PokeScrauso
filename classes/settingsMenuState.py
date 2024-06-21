@@ -29,7 +29,7 @@ def get_configuration_images(keybinds):
         return images
 
 def handle_settings_input(game, key):
-    if not game.modyfing_keybind:   
+    if game.modyfing_keybind == False:   
         if key == PAUSE_KEY:
             game.game_state = GameState.START_MENU
         elif key == SAVE_SETTINGS_KEY:
@@ -37,7 +37,7 @@ def handle_settings_input(game, key):
             save_configuration()
         elif key == RESTORE_SETTINGS_KEY:
             #Ripristina le impostazioni
-            set_default_configuration()
+            set_default_configuration(game.modified_keybinds)
         elif key == DISCARD_SETTINGS_KEY:
             #Scarta le impostazioni
             #TODO
@@ -48,21 +48,22 @@ def handle_settings_input(game, key):
             #Muta il gioco
             game.current_volume_status = not game.current_volume_status
     else:
-        if key in ACCEPTABLE_KEYBINDS:
-            game.new_proposed_key = key
-            print(game.new_proposed_key)
+        if key == PAUSE_KEY: # If the user presses the escape key, the process is interrupted
             game.modyfing_keybind = False
-            if True: #Controlla che non ci siano conflitti
+            game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
+        elif key in ACCEPTABLE_KEYBINDS:
+            desired_dict_key = list(game.modified_keybinds.keys())[game.last_clicked_index] # This line gets the key of the dictionary that corresponds to the last clicked index
+            game.modified_keybinds_images_values[game.last_clicked_index] = game.key_images[pygame.key.name(key)] # This line updates the image of the keybind at the last clicked index with the new key
+            game.modified_keybinds[desired_dict_key] = key # This line updates the dictionary with the new key
+            game.modyfing_keybind = False # Correctly setting modifying_keybind to False to indicate the process is complete
                 
-
-
 def handle_settings_input_mouse(game):
     if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Salva le impostazioni
         save_configuration()
     elif game.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Ripristina le impostazioni
-        set_default_configuration()
+        game.modified_keybinds = set_default_configuration()
     elif game.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
         #Scarta le impostazioni
         #TODO
@@ -75,12 +76,11 @@ def handle_settings_input_mouse(game):
     else:
         for i in range(len(game.settings_menu_images_rects)):
             if game.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
-                if (game.last_clicked_index is not None and game.last_clicked_index != i) or game.modifyng_keybind == False: # Se c'è una Surface precedentemente selezionata, ripristina la sua opacità
+                if (game.last_clicked_index is not None and game.last_clicked_index != i) or game.modifying_keybind == False: # Se c'è una Surface precedentemente selezionata, ripristina la sua opacità
                     game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
                 game.modified_keybinds_images_values[i].set_alpha(128) # Imposta l'opacità della Surface appena selezionata
                 game.last_clicked_index = i # Aggiorna l'indice dell'ultima Surface cliccata
-                game.modyfing_keybind = True
-                print("Cambia il tasto") #Placeholder
+                game.modyfing_keybind = True # Imposta la variabile di stato a True
                 break
 
 def render_texts(texts, font, color):

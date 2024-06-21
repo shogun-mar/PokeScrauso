@@ -126,3 +126,4 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.input() #Gestisce l'input del giocatore
         self.rect.center += self.direction * self.speed
+        print(self.rect.center)

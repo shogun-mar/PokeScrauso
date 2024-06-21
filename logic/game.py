@@ -86,7 +86,7 @@ class Game:
         self.unmute_button = pygame.image.load("graphics/UI/menus/buttons/unmute_button.png").convert_alpha()
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, SCREEN_HEIGHT - 50))
 
-        self.current_keybinds = get_current_configuration()
+        self.current_keybinds = load_configuration()
         self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
         self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
         self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
@@ -94,7 +94,7 @@ class Game:
         self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
         key_images_values = list(self.key_images.values())
         self.last_clicked_index = None #Indice dell'ultima immagine cliccata
-        self.modifying_keybind = True #Logicamente sarebbe False ma messo a True nel primo ciclo per semplificare la logica settingsMenuState
+        self.modifying_keybind = False #Variabile di stato per indicare se si sta modificando un tasto
 
         self.settings_menu_images_rects = get_settings_menu_rects(self, key_images_values)
 

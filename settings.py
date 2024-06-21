@@ -154,30 +154,13 @@ def save_configuration(new_configuration):
 
 #Funzione di caricamento delle impostazioni
 def load_configuration():
+    keybinds = {}  # Initialize an empty dictionary to store keybinds
     with open("settings.txt", 'r') as f:
-        global FORWARD_KEY, LEFT_KEY
-        global BACKWARD_KEY, RIGHT_KEY
-        global FULLSCREEN_KEY, POKEDEX_KEY
-        global EXIT_KEY, INTERACTION_KEY
-        global MAP_KEY, INVENTORY_KEY
-        global HELP_KEY, ZOOM_IN_KEY
-        global ZOOM_OUT_KEY
-
         for line in f:
             name, value = line.strip().split(' = ')
-            if name == "FORWARD_KEY": FORWARD_KEY = int(value)
-            elif name == "LEFT_KEY": LEFT_KEY = int(value)
-            elif name == "BACKWARD_KEY": BACKWARD_KEY = int(value)
-            elif name == "RIGHT_KEY": RIGHT_KEY = int(value)
-            elif name == "FULLSCREEN_KEY": FULLSCREEN_KEY = int(value)
-            elif name == "POKEDEX_KEY": POKEDEX_KEY = int(value)
-            elif name == "EXIT_KEY": EXIT_KEY = int(value)
-            elif name == "INTERACTION_KEY": INTERACTION_KEY = int(value)
-            elif name == "MAP_KEY": MAP_KEY = int(value)
-            elif name == "INVENTORY_KEY": INVENTORY_KEY = int(value)
-            elif name == "HELP_KEY": HELP_KEY = int(value)
-            elif name == "ZOOM_IN_KEY": ZOOM_IN_KEY = int(value)
-            elif name == "ZOOM_OUT_KEY": ZOOM_OUT_KEY = int(value)
+            keybinds[name] = int(value)  # Add the key-value pair to the dictionary
+
+    return keybinds  # Return the dictionary containing the keybinds
             
 
 def get_current_configuration():

@@ -1,6 +1,6 @@
 import pygame
 from settings import *
-from classes.gameState import GameState
+from logic.gameState import GameState
 
 def handle_start_menu_input(game, key):
         if key == INTERACTION_KEY: game.game_state = GameState.GAMEPLAY #Chiude il menu iniziale

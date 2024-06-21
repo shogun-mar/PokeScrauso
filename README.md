@@ -32,4 +32,4 @@ per risolverlo è possibile spostare i file main.py e settings.py nella cartella
 ## Crediti
 Noi non possediamo alcun elemento di questo gioco, tutti gli asset utilizzati per la realizzazione di questo gioco appartengono ai rispettivi possessori.
 
-### In quanto questo progetto è stato realizzato puramente per sfidare noi stessi e senza lo scopo di lucro, dichiariamo che la distribuzione di PokeScrauso è assolutamente vietata.
+## In quanto questo progetto è stato realizzato puramente per sfidare noi stessi e senza lo scopo di lucro, dichiariamo che la distribuzione di PokeScrauso è assolutamente vietata.

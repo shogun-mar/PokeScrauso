@@ -1,5 +1,5 @@
 import pygame
-from classes.gameState import GameState
+from logic.gameState import GameState
 from settings import *
 
 def handle_pause_input(self, key):

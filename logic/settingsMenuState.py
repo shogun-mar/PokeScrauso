@@ -1,6 +1,6 @@
 import pygame
 from os import path
-from classes.gameState import GameState
+from logic.gameState import GameState
 from settings import *
 
 def render_settings_menu(game):

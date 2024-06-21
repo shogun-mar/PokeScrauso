@@ -29,9 +29,9 @@ class CameraGroup(pygame.sprite.Group):
 
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
-        if keys[ZOOM_UP_KEY] and self.zoom_scale < ZOOM_SCALE_LIMITS[1]:
+        if keys[ZOOM_OUT_KEY] and self.zoom_scale < ZOOM_SCALE_LIMITS[1]:
             self.zoom_scale += ZOOM_SCALING_VELOCITY
-        elif keys[ZOOM_DOWN_KEY] and self.zoom_scale > ZOOM_SCALE_LIMITS[0]:
+        elif keys[ZOOM_IN_KEY] and self.zoom_scale > ZOOM_SCALE_LIMITS[0]:
             self.zoom_scale -= ZOOM_SCALING_VELOCITY
 
 

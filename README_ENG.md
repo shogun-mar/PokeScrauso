@@ -32,4 +32,4 @@ it is possible to solve it by moving the files main.py and setting.py in the cla
 
 We don't own any of the elements used in this game, every asset used in the realization of this game belong to their respective owner.
 
-### Since this project was realized purely to test ourself and without any intention to profit on it, we declare that the distribution of PokeScrauso is severly forbidden.
+## Since this project was realized purely to test ourself and without any intention to profit on it, we declare that the distribution of PokeScrauso is severly forbidden.

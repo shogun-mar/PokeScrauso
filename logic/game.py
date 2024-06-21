@@ -4,17 +4,17 @@ from random import randint
 from os import listdir, environ, path
 from ctypes import windll
 from settings import *
-from classes.player import Player
-from classes.gameState import GameState
-from classes.cameraGroup import CameraGroup
-from classes.gameplayState import *
-from classes.helpMenuState import *
-from classes.pokedexState import *
-from classes.inventoryMenuState import *
-from classes.mapState import *
-from classes.pauseState import *
-from classes.settingsMenuState import *
-from classes.startMenuState import *
+from logic.player import Player
+from logic.gameState import GameState
+from logic.cameraGroup import CameraGroup
+from logic.gameplayState import *
+from logic.helpMenuState import *
+from logic.pokedexState import *
+from logic.inventoryMenuState import *
+from logic.mapState import *
+from logic.pauseState import *
+from logic.settingsMenuState import *
+from logic.startMenuState import *
 
 class Game:
     def __init__(self):

@@ -1,4 +1,4 @@
-from classes.gameState import GameState
+from logic.gameState import GameState
 from settings import *
 
 def handle_help_screen_input(self, key):

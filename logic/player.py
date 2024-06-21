@@ -1,6 +1,7 @@
 import pygame
 import time
 from settings import *
+from game import Game
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
@@ -83,33 +84,35 @@ class Player(pygame.sprite.Sprite):
             self.current_animation = self.right_sprites
             self.verse = "right"
             
-    def input(self):
+    def input(self, game):
         
-        self.keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
+        keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
+        print(game.current_keybinds)
+        print(f"forward: {pygame.key.name(FORWARD_KEY)}, left: {pygame.key.name(LEFT_KEY)}, backward: {pygame.key.name(BACKWARD_KEY)}, right: {pygame.key.name(RIGHT_KEY)}")
 
-        if (self.keys[BACKWARD_KEY] and self.keys[FORWARD_KEY]) or (self.keys[LEFT_KEY] and self.keys[RIGHT_KEY]): #Se vengono premuti entrambi i tasti assieme non accade nessun movimento
+        if (keys[BACKWARD_KEY] and keys[FORWARD_KEY]) or (keys[LEFT_KEY] and keys[RIGHT_KEY]): #Se vengono premuti entrambi i tasti assieme non accade nessun movimento
             self.direction.y = 0
             self.direction.x = 0
 
-        elif self.keys[BACKWARD_KEY] and not self.keys[LEFT_KEY] and not self.keys[RIGHT_KEY]:
+        elif keys[BACKWARD_KEY] and not keys[LEFT_KEY] and not keys[RIGHT_KEY]:
             self.change_animation_verse("down")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = -1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
             
-        elif self.keys[FORWARD_KEY] and not self.keys[LEFT_KEY] and not self.keys[RIGHT_KEY]:
+        #elif  and not keys[LEFT_KEY] and not keys[RIGHT_KEY]:
             self.change_animation_verse("up")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.y = 1
             self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
             
-        elif self.keys[LEFT_KEY]:
+        elif keys[LEFT_KEY]:
             self.change_animation_verse("left")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = 1
             self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
             
-        elif self.keys[RIGHT_KEY]:
+        elif keys[RIGHT_KEY]:
             self.change_animation_verse("right")
             self.change_frame() #Cambia il frame del giocatore
             self.direction.x = -1
@@ -123,7 +126,6 @@ class Player(pygame.sprite.Sprite):
             #self.current_frame = 0 #Non necessario perchè se in movimento cicla fra frame 1 e 2 ma "teoricamente" corretto
             self.image = self.current_animation[0] 
 
-    def move(self):
-        self.input() #Gestisce l'input del giocatore
+    def move(self, game):
+        self.input(game) #Gestisce l'input del giocatore
         self.rect.center += self.direction * self.speed
-        print(self.rect.center)

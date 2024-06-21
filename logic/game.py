@@ -40,10 +40,6 @@ class Game:
         #Font
         self.menu_font = pygame.font.Font("graphics/fonts/menu_font.ttf", 10)  # Choose the font for the text
 
-        #Objects initialization
-        self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
-        self.player = Player((0,0), self.camera_group) #Parametri arbitrari per testing, da sistemare
-
         #Pointer images
         self.pointer_image = pygame.image.load("graphics/UI/menus/pointers/pointer.png").convert_alpha()
         self.pointer_image_rect = self.pointer_image.get_rect(center = (0,0))
@@ -118,9 +114,12 @@ class Game:
         #Map images
         self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
-        
         #Overlay for map
         self.overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+
+        #Objects initialization
+        self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
+        self.player = Player((0,0), self.camera_group)
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -163,7 +162,7 @@ class Game:
                 self.camera_group.zoom_scale += event.y * ZOOM_SCALING_VELOCITY
             
         #Player controls related events
-        if self.game_state == GameState.GAMEPLAY: self.player.move()
+        if self.game_state == GameState.GAMEPLAY: self.player.move(self)
 
         #Update the pointer image if the mouse is over a button
         self.update_pointer()

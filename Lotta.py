@@ -15,6 +15,8 @@ HEALTH_BAR_HEIGHT=7
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
 font=pygame.font.Font("graphics/fonts/PressStart2P.ttf",12)
+
+
 # Carica le immagini dei Pokémon
 name_gioc="DITTO"
 life_point=100
@@ -24,7 +26,6 @@ player_pokemon_rect = player_pokemon_img.get_rect(center=(130, 400))
 player_riq_img=pygame.image.load('graphics/UI/Battle/databox_normal.png')
 player_riq_rect=player_riq_img.get_rect(center=(129,260))
 player_info_text = font.render(f"{name_gioc} Lvl {1000} ", True, (0, 0, 0))
-
 
 
 name_enemy="PIKACHU"
@@ -38,6 +39,21 @@ enemy_info_text = font.render(f"{name_enemy} Lvl {104} ", True, (0, 0, 0))
 
 # Carica lo sfondo della battaglia
 battle_background = pygame.image.load('graphics/battle/Background_battle.png')
+pokeball_images = []
+for i in range(18):
+    pokeball_image = pygame.image.load(f'graphics/Gen 3 Pinball Pokeballs/Gen3 Pinball Pokeballs {i}.png')
+    pokeball_images.append(pokeball_image)
+
+pygame.mixer.init()
+pokemon_cry = pygame.mixer.Sound('sounds/cries/132.ogg')
+pokeball_x = 200
+pokeball_y = 300
+pokeball_animation_speed = 3.65
+pokeball_frame = 0
+pokeball_index = 0
+pokemon_animation_speed = 2
+pokemon_frame = 0
+pokemon_index = 0
 
 # Definisci i bottoni
 attack_button = pygame.Rect(400, 360, 150, 50)
@@ -164,10 +180,74 @@ while running:
     player_life=font.render(f"{life_point}/{poke_life}", True,(0,0,0))
     # Disegna lo sfondo
     screen.blit(battle_background, (0, 0))
+    """
+    screen.blit(pokeball_images[pokeball_frame], (pokeball_x, pokeball_y))
+
+    # Aggiorna la posizione della Poké Ball
+    pokeball_x += pokeball_speed
+    if pokeball_x > 250:
+        pokeball_speed = -pokeball_speed
+    if pokeball_x < 200:
+        pokeball_speed = -pokeball_speed
+
+    # Aggiorna l'animazione della Poké Ball
+    pokeball_frame += 1
+    if pokeball_frame >= len(pokeball_images):
+        pokeball_frame = 0
+
+    # Verifica se la Poké Ball è stata lanciata
+    if pokeball_x > 250:
+        # Disegna il Pokémon che esce dalla Poké Ball
+        pokemon_image = pygame.transform.scale(player_pokemon_img, (50, 50))
+        screen.blit(pokemon_image, (pokeball_x, pokeball_y))
+    """
+       # Update Poké Ball animation
+    pokeball_x += pokeball_animation_speed
+    if pokeball_x > 250:
+        pokeball_animation_speed = -pokeball_animation_speed
+    if pokeball_x < 200:
+        pokeball_animation_speed = -pokeball_animation_speed
+
+    pokeball_frame += 1
+    if pokeball_frame >= len(pokeball_images):
+        pokeball_frame = 0
+
+    # Update Pokémon animation
+    pokemon_frame += 1
+    if pokemon_frame >= len(player_pokemon_img):
+        pokemon_frame = 0
+
+    # Draw Poké Ball
+    screen.blit(pokeball_images[pokeball_index], (pokeball_x, pokeball_y))
+
+    # Draw Pokémon
+    if pokeball_index == len(pokeball_images) - 1:
+        screen.blit(player_pokemon_img, player_pokemon_rect)
+        pygame.time.delay(1000)
+
+    # Update indices
+    pokeball_index += 1
+    if pokeball_index >= len(pokeball_images):
+        pokeball_index = 0
+
+    pokemon_index += 1
+    if pokemon_index >= len(player_pokemon_img):
+        pokemon_index = 0
+
+    # Suona il verso del Pokémon
+    if pokeball_index == len(pokeball_images) - 1:
+        pokemon_cry.play()
+    
+    #screen.blit(player_pokemon_img, player_pokemon_rect)
+    
+        
+            
+
+   
 
     # Disegna i Pokémon
     screen.blit(player_riq_img,player_riq_rect)
-    #pygame.draw.rect(screen, (0,255,0), (100, 257, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
+    
     health_bar_color_gioc = (0,255,0)
     if (life_point/poke_life)*100< 50:
         health_bar_color_gioc = (255, 128, 0)  # arancione
@@ -180,7 +260,7 @@ while running:
     screen.blit(health_bar_surface_gioc, (100, 257))
 
     pygame.draw.rect(screen, (72, 139, 240), (6.5, 290, 192, 6))
-    screen.blit(player_pokemon_img,player_pokemon_rect)
+    #screen.blit(player_pokemon_img,player_pokemon_rect)
     screen.blit(player_info_text, (50, 238))
     screen.blit(player_life,(104,272))
 
@@ -269,24 +349,12 @@ while running:
         
 
 
- # Disegna nome e livello del Pokémon del giocatore
-    
-    
-    # player_info_text = font.render(f"{name_gioc} Lvl {1000} ", True, (0, 0, 0))
-    # screen.blit(player_info_text, (50, 260))
-    
-
-    # Disegna nome e livello del Pokémon nemico
-    # enemy_info_text = font.render(f"{name_enemy} Lvl {104} ", True, (0, 0, 0))
-    # screen.blit(enemy_info_text, (500, 60))
-    # pygame.draw.rect(screen, (0,255,0), (500, 80, 104, 10))
-    
     pygame.time.Clock().tick(10)
 
     pygame.display.update()
     
-    life_point -= 1
-    enemy_hp-=1
+    #life_point -= 1
+    #enemy_hp-=1
     if life_point <=0 or enemy_hp<=0:
         #life_point = 0
         message = "MORTO X_X"

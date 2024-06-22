@@ -125,6 +125,9 @@ class Game:
         self.naming_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
         self.naming_cursor_rect = self.naming_cursor.get_rect(center = (self.half_w - 100, self.half_h - 50)) #Posizione da sistemare
         self.naming_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
+        self.naming_background_rect = self.naming_background.get_rect(topleft = (0,0))
+        self.naming_texts  = render_name_menu_texts(self.menu_font, (0,0,0))
+        self.naming_texts_rects = get_name_menu_texts_rects(self.naming_texts)
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()

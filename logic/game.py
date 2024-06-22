@@ -124,7 +124,7 @@ class Game:
 
         #Name menu
         self.name_menu_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
-        self.name_menu_cursor_rect = self.name_menu_cursor.get_rect(center = (50, 150)) #Posizione da sistemare
+        self.name_menu_cursor_rect = self.name_menu_cursor.get_rect(center = (85, 235))
         self.name_menu_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
         self.name_menu_overlay_controls = pygame.image.load("graphics/menus/naming menu/overlay_controls.png").convert_alpha()
         self.name_menu_overlay_tab = pygame.image.load("graphics/menus/naming menu/overlay_tab_" + str(randint(1, 4)) + ".png").convert_alpha()

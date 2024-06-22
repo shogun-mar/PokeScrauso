@@ -1,7 +1,16 @@
 import settings
 
-def handle_name_menu_input(key):
-    pass
+start_x = 85
+start_y = 235
+padding_x = 46
+padding_y = 50
+
+row = 1
+column = 1
+
+def handle_name_menu_input(game, key):
+    if key == settings.FORWARD_KEY or key == settings.BACKWARD_KEY or key == settings.LEFT_KEY or key == settings.RIGHT_KEY:
+        move_cursor(game, key)
 
 def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_background, (0, 0))
@@ -10,6 +19,34 @@ def render_name_menu(game, simbols_set_index):
     for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
         game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
     game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)
+
+def move_cursor(game, key):
+    global row, column
+    simbols_set_index = game.simbols_set_index
+    if key == settings.LEFT_KEY:
+        if game.name_menu_cursor_rect.x > start_x:
+            column -=1
+        elif column == 1:
+            row -= 1
+            column = 13
+
+    elif key == settings.RIGHT_KEY:
+        if game.name_menu_cursor_rect.x <= settings.SCREEN_WIDTH - start_x - padding_x:
+            column += 1
+        else:
+            row += 1
+            column = 1
+
+    elif key == settings.FORWARD_KEY:
+        if row > 1:
+            row -= 1
+
+    elif key == settings.BACKWARD_KEY:
+        if row <= len(game.rendered_name_menu_texts[simbols_set_index])//14:
+            row += 1
+
+    game.name_menu_cursor_rect.center = game.rendered_name_menu_texts_rects[simbols_set_index][(row-1)*14 + (column-1)].center
+    print((row-1)*13 + (column-1))
 
 def render_name_menu_texts(font, color):
     rendered_texts = [] #[[lettere maiuscole], [lettere minuscole], [numeri e simboli]]
@@ -30,10 +67,6 @@ def render_name_menu_texts(font, color):
 
 def get_name_menu_texts_rects(rendered_texts):
     all_rects = []  #Three-dimensional list
-    start_x = 85
-    start_y = 235
-    padding_x = 50
-    padding_y = 50
 
     for simbols_set in rendered_texts:
         x_coord = start_x
@@ -41,7 +74,7 @@ def get_name_menu_texts_rects(rendered_texts):
         temp_array = []
         for simbol in simbols_set:
             temp_array.append(simbol.get_rect(center=(x_coord, y_coord)))
-            if x_coord <= settings.SCREEN_WIDTH - start_x - padding_x:
+            if x_coord <= settings.SCREEN_WIDTH - start_x:
                 x_coord += padding_x
             else:
                 x_coord = start_x

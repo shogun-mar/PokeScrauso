@@ -5,11 +5,12 @@ from settings import  *
 first_level_first_zone = Image.open("graphics/collision_maps/1_1.png")
 first_level_second_zone = Image.open("graphics/collision_maps/1_2.png")
 first_level_third_zone = Image.open("graphics/collision_maps/1_3.png")
-first_level_images = [first_level_first_zone, first_level_second_zone, first_level_third_zone]
+first_level_maps = [first_level_first_zone, first_level_second_zone, first_level_third_zone]
 
 def allow_movement(desired_coord, level_num, zone_num):
+    return True
     if level_num == 1:
-        level = first_level_images
+        level = first_level_maps
     #Aggiungi altri elif per altri livelli TODO
     else:
         raise Exception("Level not found") #Da togliere messe per debugging
@@ -21,12 +22,10 @@ def allow_movement(desired_coord, level_num, zone_num):
 
     x_coord = (desired_coord[0] - 720) + PLAYER_SPEED
     y_coord = (desired_coord[1] - 490) + PLAYER_SPEED
-    print(x_coord, y_coord)
-    print(zone.getpixel((x_coord, y_coord)))
+    print("Coordinates: ", x_coord," ", y_coord)
+    print("Pixel: ", zone.getpixel((x_coord, y_coord)))
 
     if zone.getpixel((x_coord, y_coord)) == (0,0,0,0) or zone.getpixel((x_coord, y_coord)) == (0,0,0,255): #Se il pixel è trasparente o nero
         return False
-
-    return False
-
-        
+    else:
+        return True

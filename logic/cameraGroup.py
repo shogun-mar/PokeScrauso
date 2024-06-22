@@ -24,8 +24,17 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_offset.y = self.internal_surface_size_vector.y // 2 - self.half_h
 
         #Ground
-        self.ground_surf = pygame.image.load("graphics/world_sprites/1.png").convert_alpha()
-        self.ground_rect = self.ground_surf.get_rect(topleft = (0,0))
+        self.ground_surf_1_1 = pygame.image.load("graphics/world_sprites/1_1.png").convert_alpha()
+        self.ground_surf_1_2 = pygame.image.load("graphics/world_sprites/1_2.png").convert_alpha()
+        self.ground_surf_1_3 = pygame.image.load("graphics/world_sprites/1_3.png").convert_alpha()
+        self.ground_surf_1_4 = pygame.image.load("graphics/world_sprites/1_4.png").convert_alpha()
+        self.ground_surfaces = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]
+
+        self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
+        self.ground_rect_1_2 = self.ground_surf_1_2.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
+        self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
+        self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
+        self.ground_rects = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
 
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
@@ -38,6 +47,11 @@ class CameraGroup(pygame.sprite.Group):
     def center_target_camera(self, target):
         self.offset.x = target.rect.centerx - self.half_w
         self.offset.y = target.rect.centery - self.half_h
+
+    def draw_ground_zones(self):
+        for i, ground_surf in enumerate(self.ground_surfaces):
+            offset = self.ground_rects[i].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(ground_surf, offset)
     
     def custom_draw(self, player):
 
@@ -47,8 +61,7 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_surface.fill(BACKGROUND_COLOR)
 
         #Terreno
-        ground_offset = self.ground_rect.topleft + self.offset + self.internal_offset
-        self.internal_surface.blit(self.ground_surf, ground_offset)
+        self.draw_ground_zones()
         
         #Elementi attivi
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):

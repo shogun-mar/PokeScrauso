@@ -10,4 +10,5 @@ class GameState(Enum):
     START_MENU = 5
     SETTINGS_MENU = 6
     HELP_MENU = 7
+    NAME_MENU = 8
     

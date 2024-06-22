@@ -7,14 +7,15 @@ from ctypes import windll
 from logic.player import Player
 from logic.gameState import GameState
 from logic.cameraGroup import CameraGroup
-from logic.gameplayState import *
-from logic.helpMenuState import *
-from logic.pokedexState import *
-from logic.inventoryMenuState import *
-from logic.mapState import *
-from logic.pauseState import *
-from logic.settingsMenuState import *
-from logic.startMenuState import *
+from logic.states.gameplayState import *
+from logic.states.helpMenuState import *
+from logic.states.pokedexState import *
+from logic.states.inventoryMenuState import *
+from logic.states.mapState import *
+from logic.states.pauseState import *
+from logic.states.settingsMenuState import *
+from logic.states.startMenuState import *
+from logic.states.nameMenuState import *
 
 class Game:
     def __init__(self):
@@ -26,7 +27,7 @@ class Game:
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("PokèScrauso")
-        pygame.display.set_icon(pygame.image.load("graphics/UI/menus/logo_small.png"))
+        pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
         # Allow only specific events
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
         # Get physical resolution
@@ -38,12 +39,15 @@ class Game:
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.START_MENU #Stato di gioco iniziale
         #Font
-        self.menu_font = pygame.font.Font("graphics/fonts/standard_font.ttf", 10)  # Choose the font for the text
+        self.menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)  # Choose the font for the text
+
+        #Frame oscurato per il menu di pausa e di aiuto
+        self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
 
         #Pointer images
-        self.pointer_image = pygame.image.load("graphics/UI/menus/pointers/pointer.png").convert_alpha()
+        self.pointer_image = pygame.image.load("graphics/menus/pointers/pointer.png").convert_alpha()
         self.pointer_image_rect = self.pointer_image.get_rect(center = (0,0))
-        self.pointer_click_image = pygame.image.load("graphics/UI/menus/pointers/pointer_click.png").convert_alpha()
+        self.pointer_click_image = pygame.image.load("graphics/menus/pointers/pointer_click.png").convert_alpha()
         self.pointer_click_image_rect = self.pointer_click_image.get_rect(center = (0,0))
         self.current_pointer = self.pointer_image #Disegno sempre questa variabile ma cambio il suo valore in base alla posizione del mouse
         self.current_pointer_rect = self.pointer_image_rect
@@ -51,7 +55,7 @@ class Game:
 
         #Start menu
         randomint = randint(1,6)
-        self.start_background_images = self.import_frames("graphics/UI/menus/backgrounds/start_menu_background"+str(randomint))
+        self.start_background_images = self.import_frames("graphics/menus/start menu/start_menu_background"+str(randomint))
         self.start_menu_current_frame = 0
         if randomint == 1: self.background_frame_switch_delay = 0.16 #Il delay fra i frame cambia in base allo sfondo
         elif randomint == 2 or randomint == 3: self.background_frame_switch_delay = 0.06
@@ -60,26 +64,26 @@ class Game:
         elif randomint == 6: self.background_frame_switch_delay = 0.25
         self.background_last_switch_time = time.time()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
-        self.start_text_image = pygame.image.load("graphics/UI/menus/texts/start_menu_text.png").convert_alpha()
+        self.start_text_image = pygame.image.load("graphics/menus/start menu/start_menu_text.png").convert_alpha()
         self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
-        self.new_game_button = pygame.image.load("graphics/UI/menus/buttons/start_menu_new_game_text.png").convert_alpha()
+        self.new_game_button = pygame.image.load("graphics/menus/start menu/start_menu_new_game_text.png").convert_alpha()
         self.new_game_button_rect = self.new_game_button.get_rect(center = (self.half_w, self.half_h + 50))
-        self.load_save_button = pygame.image.load("graphics/UI/menus/buttons/start_menu_load_save_text.png").convert_alpha()
+        self.load_save_button = pygame.image.load("graphics/menus/start menu/start_menu_load_save_text.png").convert_alpha()
         self.load_save_button_rect = self.load_save_button.get_rect(center = (self.half_w, self.half_h + 150))
-        self.settings_button = pygame.image.load("graphics/UI/menus/buttons/settings_icon.png").convert_alpha()
+        self.settings_button = pygame.image.load("graphics/menus/start menu/settings_icon.png").convert_alpha()
         self.settings_button_rect = self.settings_button.get_rect(center = (settings.SCREEN_WIDTH - 40, settings.SCREEN_HEIGHT - 40))
 
         #Settings menu
-        self.settings_background_image = pygame.image.load("graphics/UI/menus/backgrounds/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
-        self.save_button = pygame.image.load("graphics/UI/menus/buttons/save_button.png").convert_alpha()
+        self.settings_background_image = pygame.image.load("graphics/menus/settings menu/settings_background" + str(randint(1,2)) + ".png").convert_alpha()
+        self.save_button = pygame.image.load("graphics/menus/settings menu/save_button.png").convert_alpha()
         self.save_button_rect = self.save_button.get_rect(center = (self.half_w + 16, settings.SCREEN_HEIGHT - 50 ))
-        self.restore_button = pygame.image.load("graphics/UI/menus/buttons/restore_button.png").convert_alpha()
+        self.restore_button = pygame.image.load("graphics/menus/settings menu/restore_button.png").convert_alpha()
         self.restore_button_rect = self.restore_button.get_rect(center = (self.half_w - 16, settings.SCREEN_HEIGHT - 50))
-        self.discard_button = pygame.image.load("graphics/UI/menus/buttons/discard_button.png").convert_alpha()
+        self.discard_button = pygame.image.load("graphics/menus/settings menu/discard_button.png").convert_alpha()
         self.discard_button_rect = self.discard_button.get_rect(center = (self.half_w - 48, settings.SCREEN_HEIGHT - 50))
-        self.mute_button = pygame.image.load("graphics/UI/menus/buttons/mute_button.png").convert_alpha()
+        self.mute_button = pygame.image.load("graphics/menus/settings menu/mute_button.png").convert_alpha()
         self.mute_button_rect = self.mute_button.get_rect(center = (self.half_w + 48, settings.SCREEN_HEIGHT - 50))
-        self.unmute_button = pygame.image.load("graphics/UI/menus/buttons/unmute_button.png").convert_alpha()
+        self.unmute_button = pygame.image.load("graphics/menus/settings menu/unmute_button.png").convert_alpha()
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, settings.SCREEN_HEIGHT - 50))
 
         self.current_keybinds = settings.load_configuration() #Carica le impostazioni attuali
@@ -87,7 +91,7 @@ class Game:
         self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
         self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
 
-        self.key_images = self.import_sequence_images("graphics/UI/menus/icons/keys")
+        self.key_images = self.import_sequence_images("graphics/menus/icons/keys")
         key_images_values = list(self.key_images.values())
         self.last_clicked_index = None #Indice dell'ultima immagine cliccata
         self.modifying_keybind = False #Variabile di stato per indicare se si sta modificando un tasto
@@ -117,8 +121,13 @@ class Game:
         self.help_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
         self.help_menu_rendered_texts_rects = self.settings_menu_rendered_texts_rects #Le posizioni dei testi sono le stesse di quelle del menu delle impostazioni
 
+        #Name menu
+        self.naming_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
+        self.naming_cursor_rect = self.naming_cursor.get_rect(center = (self.half_w - 100, self.half_h - 50)) #Posizione da sistemare
+        self.naming_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
+
         #Map images
-        self.map_image = pygame.image.load("graphics/UI/menus/maps/map.png").convert_alpha()
+        self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         #Overlay for map
         self.overlay = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
@@ -127,8 +136,6 @@ class Game:
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.player = Player((0,0), self.camera_group, self.current_keybinds)
 
-        #Frame oscurato per il menu di pausa e di aiuto
-        self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
 
     def start(self):
         while True:
@@ -161,6 +168,7 @@ class Game:
                 elif self.game_state == GameState.POKEDEX: handle_pokedex_input(self, event.key)
                 elif self.game_state == GameState.SETTINGS_MENU: handle_settings_input(self, event.key)
                 elif self.game_state == GameState.HELP_MENU: handle_help_screen_input(self, event.key)
+                elif self.game_state == GameState.NAME_MENU: handle_name_menu_input(self, event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
                 if self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
@@ -186,6 +194,7 @@ class Game:
         elif self.game_state == GameState.START_MENU: render_start_menu(self)
         elif self.game_state == GameState.SETTINGS_MENU: render_settings_menu(self)
         elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
+        elif self.game_state == GameState.NAME_MENU: render_name_menu(self)
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
         if self.game_state != GameState.GAMEPLAY and self.game_state != GameState.HELP_MENU: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)

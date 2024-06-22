@@ -17,7 +17,7 @@ def get_configuration_images(keybinds):
         images = {}  # Dictionary with key names as keys and images as values
         for key, value in keybinds.items():
             key_name = pygame.key.name(value) #Convert the pygame key constant to its string representation
-            file_path = path.join("graphics", "UI", "menus", "icons", "keys", f"{key_name}.png") #Construct the file path
+            file_path = path.join("graphics", "menus", "icons", "keys", f"{key_name}.png") #Construct the file path
             # Check if the file exists (not necessary, but good practice)
             #if path.isfile(file_path):
             image = pygame.image.load(file_path).convert_alpha() # Load the image

@@ -1,11 +1,14 @@
 import pygame
 import settings
 
-def handle_name_menu_input(game):
+def handle_name_menu_input(game, key):
     pass
 
-def render_name_menu(game):
-    for i 
+def render_name_menu(game, simbols_set_index):
+    game.fake_screen.blit(game.name_menu_background, (0, 0))
+    for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
+        game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
+    game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)
 
 def render_name_menu_texts(font, color):
     rendered_texts = [] #[[lettere maiuscole], [lettere minuscole], [numeri e simboli]]
@@ -22,19 +25,23 @@ def render_name_menu_texts(font, color):
             rendered_texts.append(temp_array)
             temp_array = []
 
-    del simbols
-    del temp_array
     return rendered_texts
 
-def get_name_menu_texts_rects(rendered_texts):
-    rects = []
-    x_coord = 0
+def get_name_menu_texts_rects(rendered_texts, start_x, start_y, padding_x, padding_y):
+    all_rects = []  #Three-dimensional list.
 
-    max_length = max(len(rendered_texts[0]), len(rendered_texts[1]), len(rendered_texts[2])) #Trova la lunghezza massima in modo da avere sempre abbastanza rettangoli per tutte le lettere
-    for i in range(max_length):
-        rects.append(pygame.Rect(0, 0, 0, 0))
 
-    del rects
-    return rects
+    for simbols_set in rendered_texts:
+        x_coord = start_x
+        y_coord = start_y
+        temp_array = []
+        for simbol in simbols_set:
+            temp_array.append(simbol.get_rect(center=(x_coord, y_coord)))
+            if x_coord < settings.SCREEN_WIDTH - start_x:
+                x_coord += padding_x
+            else:
+                x_coord = start_x
+                y_coord += 50
+        all_rects.append(temp_array)
 
-    
+    return all_rects    

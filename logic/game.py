@@ -37,9 +37,10 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.START_MENU #Stato di gioco iniziale
+        self.game_state = GameState.NAME_MENU #Stato di gioco iniziale
         #Font
-        self.menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)  # Choose the font for the text
+        menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
+        naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -112,22 +113,25 @@ class Game:
             #Salvataggio rapido
             #Caricamento rapido
         ]
-        self.settings_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (0,0,0))
+        self.settings_menu_rendered_texts = render_texts(keybinds_text, menu_font, (0,0,0))
         self.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(self, self.settings_menu_rendered_texts)
 
         #Help menu
         self.help_keybinds_images_values = list(get_configuration_images(self.current_keybinds).values())
         self.help_menu_images_rects = self.settings_menu_images_rects #Le posizioni delle immagini sono le stesse di quelle del menu delle impostazioni
-        self.help_menu_rendered_texts = render_texts(keybinds_text, self.menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
+        self.help_menu_rendered_texts = render_texts(keybinds_text, menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
         self.help_menu_rendered_texts_rects = self.settings_menu_rendered_texts_rects #Le posizioni dei testi sono le stesse di quelle del menu delle impostazioni
 
         #Name menu
-        self.naming_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
-        self.naming_cursor_rect = self.naming_cursor.get_rect(center = (self.half_w - 100, self.half_h - 50)) #Posizione da sistemare
-        self.naming_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
-        self.naming_background_rect = self.naming_background.get_rect(topleft = (0,0))
-        self.naming_texts  = render_name_menu_texts(self.menu_font, (0,0,0))
-        self.naming_texts_rects = get_name_menu_texts_rects(self.naming_texts)
+        self.name_menu_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
+        self.name_menu_cursor_rect = self.name_menu_cursor.get_rect(center = (50, 150)) #Posizione da sistemare
+        self.name_menu_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
+        self.name_menu__background_rect = self.name_menu_background.get_rect(topleft = (0,0))
+        self.rendered_name_menu_texts  = render_name_menu_texts(naming_menu_font, (0,0,0))
+        max_length = max(len(self.rendered_name_menu_texts[0]), len(self.rendered_name_menu_texts[1]), len(self.rendered_name_menu_texts[2])) #Trova la lunghezza massima in modo da avere sempre abbastanza rettangoli per tutte le lettere
+        self.rendered_name_menu_texts_rects = get_name_menu_texts_rects(self.rendered_name_menu_texts, 50, 150, 50, 50)
+        del max_length #Pulizia della memoria
+        self.simbols_set_index = 0 #Indice del set di simboli attualmente visualizzato
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
@@ -138,7 +142,6 @@ class Game:
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.player = Player((0,0), self.camera_group, self.current_keybinds)
-
 
     def start(self):
         while True:
@@ -197,7 +200,7 @@ class Game:
         elif self.game_state == GameState.START_MENU: render_start_menu(self)
         elif self.game_state == GameState.SETTINGS_MENU: render_settings_menu(self)
         elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
-        elif self.game_state == GameState.NAME_MENU: render_name_menu(self)
+        elif self.game_state == GameState.NAME_MENU: render_name_menu(self, self.simbols_set_index)
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
         if self.game_state != GameState.GAMEPLAY and self.game_state != GameState.HELP_MENU: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)

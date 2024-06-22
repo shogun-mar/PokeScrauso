@@ -1,11 +1,12 @@
-import pygame
 import settings
 
-def handle_name_menu_input(game, key):
+def handle_name_menu_input(key):
     pass
 
 def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_background, (0, 0))
+    game.fake_screen.blit(game.name_menu_overlay_tab, (22, 190))
+    game.fake_screen.blit(game.name_menu_overlay_controls, (22, 120))
     for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
         game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
     game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)
@@ -27,9 +28,12 @@ def render_name_menu_texts(font, color):
 
     return rendered_texts
 
-def get_name_menu_texts_rects(rendered_texts, start_x, start_y, padding_x, padding_y):
-    all_rects = []  #Three-dimensional list.
-
+def get_name_menu_texts_rects(rendered_texts):
+    all_rects = []  #Three-dimensional list
+    start_x = 85
+    start_y = 235
+    padding_x = 50
+    padding_y = 50
 
     for simbols_set in rendered_texts:
         x_coord = start_x
@@ -37,11 +41,11 @@ def get_name_menu_texts_rects(rendered_texts, start_x, start_y, padding_x, paddi
         temp_array = []
         for simbol in simbols_set:
             temp_array.append(simbol.get_rect(center=(x_coord, y_coord)))
-            if x_coord < settings.SCREEN_WIDTH - start_x:
+            if x_coord <= settings.SCREEN_WIDTH - start_x - padding_x:
                 x_coord += padding_x
             else:
                 x_coord = start_x
-                y_coord += 50
+                y_coord += padding_y
         all_rects.append(temp_array)
 
-    return all_rects    
+    return all_rects

@@ -126,11 +126,10 @@ class Game:
         self.name_menu_cursor = pygame.image.load("graphics/menus/naming menu/cursor.png").convert_alpha()
         self.name_menu_cursor_rect = self.name_menu_cursor.get_rect(center = (50, 150)) #Posizione da sistemare
         self.name_menu_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
-        self.name_menu__background_rect = self.name_menu_background.get_rect(topleft = (0,0))
+        self.name_menu_overlay_controls = pygame.image.load("graphics/menus/naming menu/overlay_controls.png").convert_alpha()
+        self.name_menu_overlay_tab = pygame.image.load("graphics/menus/naming menu/overlay_tab_" + str(randint(1, 4)) + ".png").convert_alpha()
         self.rendered_name_menu_texts  = render_name_menu_texts(naming_menu_font, (0,0,0))
-        max_length = max(len(self.rendered_name_menu_texts[0]), len(self.rendered_name_menu_texts[1]), len(self.rendered_name_menu_texts[2])) #Trova la lunghezza massima in modo da avere sempre abbastanza rettangoli per tutte le lettere
-        self.rendered_name_menu_texts_rects = get_name_menu_texts_rects(self.rendered_name_menu_texts, 50, 150, 50, 50)
-        del max_length #Pulizia della memoria
+        self.rendered_name_menu_texts_rects = get_name_menu_texts_rects(self.rendered_name_menu_texts)
         self.simbols_set_index = 0 #Indice del set di simboli attualmente visualizzato
 
         #Map images

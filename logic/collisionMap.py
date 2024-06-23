@@ -8,6 +8,7 @@ first_level_third_zone = Image.open("graphics/collision_maps/1_3.png")
 first_level_maps = [first_level_first_zone, first_level_second_zone, first_level_third_zone]
 
 def allow_movement(desired_coord, level_num, zone_num):
+
     if level_num == 1:
         level = first_level_maps
     #Aggiungi altri elif per altri livelli TODO
@@ -21,10 +22,12 @@ def allow_movement(desired_coord, level_num, zone_num):
 
     x_coord = ((desired_coord[0] - 720) + PLAYER_SPEED) * (-1)
     y_coord = ((desired_coord[1] - 480) + PLAYER_SPEED) * (-1)
-    print("Coordinates: ", x_coord," ", y_coord)
-    print("Pixel: ", zone.getpixel((x_coord, y_coord)))
+    pixel_color = zone.getpixel((x_coord, y_coord))
 
-    if zone.getpixel((x_coord, y_coord)) == (0,0,0,0) or zone.getpixel((x_coord, y_coord)) == (0,0,0,255): #Se il pixel è trasparente o nero
+    print("Desired coordinates: ", x_coord," ", y_coord, " - Pixel color: ", pixel_color, end=" ")
+
+    return True
+
+    if pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
         return False
-    else:
-        return True
+    return True

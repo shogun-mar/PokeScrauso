@@ -97,30 +97,38 @@ class Player(pygame.sprite.Sprite):
         elif keys[settings.FORWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
             self.change_animation_verse("up")
             self.change_frame() #Cambia il frame del giocatore
-            if allow_movement((self.rect.centerx - settings.PLAYER_SPEED, self.rect.centery), 1, 1): #Meno perchè pygame ha l'origine in alto a sinistra
-                self.direction.y = 1
-                self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+            for speed in (settings.PLAYER_SPEED, 0, -1):
+                if allow_movement((self.rect.centerx - speed, self.rect.centery), 1, 1):
+                    self.direction.y = 1
+                    self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+                    break
 
         elif keys[settings.BACKWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
             self.change_animation_verse("down")
             self.change_frame() #Cambia il frame del giocatore
-            if allow_movement((self.rect.centerx + settings.PLAYER_SPEED, self.rect.centery), 1, 1):
-                self.direction.y = -1
-                self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+            for speed in (settings.PLAYER_SPEED, 0, -1):
+                if allow_movement((self.rect.centerx + settings.PLAYER_SPEED, self.rect.centery), 1, 1):
+                    self.direction.y = -1
+                    self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+                    break
 
         elif keys[settings.LEFT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:  
             self.change_animation_verse("left")
             self.change_frame() #Cambia il frame del giocatore
-            if allow_movement((self.rect.centerx, self.rect.centery - settings.PLAYER_SPEED), 1, 1):
-                self.direction.x = 1
-                self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+            for speed in (settings.PLAYER_SPEED, 0, -1):
+                if allow_movement((self.rect.centerx, self.rect.centery - settings.PLAYER_SPEED), 1, 1):
+                    self.direction.x = 1
+                    self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+                    break
 
         elif keys[settings.RIGHT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:    
             self.change_animation_verse("right")
             self.change_frame() #Cambia il frame del giocatore
-            if allow_movement((self.rect.centerx, self.rect.centery + settings.PLAYER_SPEED), 1, 1):
-                self.direction.x = -1
-                self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+            for speed in (settings.PLAYER_SPEED, 0, -1):
+                if allow_movement((self.rect.centerx, self.rect.centery + settings.PLAYER_SPEED), 1, 1):
+                    self.direction.x = -1
+                    self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
+                    break
                
         else:
             self.direction.x = 0

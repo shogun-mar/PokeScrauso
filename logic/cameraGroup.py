@@ -24,17 +24,21 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_offset.y = self.internal_surface_size_vector.y // 2 - self.half_h
 
         #Ground
-        self.ground_surf_1_1 = pygame.image.load("graphics/world_sprites/1_1.png").convert_alpha()
+        self.ground_surf_1_1 = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha()
+        self.ground_surf_1_2 = pygame.image.load("graphics/collision_maps/1_2.png").convert_alpha()
+        self.ground_surf_1_3 = pygame.image.load("graphics/collision_maps/1_3.png").convert_alpha()
+        """self.ground_surf_1_1 = pygame.image.load("graphics/world_sprites/1_1.png").convert_alpha()
         self.ground_surf_1_2 = pygame.image.load("graphics/world_sprites/1_2.png").convert_alpha()
         self.ground_surf_1_3 = pygame.image.load("graphics/world_sprites/1_3.png").convert_alpha()
         self.ground_surf_1_4 = pygame.image.load("graphics/world_sprites/1_4.png").convert_alpha()
-        self.ground_surfaces = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]
+        """
+        self.ground_surfaces = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3]#, self.ground_surf_1_4]
 
         self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
         self.ground_rect_1_2 = self.ground_surf_1_2.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
         self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
-        self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
-        self.ground_rects = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
+        #self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
+        self.ground_rects = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3]#, self.ground_rect_1_4]
 
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()

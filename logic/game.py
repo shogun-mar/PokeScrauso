@@ -37,10 +37,13 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.NAME_MENU #Stato di gioco iniziale
+        self.game_state = GameState.START_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
-        naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
+        self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
+
+        #Colors
+        self.naming_menu_color = (0,0,0)
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -128,9 +131,16 @@ class Game:
         self.name_menu_background = pygame.image.load("graphics/menus/naming menu/background.png").convert_alpha()
         self.name_menu_overlay_controls = pygame.image.load("graphics/menus/naming menu/overlay_controls.png").convert_alpha()
         self.name_menu_overlay_tab = pygame.image.load("graphics/menus/naming menu/overlay_tab_" + str(randint(1, 4)) + ".png").convert_alpha()
-        self.rendered_name_menu_texts  = render_name_menu_texts(naming_menu_font, (0,0,0))
+        self.simbols = [
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+        ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ':', ', ', ';', "'", '"', '!', '?', '(', ')', '+', '-', '*', '/', '=']
+        ]
+        self.rendered_name_menu_texts  = render_name_menu_texts(self.naming_menu_font, (0,0,0), self)
         self.rendered_name_menu_texts_rects = get_name_menu_texts_rects(self.rendered_name_menu_texts)
         self.simbols_set_index = 0 #Indice del set di simboli attualmente visualizzato
+        self.player_name = "____________" # Iniziale nome del giocatore
+        self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
@@ -140,7 +150,7 @@ class Game:
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
-        self.player = Player((0,0), self.camera_group, self.current_keybinds)
+        self.player = Player((50, 200), self.camera_group, self.current_keybinds)
 
     def start(self):
         while True:
@@ -176,7 +186,8 @@ class Game:
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input(self, event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
-                if self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
+                elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
+                elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self)
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY
             

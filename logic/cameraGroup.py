@@ -16,7 +16,11 @@ class CameraGroup(pygame.sprite.Group):
         self.half_h = self.display_surface.get_height() // 2
 
         #Camera offset
-        self.offset = pygame.math.Vector2() 
+        self.offset = pygame.math.Vector2()
+
+        #Dichiarazione di variabili temporanee per gli offset
+        self.offset_pos = None
+         
 
         #Camera zoom
         self.zoom_scale = INITIAL_ZOOM
@@ -62,7 +66,6 @@ class CameraGroup(pygame.sprite.Group):
         elif keys[ZOOM_IN_KEY] and self.zoom_scale > ZOOM_SCALE_LIMITS[0]:
             self.zoom_scale -= ZOOM_SCALING_VELOCITY
 
-
     def center_target_camera(self, target):
         self.offset.x = target.rect.centerx - self.half_w
         self.offset.y = target.rect.centery - self.half_h
@@ -77,6 +80,8 @@ class CameraGroup(pygame.sprite.Group):
             offset = self.first_level_maps_rects[i].topleft + self.offset + self.internal_offset
             self.internal_surface.blit(map_surf, offset)
     
+    def calculate_new_player_relative_coords(self):
+
     def custom_draw(self, player):
 
         self.keyboard_zoom_control()
@@ -89,14 +94,15 @@ class CameraGroup(pygame.sprite.Group):
         
         #Elementi attivi
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
-            offset_pos = sprite.rect.topleft - self.offset + self.internal_offset
-            self.internal_surface.blit(sprite.image, offset_pos)
+            self.offset_pos = sprite.rect.topleft - self.offset + self.internal_offset
+            relative_pos = (sprite.rect.midbottom - self.offset + self.internal_offset) - (self.first_level_maps_rects[0].topleft + self.offset + self.internal_offset) 
+            print("original coords:", sprite.rect.topleft, "with offset", relative_pos)
+            self.internal_surface.blit(sprite.image, self.offset_pos)
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))
-
         self.display_surface.blit(scaled_surface, scaled_rect)
-    
+
     def change_level(self, level_num):
         CameraGroup.level_num = level_num
     

@@ -36,7 +36,7 @@ def allow_movement(desired_coords):
     #y_coord = ((desired_coord[1] - 490) + settings.PLAYER_SPEED) * (-1)
     #pixel_color = zone.getpixel((x_coord, y_coord))
 
-    print("Coords:",desired_coords, "-Offset:", camera_group_offset, "-Internal offset:", internal_camera_group_offset, "-Calc coords:", x_coord, y_coord)#, "-Pixel color:", pixel_color)
+    #print("Coords:",desired_coords, "-Offset:", camera_group_offset, "-Internal offset:", internal_camera_group_offset, "-Calc coords:", x_coord, y_coord)#, "-Pixel color:", pixel_color)
     return True
     if pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
         return False

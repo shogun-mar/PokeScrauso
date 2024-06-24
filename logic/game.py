@@ -39,7 +39,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.NAME_MENU #Stato di gioco iniziale
+        self.game_state = GameState.SETTINGS_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -110,7 +110,7 @@ class Game:
             "Toggle fullscreen", "Open the Pokèdex",
             "Closes the game", "Interact with objects",
             "Open the map", "Open the inventory",
-            "Open the help menu", #"Pause the game",
+            "Open the help menu", "Pause the game",
             "Zoom in", "Zoom out"
         
             #Takes a screenshot
@@ -266,10 +266,9 @@ class Game:
     def import_sequence_images(self, directory_path): #Importa una serie di immagini come quelle dei tasti per le impostazioni per esempio
         images_dict = {}
         for filename in listdir(directory_path):
-            if filename.endswith('.png') or filename.endswith('.jpg'):
+            if filename.endswith('.png'):
                 image = pygame.image.load(path.join(directory_path, filename)).convert_alpha()
-                # Use os.path.splitext to remove the file extension
-                file_name_without_extension = path.splitext(filename)[0]
+                file_name_without_extension = path.splitext(filename)[0] # Use os.path.splitext to remove the file extension
                 images_dict[file_name_without_extension] = image
         return images_dict
 

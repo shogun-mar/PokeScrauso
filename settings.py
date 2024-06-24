@@ -34,7 +34,13 @@ MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle 
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
 SCREENSHOT_KEY = pygame.K_F12 #Pulsante per fare uno screenshot
-ACCEPTABLE_KEYBINDS = [pygame.K_a, pygame.K_b, pygame.K_c, pygame.K_d, pygame.K_e, pygame.K_f, pygame.K_g, pygame.K_h, pygame.K_i, pygame.K_j, pygame.K_k, pygame.K_l, pygame.K_m, pygame.K_n, pygame.K_o, pygame.K_p, pygame.K_q, pygame.K_r, pygame.K_s, pygame.K_t, pygame.K_u, pygame.K_v, pygame.K_w, pygame.K_x, pygame.K_y, pygame.K_z, pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_SPACE, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT] #pygame.K_ESCAPE, pygame.K_BACKSPACE, pygame.K_TAB, pygame.K_CAPSLOCK, pygame.K_LSHIFT
+ACCEPTABLE_KEYBINDS = [pygame.K_a, pygame.K_b, pygame.K_c, pygame.K_d, pygame.K_e, pygame.K_f, pygame.K_g, pygame.K_h, pygame.K_i, 
+                       pygame.K_j, pygame.K_k, pygame.K_l, pygame.K_m, pygame.K_n, pygame.K_o, pygame.K_p, pygame.K_q, pygame.K_r, 
+                       pygame.K_s, pygame.K_t, pygame.K_u, pygame.K_v, pygame.K_w, pygame.K_x, pygame.K_y, pygame.K_z, pygame.K_0, 
+                       pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, 
+                       pygame.K_SPACE, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_ESCAPE, pygame.K_BACKSPACE,
+                       pygame.K_TAB, pygame.K_CAPSLOCK, pygame.K_LSHIFT, pygame.K_RSHIFT, pygame.K_LCTRL, pygame.K_RCTRL, pygame.K_LALT,
+                       pygame.K_RALT]
 
 #Keybinds for movement
 FORWARD_KEY = pygame.K_w #Pulsante per muoversi in avanti

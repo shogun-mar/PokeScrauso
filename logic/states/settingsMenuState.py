@@ -18,8 +18,6 @@ def get_configuration_images(keybinds):
         for key, value in keybinds.items():
             key_name = pygame.key.name(value) #Convert the pygame key constant to its string representation
             file_path = path.join("graphics", "menus", "icons", "keys", f"{key_name}.png") #Construct the file path
-            # Check if the file exists (not necessary, but good practice)
-            #if path.isfile(file_path):
             image = pygame.image.load(file_path).convert_alpha() # Load the image
             images[key] = image # Add the image to the dictionary
         return images
@@ -39,6 +37,7 @@ def handle_settings_input(game, key):
             game.modified_keybinds_images_values[game.last_clicked_index] = game.key_images[pygame.key.name(key)] # This line updates the image of the keybind at the last clicked index with the new key
             game.modified_keybinds[desired_dict_key] = key # This line updates the dictionary with the new key
             game.modifying_keybind = False # Correctly setting modifying_keybind to False to indicate the process is complete
+            update_rects(game) # Update the rects of the text to be rendered (should be done only is a long key is added or removed but the performance impact is negligible)
 
 def handle_settings_input_mouse(game):
     if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
@@ -89,6 +88,10 @@ def get_settings_menu_texts_rects(game, settings_menu_rendered_texts):
         new_midleft = (corresponding_midright[0] + 10, corresponding_midright[1])
         rects.append(settings_menu_rendered_texts[i].get_rect(midleft = new_midleft)) 
     return rects
+
+def update_rects(game):
+    game.settings_menu_images_rects = get_settings_menu_rects(game, game.modified_keybinds_images_values)
+    game.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(game, game.settings_menu_rendered_texts)
 
 def get_settings_menu_rects(game, keybind_images):
     rects = []

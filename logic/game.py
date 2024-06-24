@@ -4,6 +4,7 @@ import settings #Bisogna importare così perchè from ... import * clona le vari
 from random import randint
 from os import listdir, environ, path
 from ctypes import windll
+from datetime import datetime
 from logic.player import Player
 from logic.gameState import GameState
 from logic.cameraGroup import CameraGroup
@@ -16,6 +17,7 @@ from logic.states.pauseState import *
 from logic.states.settingsMenuState import *
 from logic.states.startMenuState import *
 from logic.states.nameMenuState import *
+from logic.states.squadMenuState import *
 
 class Game:
     def __init__(self):
@@ -111,6 +113,7 @@ class Game:
             "Open the help menu", #"Pause the game",
             "Zoom in", "Zoom out"
         
+            #Takes a screenshot
             #Text field for max fps
             #Dropdown della risoluzione?
             #Salvataggio rapido
@@ -172,7 +175,7 @@ class Game:
                         self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME, vsync=1)
                     else:
                         self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags, vsync=1) 
-                        
+                if event.key == settings.SCREENSHOT_KEY: pygame.image.save(self.screen, f"screenshots/screenshot_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png")        
                 #Game state specific events
                 if event.key == settings.EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input(self, event.key)
@@ -184,6 +187,7 @@ class Game:
                 elif self.game_state == GameState.SETTINGS_MENU: handle_settings_input(self, event.key)
                 elif self.game_state == GameState.HELP_MENU: handle_help_screen_input(self, event.key)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input(self, event.key)
+                elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_input(self, event.key)
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
@@ -211,6 +215,7 @@ class Game:
         elif self.game_state == GameState.SETTINGS_MENU: render_settings_menu(self)
         elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
         elif self.game_state == GameState.NAME_MENU: render_name_menu(self, self.simbols_set_index)
+        elif self.game_state == GameState.SQUAD_MENU: render_squad_menu(self)
         
         #Disegna il puntatore (solamente se non si è in GAMEPLAY)
         if self.game_state != GameState.GAMEPLAY and self.game_state != GameState.HELP_MENU: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)

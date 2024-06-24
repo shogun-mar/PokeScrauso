@@ -17,7 +17,7 @@ BACKGROUND_COLOR = (0,0,0)
 ZOOM_SCALING_VELOCITY = 0.1
 ZOOM_SCALE_LIMITS = (0.1, 1.50) #0.75, 1.50
 INITIAL_ZOOM = 1.0
-INTERNAL_SURFACE_SIZE = (2500,2500) #2500, 2500
+INTERNAL_SURFACE_SIZE = (1920,1080) #2500, 2500
 
 #Player settings
 PLAYER_SPEED = 10
@@ -33,6 +33,7 @@ INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
 MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle impostazioni)
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
+SCREENSHOT_KEY = pygame.K_F12 #Pulsante per fare uno screenshot
 ACCEPTABLE_KEYBINDS = [pygame.K_a, pygame.K_b, pygame.K_c, pygame.K_d, pygame.K_e, pygame.K_f, pygame.K_g, pygame.K_h, pygame.K_i, pygame.K_j, pygame.K_k, pygame.K_l, pygame.K_m, pygame.K_n, pygame.K_o, pygame.K_p, pygame.K_q, pygame.K_r, pygame.K_s, pygame.K_t, pygame.K_u, pygame.K_v, pygame.K_w, pygame.K_x, pygame.K_y, pygame.K_z, pygame.K_0, pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_SPACE, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT] #pygame.K_ESCAPE, pygame.K_BACKSPACE, pygame.K_TAB, pygame.K_CAPSLOCK, pygame.K_LSHIFT
 
 #Keybinds for movement

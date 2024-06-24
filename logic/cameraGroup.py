@@ -1,4 +1,5 @@
 import pygame
+import datetime #per debugging da togliere
 from settings import *
 
 class CameraGroup(pygame.sprite.Group):
@@ -83,8 +84,11 @@ class CameraGroup(pygame.sprite.Group):
     def calculate_new_player_relative_coords(self): #pygame.math.Vector2 - pygame.math.Vector2 
         return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
-    def get_player_zone(self):
-        pass
+    def increase_player_zone_num(self):
+        self.zone_num += 1
+
+    def decrease_player_zone_num(self):
+        self.zone_num -= 1
 
     def draw_ground_zones(self):
         for i, ground_surf in enumerate(self.ground_surfaces):
@@ -95,7 +99,7 @@ class CameraGroup(pygame.sprite.Group):
         for i, map_surf in enumerate(self.first_level_maps):
             offset_pos_maps = self.first_level_maps_rects[i].topleft + self.offset + self.internal_offset
             self.internal_surface.blit(map_surf, offset_pos_maps)
-    
+
     def custom_draw(self, player):
 
         self.keyboard_zoom_control()

@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__(camera_group)
         self.camera_group = camera_group
         self.pos = pos
-        self.collision_controller = CollisionController(camera_group)
+        self.collision_controller = CollisionController(camera_group, self)
         self.direction = pygame.math.Vector2()
         self.max_speed = settings.PLAYER_SPEED #Maximum numbers of pixels the player can move in one frame
         self.actual_speed = self.max_speed #Speed of the player in the current frame (default is the maximum speed)

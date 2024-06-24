@@ -92,19 +92,7 @@ class Game:
         self.unmute_button = pygame.image.load("graphics/menus/settings menu/unmute_button.png").convert_alpha()
         self.unmute_button_rect = self.unmute_button.get_rect(center = (self.half_w + 48, settings.SCREEN_HEIGHT - 50))
 
-        self.current_keybinds = settings.load_configuration() #Carica le impostazioni attuali
-        self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
-        self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
-        self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
-
-        self.key_images = self.import_sequence_images("graphics/menus/icons/keys")
-        key_images_values = list(self.key_images.values())
-        self.last_clicked_index = None #Indice dell'ultima immagine cliccata
-        self.modifying_keybind = False #Variabile di stato per indicare se si sta modificando un tasto
-
-        self.settings_menu_images_rects = get_settings_menu_rects(self, key_images_values)
-
-        keybinds_text = [
+        self.keybinds_text = [
             "Move forwards", "Move to the left", 
             "Move backwards", "Move to the right", 
             "Toggle fullscreen", "Open the Pokèdex",
@@ -112,20 +100,24 @@ class Game:
             "Open the map", "Open the inventory",
             "Open the help menu", "Pause the game",
             "Zoom in", "Zoom out"
-        
-            #Takes a screenshot
-            #Text field for max fps
-            #Dropdown della risoluzione?
-            #Salvataggio rapido
-            #Caricamento rapido
         ]
-        self.settings_menu_rendered_texts = render_texts(keybinds_text, menu_font, (0,0,0))
-        self.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(self, self.settings_menu_rendered_texts)
+        self.last_clicked_index = None #Indice dell'ultima immagine cliccata
+        self.modifying_keybind = False #Variabile di stato per indicare se si sta modificando un tasto
 
+        self.current_keybinds = settings.load_configuration() #Carica le impostazioni attuali
+        self.modified_keybinds = self.current_keybinds.copy() #Verrà poi modificato quando l'utente cambia i tasti
+        self.modified_keybinds_images = get_configuration_images(self.modified_keybinds) 
+        self.modified_keybinds_images_values = list(self.modified_keybinds_images.values())
+        self.key_images = self.import_sequence_images("graphics/menus/icons/keys")
+        key_images_values = list(self.key_images.values())
+        self.settings_menu_images_rects = get_settings_menu_image_rects(self, key_images_values)
+        self.settings_menu_rendered_texts = render_texts(self.keybinds_text, menu_font, (0,0,0))
+        self.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(self)
+    
         #Help menu
         self.help_keybinds_images_values = list(get_configuration_images(self.current_keybinds).values())
         self.help_menu_images_rects = self.settings_menu_images_rects #Le posizioni delle immagini sono le stesse di quelle del menu delle impostazioni
-        self.help_menu_rendered_texts = render_texts(keybinds_text, menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
+        self.help_menu_rendered_texts = render_texts(self.keybinds_text, menu_font, (255,255,255)) #I testi sono li stessi di quelli del menu delle impostazioni ma con un colore diverso
         self.help_menu_rendered_texts_rects = self.settings_menu_rendered_texts_rects #Le posizioni dei testi sono le stesse di quelle del menu delle impostazioni
 
         #Name menu

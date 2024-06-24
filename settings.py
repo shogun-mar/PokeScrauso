@@ -4,7 +4,7 @@ import pygame
 SCREEN_WIDTH = 720
 SCREEN_HEIGHT = 480
 flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.SCALED
-MAX_FPS = 60 #60
+MAX_FPS = 30 #60
 BACKGROUND_COLOR = (0,0,0)
 
 #def get_screen_width(): return SCREEN_WIDTH Tutta il gioco è progettato per andare a 720x480 ma sarebbe carino che se il giocatore volesse cambiare la risoluzione potesse farlo
@@ -34,6 +34,7 @@ MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle 
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
 SCREENSHOT_KEY = pygame.K_F12 #Pulsante per fare uno screenshot
+CANCEL_KEY = pygame.K_l #Pulsante per annullare un'azione
 ACCEPTABLE_KEYBINDS = [pygame.K_a, pygame.K_b, pygame.K_c, pygame.K_d, pygame.K_e, pygame.K_f, pygame.K_g, pygame.K_h, pygame.K_i, 
                        pygame.K_j, pygame.K_k, pygame.K_l, pygame.K_m, pygame.K_n, pygame.K_o, pygame.K_p, pygame.K_q, pygame.K_r, 
                        pygame.K_s, pygame.K_t, pygame.K_u, pygame.K_v, pygame.K_w, pygame.K_x, pygame.K_y, pygame.K_z, pygame.K_0, 
@@ -67,6 +68,7 @@ def set_default_configuration():
         "MAP_KEY": pygame.K_m,
         "INVENTORY_KEY": pygame.K_i,
         "HELP_KEY": pygame.K_h,
+        "PAUSE_KEY": pygame.K_ESCAPE,
         "ZOOM_IN_KEY": pygame.K_z,
         "ZOOM_OUT_KEY": pygame.K_q
     }
@@ -86,17 +88,18 @@ def save_configuration_to_file():
         f.write(f"MAP_KEY = {MAP_KEY}\n")
         f.write(f"INVENTORY_KEY = {INVENTORY_KEY}\n")
         f.write(f"HELP_KEY = {HELP_KEY}\n")
+        f.write(f"PAUSE_KEY = {PAUSE_KEY}\n")
         f.write(f"ZOOM_IN_KEY = {ZOOM_IN_KEY}\n")
         f.write(f"ZOOM_OUT_KEY = {ZOOM_OUT_KEY}\n")        
 
 def save_configuration(new_configuration):
-    global FORWARD_KEY, LEFT_KEY
-    global BACKWARD_KEY, RIGHT_KEY
-    global FULLSCREEN_KEY, POKEDEX_KEY
-    global EXIT_KEY, INTERACTION_KEY
-    global MAP_KEY, INVENTORY_KEY
-    global HELP_KEY, ZOOM_IN_KEY
-    global ZOOM_OUT_KEY
+    global FORWARD_KEY, LEFT_KEY, \
+           BACKWARD_KEY, RIGHT_KEY, \
+           FULLSCREEN_KEY, POKEDEX_KEY, \
+           EXIT_KEY, INTERACTION_KEY, \
+           MAP_KEY, INVENTORY_KEY, \
+           HELP_KEY, PAUSE_KEY, \
+           ZOOM_IN_KEY, ZOOM_OUT_KEY
 
     FORWARD_KEY = new_configuration["FORWARD_KEY"]
     LEFT_KEY = new_configuration["LEFT_KEY"]
@@ -109,6 +112,7 @@ def save_configuration(new_configuration):
     MAP_KEY = new_configuration["MAP_KEY"]
     INVENTORY_KEY = new_configuration["INVENTORY_KEY"]
     HELP_KEY = new_configuration["HELP_KEY"]
+    PAUSE_KEY = new_configuration["PAUSE_KEY"]
     ZOOM_IN_KEY = new_configuration["ZOOM_IN_KEY"]
     ZOOM_OUT_KEY = new_configuration["ZOOM_OUT_KEY"]
 
@@ -116,9 +120,13 @@ def save_configuration(new_configuration):
 
 #Funzione di caricamento delle impostazioni
 def load_configuration():
-    global FORWARD_KEY, LEFT_KEY, BACKWARD_KEY, RIGHT_KEY, FULLSCREEN_KEY, \
-           POKEDEX_KEY, EXIT_KEY, INTERACTION_KEY, MAP_KEY, INVENTORY_KEY, \
-           HELP_KEY, ZOOM_IN_KEY, ZOOM_OUT_KEY
+    global FORWARD_KEY, LEFT_KEY, \
+           BACKWARD_KEY, RIGHT_KEY, \
+           FULLSCREEN_KEY, POKEDEX_KEY, \
+           EXIT_KEY, INTERACTION_KEY, \
+           MAP_KEY, INVENTORY_KEY, \
+           HELP_KEY, PAUSE_KEY, \
+           ZOOM_IN_KEY, ZOOM_OUT_KEY
 
     keybinds = {}
     with open("settings.txt", 'r') as f:
@@ -149,6 +157,8 @@ def load_configuration():
                 INVENTORY_KEY = keybinds[name] = value
             elif name == "HELP_KEY":
                 HELP_KEY = keybinds[name] = value
+            elif name == "PAUSE_KEY":
+                PAUSE_KEY = keybinds[name] = value
             elif name == "ZOOM_IN_KEY":
                 ZOOM_IN_KEY = keybinds[name] = value
             elif name == "ZOOM_OUT_KEY":
@@ -168,6 +178,7 @@ def print_configuration():
     print("MAP_KEY:", pygame.key.name(MAP_KEY))
     print("INVENTORY_KEY:", pygame.key.name(INVENTORY_KEY))
     print("HELP_KEY:", pygame.key.name(HELP_KEY))
+    print("PAUSE_KEY:", pygame.key.name(PAUSE_KEY))
     print("ZOOM_IN_KEY:", pygame.key.name(ZOOM_IN_KEY))
     print("ZOOM_OUT_KEY:", pygame.key.name(ZOOM_OUT_KEY))
           
@@ -178,6 +189,7 @@ def get_current_configuration():
         "FULLSCREEN_KEY": FULLSCREEN_KEY, "POKEDEX_KEY": POKEDEX_KEY,
         "EXIT_KEY": EXIT_KEY, "INTERACTION_KEY": INTERACTION_KEY,
         "MAP_KEY": MAP_KEY, "INVENTORY_KEY": INVENTORY_KEY,
-        "HELP_KEY": HELP_KEY, "ZOOM_IN_KEY": ZOOM_IN_KEY,
+        "HELP_KEY": HELP_KEY, "PAUSE_KEY": PAUSE_KEY,
+        "ZOOM_IN_KEY": ZOOM_IN_KEY,
         "ZOOM_OUT_KEY": ZOOM_OUT_KEY
     }

@@ -9,17 +9,24 @@ def render_settings_menu(game):
     game.fake_screen.blit(game.restore_button, game.restore_button_rect)
     game.fake_screen.blit(game.discard_button, game.discard_button_rect)
     game.fake_screen.blit(game.mute_button, game.mute_button_rect) if game.current_volume_status else game.fake_screen.blit(game.unmute_button, game.unmute_button_rect)
-    for i in range(len(game.modified_keybinds_images_values)):
-        game.fake_screen.blit(game.modified_keybinds_images_values[i], game.settings_menu_images_rects[i])
+    for i in range(len(game.keybinds_text)):
         game.fake_screen.blit(game.settings_menu_rendered_texts[i], game.settings_menu_rendered_texts_rects[i])
+        #print("len images values", len(game.settings_menu_images_rects), "len images rects", len(game.settings_menu_rendered_texts_rects))
+        try:
+            game.fake_screen.blit(game.modified_keybinds_images_values[i], game.settings_menu_images_rects[i])
+        except:
+            pass
+            #print("Errore i:", i)
 
 def get_configuration_images(keybinds):
         images = {}  # Dictionary with key names as keys and images as values
+        
         for key, value in keybinds.items():
             key_name = pygame.key.name(value) #Convert the pygame key constant to its string representation
             file_path = path.join("graphics", "menus", "icons", "keys", f"{key_name}.png") #Construct the file path
             image = pygame.image.load(file_path).convert_alpha() # Load the image
             images[key] = image # Add the image to the dictionary
+
         return images
 
 def handle_settings_input(game, key):
@@ -29,7 +36,7 @@ def handle_settings_input(game, key):
         elif key == settings.MUTE_KEY:
             game.current_volume_status = not game.current_volume_status #Muta il gioco
     else: 
-        if key == settings.PAUSE_KEY: # If the user presses the escape key, the process is interrupted
+        if key == settings.CANCEL_KEY: # If the user presses the escape key, the process is interrupted
             game.modIfying_keybind = False
             game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
         elif key in settings.ACCEPTABLE_KEYBINDS:
@@ -81,21 +88,23 @@ def render_texts(texts, font, color):
         settings_menu_rendered_texts.append(rendered_text)
     return settings_menu_rendered_texts
 
-def get_settings_menu_texts_rects(game, settings_menu_rendered_texts):
+def get_settings_menu_texts_rects(game):
     rects = []
-    for i in range(len(settings_menu_rendered_texts)):
+    for i in range(len(game.keybinds_text)):
         corresponding_midright = game.settings_menu_images_rects[i].midright
+        print(corresponding_midright)
         new_midleft = (corresponding_midright[0] + 10, corresponding_midright[1])
-        rects.append(settings_menu_rendered_texts[i].get_rect(midleft = new_midleft)) 
+        rects.append(game.settings_menu_rendered_texts[i].get_rect(midleft=new_midleft)) 
+        #print(rects[i])
     return rects
 
 def update_rects(game):
-    game.settings_menu_images_rects = get_settings_menu_rects(game, game.modified_keybinds_images_values)
-    game.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(game, game.settings_menu_rendered_texts)
+    game.settings_menu_images_rects = get_settings_menu_image_rects(game, game.modified_keybinds_images_values)
+    game.settings_menu_rendered_texts_rects = get_settings_menu_texts_rects(game)
 
-def get_settings_menu_rects(game, keybind_images):
+def get_settings_menu_image_rects(game, keybind_images): #Forse è questo che fa casini con la posizione di alcuni testi
     rects = []
-    for i in range(len(keybind_images)):
+    for i in range(len(game.keybinds_text)):
         if i%2!=0: x_coord = game.half_w
         else: x_coord = 50 
         if i%2==0: y_coord = i*25 + 50

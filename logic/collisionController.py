@@ -32,8 +32,7 @@ class CollisionController:
 
         pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
 
-        #print("Coords:",desired_coords, "-Offset:", self.camera_group_offset, "-Internal offset:", selfinternal_camera_group_offset, "-Calc coords:", x_coord, y_coord)#, "-Pixel color:", pixel_color)
-        return True
-        if pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
+        print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
+        if pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255) or pixel_color != (255,255,255,255): #Se il pixel è trasparente o nero
             return False
         return True

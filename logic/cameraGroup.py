@@ -80,7 +80,7 @@ class CameraGroup(pygame.sprite.Group):
         self.offset.x = target.rect.centerx - self.half_w
         self.offset.y = target.rect.centery - self.half_h
 
-    def calculate_new_player_relative_coords(self):
+    def calculate_new_player_relative_coords(self): #pygame.math.Vector2 - pygame.math.Vector2 
         return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def get_player_zone(self):
@@ -89,7 +89,6 @@ class CameraGroup(pygame.sprite.Group):
     def draw_ground_zones(self):
         for i, ground_surf in enumerate(self.ground_surfaces):
             self.offset_pos_ground = self.ground_rects[i].topleft + self.offset + self.internal_offset
-            #print("ground_ rect: " , self.ground_rects[i].topleft, "with offset:", self.offset_pos_ground)
             self.internal_surface.blit(ground_surf, self.offset_pos_ground)
     
         #Draws the collision maps with half opacity for debugging purposes
@@ -110,10 +109,8 @@ class CameraGroup(pygame.sprite.Group):
         #Elementi attivi
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
             self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
-            #print("sprite pos: " , sprite.rect.topleft, "with offset:", self.offset_pos_sprites)
-            #print("relative position: ", self.offset_pos_sprites - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset), "\n")
-            if sprite == player: self.last_player_pos_offsetted = self.offset_pos_sprites #Distinguo il player per poterne calcolare le coordinate relative
-            self.internal_surface.blit(sprite.image, self.offset_pos_sprites)
+            if sprite == player: self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
+            self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))

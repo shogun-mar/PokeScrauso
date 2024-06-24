@@ -12,7 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.pos = pos
         self.collision_controller = CollisionController(camera_group)
         self.direction = pygame.math.Vector2()
-        self.speed = settings.PLAYER_SPEED # pixels per frame
+        self.max_speed = settings.PLAYER_SPEED #Maximum numbers of pixels the player can move in one frame
+        self.actual_speed = self.max_speed #Speed of the player in the current frame (default is the maximum speed)
         self.relative_pos = self.camera_group.calculate_new_player_relative_coords()
 
         #Animation variables
@@ -93,43 +94,51 @@ class Player(pygame.sprite.Sprite):
         
         keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
         self.relative_pos = self.camera_group.calculate_new_player_relative_coords() #Calcola le coordinate relative del giocatore rispetto all'immagine della zona in cui si trova
-        print(self.relative_pos)
 
         if (keys[settings.BACKWARD_KEY] and keys[settings.FORWARD_KEY]) or (keys[settings.LEFT_KEY] and keys[settings.RIGHT_KEY]): #Se vengono premuti
             self.direction.y = 0
             self.direction.x = 0
 
-        elif keys[settings.FORWARD_KEY]:
-            for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.relative_pos.x - speed, self.relative_pos.y)):
+        elif keys[settings.FORWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
+            for speed in (self.max_speed, 0, -1):
+                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y - speed)):
                     self.change_animation_verse("up")
+                    print("Current actual speed:", self.actual_speed, "\n")
+                    self.actual_speed = speed
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = 1
                     self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
 
-        elif keys[settings.BACKWARD_KEY]:
-            for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.relative_pos.x + speed, self.relative_pos.y)):
+        elif keys[settings.BACKWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
+            for speed in (self.max_speed, 0, -1):
+                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y  + speed)):
                     self.change_animation_verse("down")
+                    print("Current actual speed:", self.actual_speed, "\n")
+                    self.actual_speed = speed
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = -1
                     self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
 
         elif keys[settings.LEFT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:  
-            for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y - speed)):
+            for speed in (self.max_speed, 0, -1):
+                if self.collision_controller.allow_movement((self.relative_pos.x - speed, self.relative_pos.y)):
                     self.change_animation_verse("left")
+                    print("Current actual speed:", self.actual_speed)
+                    self.actual_speed = speed
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = 1
                     self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
 
         elif keys[settings.RIGHT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:    
-            for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y + speed)):
+            for speed in (self.max_speed, 0, -1):
+                if self.collision_controller.allow_movement((self.relative_pos.x + speed, self.relative_pos.y)):
+                #if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y + speed)):
                     self.change_animation_verse("right")
+                    print("Current actual speed:", self.actual_speed, "\n")
+                    self.actual_speed = speed
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = -1
                     self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
@@ -141,8 +150,8 @@ class Player(pygame.sprite.Sprite):
 
         if self.direction.x == 0 and self.direction.y == 0: #Se il giocatore non si sta muovendo disegno il frame che lo rappresenta come fermo
             #self.current_frame = 0 #Non necessario perchè se in movimento cicla fra frame 1 e 2 ma "teoricamente" corretto
-            self.image = self.current_animation[0] 
+            self.image = self.current_animation[0]
             
     def move(self):
         self.input() #Gestisce l'input del giocatore
-        self.rect.center += self.direction * self.speed
+        self.rect.center += self.direction * self.actual_speed

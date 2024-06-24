@@ -11,15 +11,15 @@ class CameraGroup(pygame.sprite.Group):
         self.half_h = self.display_surface.get_height() // 2
 
         #Game variables
-        self.level_num = 1
-        self.zone_num = 1
+        self.level_num = 0
+        self.zone_num = 0
 
         #Camera offset
         self.offset = pygame.math.Vector2()
 
         #Dichiarazione di variabili temporanee per gli offset
-        self.offset_pos_sprites = None
-        self.offset_pos_ground = None
+        self.offset_pos_sprites = 0
+        self.offset_pos_ground = 0
 
         #Camera zoom
         self.zoom_scale = INITIAL_ZOOM
@@ -36,13 +36,13 @@ class CameraGroup(pygame.sprite.Group):
         self.ground_surf_1_2 = pygame.image.load("graphics/world_sprites/1_2.png").convert_alpha()
         self.ground_surf_1_3 = pygame.image.load("graphics/world_sprites/1_3.png").convert_alpha()
         self.ground_surf_1_4 = pygame.image.load("graphics/world_sprites/1_4.png").convert_alpha()
-        self.ground_surfaces = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]
+        self.ground_surfaces_1 = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]  
 
         self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
         self.ground_rect_1_2 = self.ground_surf_1_2.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
         self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
         self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
-        self.ground_rects = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
+        self.ground_rects_1 = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
 
         #Collision maps
         self.first_level_first_zone = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha()
@@ -61,6 +61,14 @@ class CameraGroup(pygame.sprite.Group):
         self.first_level_fourth_zone_rect = self.first_level_fourth_zone.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
         self.first_level_maps_rects = [self.first_level_first_zone_rect, self.first_level_second_zone_rect, self.first_level_third_zone_rect, self.first_level_fourth_zone_rect]
 
+        #Variabili per rendering
+        self.ground_surfaces = self.ground_surfaces_1
+        self.ground_rects = self.ground_rects_1
+
+        #Variabili per collisioni
+        self.last_player_pos_offsetted = pygame.math.Vector2()
+
+
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
         if keys[ZOOM_OUT_KEY] and self.zoom_scale < ZOOM_SCALE_LIMITS[1]:
@@ -73,7 +81,7 @@ class CameraGroup(pygame.sprite.Group):
         self.offset.y = target.rect.centery - self.half_h
 
     def calculate_new_player_relative_coords(self):
-        return self.offset_pos_sprites - self.offset_pos_ground
+        return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def get_player_zone(self):
         pass
@@ -81,7 +89,7 @@ class CameraGroup(pygame.sprite.Group):
     def draw_ground_zones(self):
         for i, ground_surf in enumerate(self.ground_surfaces):
             self.offset_pos_ground = self.ground_rects[i].topleft + self.offset + self.internal_offset
-            print("original pos", self.ground_rects[i].topleft, "ground offset:", self.offset_pos_ground)
+            #print("ground_ rect: " , self.ground_rects[i].topleft, "with offset:", self.offset_pos_ground)
             self.internal_surface.blit(ground_surf, self.offset_pos_ground)
     
         #Draws the collision maps with half opacity for debugging purposes
@@ -102,6 +110,9 @@ class CameraGroup(pygame.sprite.Group):
         #Elementi attivi
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
             self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
+            #print("sprite pos: " , sprite.rect.topleft, "with offset:", self.offset_pos_sprites)
+            #print("relative position: ", self.offset_pos_sprites - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset), "\n")
+            if sprite == player: self.last_player_pos_offsetted = self.offset_pos_sprites #Distinguo il player per poterne calcolare le coordinate relative
             self.internal_surface.blit(sprite.image, self.offset_pos_sprites)
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)

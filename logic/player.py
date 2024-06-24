@@ -8,12 +8,12 @@ class Player(pygame.sprite.Sprite):
 
         # Call the parent class (Sprite) constructor
         super().__init__(camera_group)
+        self.camera_group = camera_group
         self.pos = pos
         self.collision_controller = CollisionController(camera_group)
         self.direction = pygame.math.Vector2()
         self.speed = settings.PLAYER_SPEED # pixels per frame
-
-        self.relative_pos = camera_group.calculate_new_player_relative_coords()
+        self.relative_pos = self.camera_group.calculate_new_player_relative_coords()
 
         #Animation variables
         self.frame_switch_delay = settings.PLAYER_ANIMATION_DELAY
@@ -92,7 +92,8 @@ class Player(pygame.sprite.Sprite):
     def input(self):
         
         keys = pygame.key.get_pressed() #Tupla di booleani contenente lo stato di tutti i tasti
-        self.relative_pos = camera_group.calculate_new_player_relative_coords()
+        self.relative_pos = self.camera_group.calculate_new_player_relative_coords() #Calcola le coordinate relative del giocatore rispetto all'immagine della zona in cui si trova
+        print(self.relative_pos)
 
         if (keys[settings.BACKWARD_KEY] and keys[settings.FORWARD_KEY]) or (keys[settings.LEFT_KEY] and keys[settings.RIGHT_KEY]): #Se vengono premuti
             self.direction.y = 0
@@ -100,7 +101,7 @@ class Player(pygame.sprite.Sprite):
 
         elif keys[settings.FORWARD_KEY]:
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.rect.centerx - speed, self.rect.centery)):
+                if self.collision_controller.allow_movement((self.relative_pos.x - speed, self.relative_pos.y)):
                     self.change_animation_verse("up")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = 1
@@ -109,7 +110,7 @@ class Player(pygame.sprite.Sprite):
 
         elif keys[settings.BACKWARD_KEY]:
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.rect.centerx + speed, self.rect.centery)):
+                if self.collision_controller.allow_movement((self.relative_pos.x + speed, self.relative_pos.y)):
                     self.change_animation_verse("down")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = -1
@@ -118,7 +119,7 @@ class Player(pygame.sprite.Sprite):
 
         elif keys[settings.LEFT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:  
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.rect.centerx, self.rect.centery - speed)):
+                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y - speed)):
                     self.change_animation_verse("left")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = 1
@@ -127,7 +128,7 @@ class Player(pygame.sprite.Sprite):
 
         elif keys[settings.RIGHT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:    
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if self.collision_controller.allow_movement((self.rect.centerx, self.rect.centery + speed)):
+                if self.collision_controller.allow_movement((self.relative_pos.x, self.relative_pos.y + speed)):
                     self.change_animation_verse("right")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = -1
@@ -145,4 +146,3 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.input() #Gestisce l'input del giocatore
         self.rect.center += self.direction * self.speed
-        #print(self.rect.center)

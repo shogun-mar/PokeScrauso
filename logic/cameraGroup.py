@@ -2,6 +2,11 @@ import pygame
 from settings import *
 
 class CameraGroup(pygame.sprite.Group):
+
+    #Game variables as class attributes to simplify logic in collisionMap.py
+    level_num = 1
+    zone_num = 1
+
     def __init__(self, screen):
         super().__init__()
         self.display_surface = screen
@@ -23,23 +28,11 @@ class CameraGroup(pygame.sprite.Group):
         self.internal_offset.x = self.internal_surface_size_vector.x // 2 - self.half_w
         self.internal_offset.y = self.internal_surface_size_vector.y // 2 - self.half_h
 
-        #Load images
-        self.first_level_first_zone = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha().set_alpha(128)
-        self.first_level_second_zone = pygame.image.load("graphics/collision_maps/1_2.png").convert_alpha().set_alpha(128)
-        self.first_level_third_zone = pygame.image.load("graphics/collision_maps/1_3.png").convert_alpha().set_alpha(128)
-        self.first_level_maps = [self.first_level_first_zone, self.first_level_second_zone, self.first_level_third_zone]
-
-        self.first_level_first_zone_rect = self.first_level_first_zone.get_rect(topleft = (0,0))
-        self.first_level_second_zone_rect = self.first_level_second_zone.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
-        self.first_level_third_zone_rect = self.first_level_third_zone.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
-        self.first_level_maps_rects = [self.first_level_first_zone_rect, self.first_level_second_zone_rect, self.first_level_third_zone_rect]
-
-        #Ground
+        #Ground images
         self.ground_surf_1_1 = pygame.image.load("graphics/world_sprites/1_1.png").convert_alpha()
         self.ground_surf_1_2 = pygame.image.load("graphics/world_sprites/1_2.png").convert_alpha()
         self.ground_surf_1_3 = pygame.image.load("graphics/world_sprites/1_3.png").convert_alpha()
         self.ground_surf_1_4 = pygame.image.load("graphics/world_sprites/1_4.png").convert_alpha()
-        
         self.ground_surfaces = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]
 
         self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
@@ -47,6 +40,20 @@ class CameraGroup(pygame.sprite.Group):
         self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
         self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
         self.ground_rects = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
+
+        #Collision maps
+        self.first_level_first_zone = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha()
+        self.first_level_first_zone.set_alpha(128)
+        self.first_level_second_zone = pygame.image.load("graphics/collision_maps/1_2.png").convert_alpha()
+        self.first_level_second_zone.set_alpha(128)
+        self.first_level_third_zone = pygame.image.load("graphics/collision_maps/1_3.png").convert_alpha()
+        self.first_level_third_zone.set_alpha(128)
+        self.first_level_maps = [self.first_level_first_zone, self.first_level_second_zone, self.first_level_third_zone]
+
+        self.first_level_first_zone_rect = self.first_level_first_zone.get_rect(topleft = (0,0))
+        self.first_level_second_zone_rect = self.first_level_second_zone.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
+        self.first_level_third_zone_rect = self.first_level_third_zone.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
+        self.first_level_maps_rects = [self.first_level_first_zone_rect, self.first_level_second_zone_rect, self.first_level_third_zone_rect]
 
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
@@ -89,3 +96,9 @@ class CameraGroup(pygame.sprite.Group):
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))
 
         self.display_surface.blit(scaled_surface, scaled_rect)
+    
+    def change_level(self, level_num):
+        CameraGroup.level_num = level_num
+    
+    def change_zone(self, zone_num):
+        CameraGroup.zone_num = zone_num

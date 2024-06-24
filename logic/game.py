@@ -7,6 +7,7 @@ from ctypes import windll
 from logic.player import Player
 from logic.gameState import GameState
 from logic.cameraGroup import CameraGroup
+from logic.collisionMap import get_offsets
 from logic.states.gameplayState import *
 from logic.states.helpMenuState import *
 from logic.states.pokedexState import *
@@ -37,7 +38,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.START_MENU #Stato di gioco iniziale
+        self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -150,7 +151,8 @@ class Game:
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
-        self.player = Player((50, 200), self.camera_group, self.current_keybinds)
+        self.player = Player((0, 200), self.camera_group, self.current_keybinds)
+        get_offsets(self.camera_group) #Imposta gli offset per la collision map
 
     def start(self):
         while True:

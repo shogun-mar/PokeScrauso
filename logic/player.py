@@ -1,7 +1,7 @@
 import pygame
 import time
 import settings #Bisogna importare così perchè from ... import * clona le variabili
-from logic.collisionMap import allow_movement
+import logic.collisionMap as collisionMap #Al momento dell'importazione esegue il codice contenuto in collisionMap.py fuori dai metodi
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group, keybinds):
@@ -94,45 +94,41 @@ class Player(pygame.sprite.Sprite):
             self.direction.y = 0
             self.direction.x = 0
 
-        elif keys[settings.FORWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
+        elif keys[settings.FORWARD_KEY]:
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if allow_movement((self.rect.centerx - speed, self.rect.centery), 1, 1):
+                if collisionMap.allow_movement((self.rect.centerx - speed, self.rect.centery)):
                     self.change_animation_verse("up")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = 1
                     self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
-            print(" - Direction: ",  self.direction)
 
-        elif keys[settings.BACKWARD_KEY] and not keys[settings.LEFT_KEY] and not keys[settings.RIGHT_KEY]:
+        elif keys[settings.BACKWARD_KEY]:
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if allow_movement((self.rect.centerx + settings.PLAYER_SPEED, self.rect.centery), 1, 1):
+                if collisionMap.allow_movement((self.rect.centerx + speed, self.rect.centery)):
                     self.change_animation_verse("down")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.y = -1
                     self.direction.x = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
-            print(" - Direction: ",  self.direction)
 
         elif keys[settings.LEFT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:  
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if allow_movement((self.rect.centerx, self.rect.centery - settings.PLAYER_SPEED), 1, 1):
+                if collisionMap.allow_movement((self.rect.centerx, self.rect.centery - speed)):
                     self.change_animation_verse("left")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = 1
                     self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
-            print(" - Direction: ",  self.direction)
 
         elif keys[settings.RIGHT_KEY] and not keys[settings.FORWARD_KEY] and not keys[settings.BACKWARD_KEY]:    
             for speed in (settings.PLAYER_SPEED, 0, -1):
-                if allow_movement((self.rect.centerx, self.rect.centery + settings.PLAYER_SPEED), 1, 1):
+                if collisionMap.allow_movement((self.rect.centerx, self.rect.centery + speed)):
                     self.change_animation_verse("right")
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = -1
                     self.direction.y = 0 #Per garantire che il giocatore non si possa muovere in diagonale
                     break
-            print(" - Direction: ",  self.direction)
                
         else:
             self.direction.x = 0

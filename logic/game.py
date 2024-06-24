@@ -7,7 +7,6 @@ from ctypes import windll
 from logic.player import Player
 from logic.gameState import GameState
 from logic.cameraGroup import CameraGroup
-from logic.collisionMap import get_offsets
 from logic.states.gameplayState import *
 from logic.states.helpMenuState import *
 from logic.states.pokedexState import *
@@ -152,7 +151,6 @@ class Game:
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.player = Player((0, 200), self.camera_group, self.current_keybinds)
-        get_offsets(self.camera_group) #Imposta gli offset per la collision map
 
     def start(self):
         while True:

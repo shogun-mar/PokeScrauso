@@ -18,11 +18,29 @@ def handle_name_menu_input(game, key):
 
 def handle_name_menu_input_mouse(game):
     mouse_pos = pygame.mouse.get_pos()
+    print(mouse_pos)
+
     #ok button topleft: 555, 150 bottomright: 655, 200
     if mouse_pos[0] >= 555 and mouse_pos[0] <= 655 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
         if is_name_valid(game): #Se l'utente ha inserito almeno un carattere
             game.player_name = game.player_name.replace("_", "")
             game.game_state = GameState.GAMEPLAY
+
+    #caratteri accentati button: topleft 235, 150 bottomright 315, 200
+    elif mouse_pos[0] >= 235 and mouse_pos[0] <= 315 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        pass
+
+    #back button: topleft 440, 150 bottomright 540, 200
+    elif mouse_pos[0] >= 440 and mouse_pos[0] <= 540 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        pass
+
+    #upper button: topleft 30, 150 bottomright 140, 200
+    elif mouse_pos[0] >= 30 and mouse_pos[0] <= 140 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        pass
+
+    #simbols button: topleft 325, 150 bottomright 400, 200
+    elif mouse_pos[0] >= 325 and mouse_pos[0] <= 400 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        pass
     
 
 def render_name_menu(game, simbols_set_index):
@@ -63,8 +81,8 @@ def move_cursor(game, key):
     game.name_menu_cursor_rect.center = game.rendered_name_menu_texts_rects[simbols_set_index][(row-1)*13 + (column-1)].center
 
 def render_name_menu_texts(font, color, game):
-    rendered_texts = []  # List containing dictionaries for each category
-    
+    rendered_texts = []  # Two-dimensional list containing dictionaries for each category
+                         # [[lower], [upper], [accentati], [speciali]]
 
     for simbol_set in game.simbols:
         temp_array = []
@@ -74,7 +92,8 @@ def render_name_menu_texts(font, color, game):
     return rendered_texts
 
 def get_name_menu_texts_rects(rendered_texts):
-    rects = [] #Three-dimensional list containing the rects of each symbol
+    rects = [] #Two-dimensional list containing the rects of each symbol
+               # [[lower], [upper], [accentati], [speciali]]
 
     for simbols_set in rendered_texts:
         x_coord = start_x

@@ -19,27 +19,26 @@ def handle_name_menu_input(game, key):
         selected_char = game.simbols[game.simbols_set_index][(row-1)*13 + (column-1)]
         update_player_name(game, selected_char)
 
-def handle_name_menu_input_mouse(game):
-    mouse_pos = pygame.mouse.get_pos()
+def handle_name_menu_input_mouse(game, mouse_pos):
     print(mouse_pos)
 
-    #lower button: topleft 150, 150 bottomright 230, 200
-    if mouse_pos[0] >= 150 and mouse_pos[0] <= 230 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+    #lower button
+    if game.simbol_set_icons_rects[0].collidepoint(mouse_pos):
         game.simbols_set_index = 0
         update_maximums(game)
 
-    #upper button: topleft 30, 150 bottomright 140, 200
-    elif mouse_pos[0] >= 30 and mouse_pos[0] <= 140 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+    #upper button
+    elif game.simbol_set_icons_rects[1].collidepoint(mouse_pos):
         game.simbols_set_index = 1
         update_maximums(game)
 
-    #caratteri accentati button: topleft 235, 150 bottomright 315, 200
-    elif mouse_pos[0] >= 235 and mouse_pos[0] <= 315 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+    #caratteri accentati button
+    elif game.simbol_set_icons_rects[2].collidepoint(mouse_pos):
         game.simbols_set_index = 2
         update_maximums(game)
 
-    #simbols button: topleft 325, 150 bottomright 400, 200
-    elif mouse_pos[0] >= 325 and mouse_pos[0] <= 400 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+    #simbols button
+    elif game.simbol_set_icons_rects[3].collidepoint(mouse_pos):
         game.simbols_set_index = 3
         update_maximums(game)
 
@@ -59,8 +58,8 @@ def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_overlay_controls, (22, 120))
     game.fake_screen.blit(game.player_name_text, (150, 50))
     game.fake_screen.blit(game.name_menu_icon, (75, 25))
-    for i in range(len(game.simbols_set_icons)):
-        if i != simbols_set_index: game.fake.screen.blit(game.simbols_set_icons[i], game.simbols_set_icons_rects[i])
+    for i in range(len(game.simbol_set_icons)):
+       if i != simbols_set_index: game.fake_screen.blit(game.simbol_set_icons[i], game.simbol_set_icons_rects[i])
     for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
         game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
     game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)

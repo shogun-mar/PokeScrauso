@@ -39,7 +39,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.SETTINGS_MENU #Stato di gioco iniziale
+        self.game_state = GameState.NAME_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -139,9 +139,11 @@ class Game:
         self.player_name = "____________" # Iniziale nome del giocatore
         self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
         self.name_menu_icon = pygame.image.load("graphics/player/down_frame2.png").convert_alpha() #Icon placed besides the name could be player or a pokèmon
-        self.simbol_set_icons = [pygame.image.load("graphics/menus/naming menu/lower_icon.png"), pygame.image.load("graphics/menus/naming menu/upper_icon.png"), pygame.image.load("graphics/menus/naming menu/accented_icon.png"), pygame.image.load("graphics/menus/naming menu/others_icon.png")]
-        self.simbol_set_icons_rects = [icon.get_rect(center = (settings.SCREEN_WIDTH - 40, 40)) for icon in self.simbol_set_icons]
-
+        self.simbol_set_icons = [pygame.image.load("graphics/menus/naming menu/upper_icon.png"), pygame.image.load("graphics/menus/naming menu/lower_icon.png"), pygame.image.load("graphics/menus/naming menu/accented_icon.png"), pygame.image.load("graphics/menus/naming menu/others_icon.png")]
+        self.simbol_set_icons_rects = []
+        for i in range(len(self.simbol_set_icons)):
+            if i == 0: self.simbol_set_icons_rects.append(self.simbol_set_icons[i].get_rect(topleft = (63, 148)))
+            else: self.simbol_set_icons_rects.append(self.simbol_set_icons[i].get_rect(topleft = (63 + i*80 + i*8, 148)))
         #Squad menu
         self.squad_menu_background = pygame.image.load("graphics/menus/squad menu/bg.png").convert_alpha()
 
@@ -215,9 +217,10 @@ class Game:
                 elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_input(self, event.key)
                 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
-                if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
-                elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
-                elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self)
+                mouse_pos = pygame.mouse.get_pos()
+                if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self, mouse_pos)
+                elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self, mouse_pos)
+                elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self, mouse_pos)
             
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY

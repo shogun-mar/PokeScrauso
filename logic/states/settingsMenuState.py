@@ -42,12 +42,12 @@ def handle_settings_input(game, key):
             game.modifying_keybind = False # Correctly setting modifying_keybind to False to indicate the process is complete
             update_rects(game) # Update the rects of the text to be rendered (should be done only is a long key is added or removed but the performance impact is negligible)
 
-def handle_settings_input_mouse(game):
-    if game.save_button_rect.collidepoint(pygame.mouse.get_pos()):
+def handle_settings_input_mouse(game, mouse_pos):
+    if game.save_button_rect.collidepoint(mouse_pos):
         #Salva le impostazioni
         settings.save_configuration(game.modified_keybinds)
         game.GameState = GameState.START_MENU
-    elif game.restore_button_rect.collidepoint(pygame.mouse.get_pos()):
+    elif game.restore_button_rect.collidepoint(mouse_pos):
         #Ripristina le impostazioni ai valori di default
         game.modified_keybinds = settings.set_default_configuration()
         for i, keybind in enumerate(game.modified_keybinds.values()):
@@ -55,7 +55,7 @@ def handle_settings_input_mouse(game):
             if key_name in game.key_images:  # Check if there is an image for this key
                 game.modified_keybinds_images_values[i] = game.key_images[key_name]  # Update the image
                 
-    elif game.discard_button_rect.collidepoint(pygame.mouse.get_pos()):
+    elif game.discard_button_rect.collidepoint(mouse_pos):
         #Scarta le impostazioni
         game.modified_keybinds = game.current_keybinds.copy() #Bisogna fare il copy se no passa per riferemento
         # Update images for each keybind based on the current (discarded) keybinds
@@ -64,12 +64,12 @@ def handle_settings_input_mouse(game):
             if key_name in game.key_images:  # Check if there is an image for this key
                 game.modified_keybinds_images_values[i] = game.key_images[key_name]  # Update the image
 
-    elif game.mute_button_rect.collidepoint(pygame.mouse.get_pos()):
+    elif game.mute_button_rect.collidepoint(mouse_pos):
         #Muta il gioco
         game.current_volume_status = not game.current_volume_status
     else:
         for i in range(len(game.settings_menu_images_rects)):
-            if game.settings_menu_images_rects[i].collidepoint(pygame.mouse.get_pos()):
+            if game.settings_menu_images_rects[i].collidepoint(mouse_pos):
                 if game.last_clicked_index is not None and game.last_clicked_index != i and game.modifying_keybind == False: # Se c'è una Surface precedentemente selezionata, ripristina la sua opacità
                    game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
                 game.modifying_keybind = True # Imposta la variabile di stato a True

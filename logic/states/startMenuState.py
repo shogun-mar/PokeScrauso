@@ -5,9 +5,7 @@ from logic.gameState import GameState
 def handle_start_menu_input(game, key):
         if key == settings.INTERACTION_KEY: game.game_state = GameState.GAMEPLAY #Chiude il menu iniziale
 
-def handle_start_menu_input_mouse(game):
-    #Controllo interazione con il pulsante
-    mouse_pos = pygame.mouse.get_pos()
+def handle_start_menu_input_mouse(game, mouse_pos):
     if game.new_game_button_rect.collidepoint(mouse_pos):
         if pygame.mouse.get_pressed()[0]: 
             #Start new game

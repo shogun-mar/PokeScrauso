@@ -45,7 +45,7 @@ class CollisionController:
             pass
         
         
-        elif pixel_color == (0,0,0,255) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
+        elif pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
             return False
     
         return True

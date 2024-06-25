@@ -163,11 +163,12 @@ class Game:
         self.squad_menu_cancel_button_active_rect = self.squad_menu_cancel_button_active.get_rect(midright = (settings.SCREEN_WIDTH - 10, 432))
         self.squad_menu_cancel_button = self.squad_menu_cancel_button_passive
         self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button_passive_rect
+        self.squad_menu_cancel_button_text = menu_font.render("CANCEL", True, (255,255,255))
 
-        self.squad_menu_round_panel = pygame.image.load("graphics/menus/squad menu/panel_round.png").convert_alpha()
-        self.squad_menu_blank_panel = pygame.image.load("graphics/menus/squad menu/panel_blank.png").convert_alpha()
-        self.squad_menu_panel_surf = []
-        self.squad_menu_panel_rects = [self.squad_menu_blank_panel.get_rect(topleft = (25, 50)), self.squad_menu_blank_panel.get_rect(topleft = (10, 110)), self.squad_menu_blank_panel.get_rect(topleft = (10, 210)), self.squad_menu_blank_panel.get_rect(topleft = (10, 310)), self.squad_menu_blank_panel.get_rect(topleft = (10, 410)), self.squad_menu_blank_panel.get_rect(topleft = (10, 510))]
+        self.squad_menu_round_panel = pygame.image.load("graphics/menus/squad menu/blank_panel_round.png").convert_alpha()
+        self.squad_menu_blank_panel = pygame.image.load("graphics/menus/squad menu/blank_panel.png").convert_alpha()
+        self.squad_menu_panel_surf = [self.squad_menu_round_panel, self.squad_menu_blank_panel, self.squad_menu_blank_panel, self.squad_menu_blank_panel, self.squad_menu_blank_panel, self.squad_menu_blank_panel]
+        self.squad_menu_panel_rects = [self.squad_menu_round_panel.get_rect(topleft = (4, 11)), self.squad_menu_blank_panel.get_rect(topleft = (4, 131)), self.squad_menu_blank_panel.get_rect(topleft = (4, 250)), self.squad_menu_blank_panel.get_rect(topright = (716, 31)), self.squad_menu_blank_panel.get_rect(topright = (716, 151)), self.squad_menu_blank_panel.get_rect(topright = (715, 271))]
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()

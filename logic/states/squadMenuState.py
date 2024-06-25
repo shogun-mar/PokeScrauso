@@ -9,7 +9,7 @@ def render_squad_menu(game):
     game.fake_screen.blit(game.squad_menu_overlay, (0, 384))
     game.fake_screen.blit(game.squad_menu_overlay_text, (35, 428))
     game.fake_screen.blit(game.squad_menu_cancel_button, game.squad_menu_cancel_button_rect)
-    game.fake_screen.blit(game.squad_menu_cancel_button_text, (game.squad_menu_cancel_button_rect.center))
+    game.fake_screen.blit(game.squad_menu_cancel_button_text, game.squad_menu_cancel_button_text_rect)
     for i in range(6): #6 perchè è il numero massimo di pokèmon che il giocatore può avere in sqaudra e quindi il numero massimo di pannelli che possono essere disegnati
        game.fake_screen.blit(game.squad_menu_panel_surf[i], game.squad_menu_panel_rects[i])
 

@@ -42,6 +42,7 @@ class Game:
         self.game_state = GameState.SQUAD_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
+        menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
         #Colors
@@ -163,7 +164,8 @@ class Game:
         self.squad_menu_cancel_button_active_rect = self.squad_menu_cancel_button_active.get_rect(midright = (settings.SCREEN_WIDTH - 10, 432))
         self.squad_menu_cancel_button = self.squad_menu_cancel_button_passive
         self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button_passive_rect
-        self.squad_menu_cancel_button_text = menu_font.render("CANCEL", True, (255,255,255))
+        self.squad_menu_cancel_button_text = menu_button_font.render("CANCEL", True, (255,255,255))
+        self.squad_menu_cancel_button_text_rect = self.squad_menu_cancel_button_text.get_rect(center = (self.squad_menu_cancel_button_rect.centerx + 30, self.squad_menu_cancel_button_rect.centery))
 
         self.squad_menu_round_panel = pygame.image.load("graphics/menus/squad menu/blank_panel_round.png").convert_alpha()
         self.squad_menu_blank_panel = pygame.image.load("graphics/menus/squad menu/blank_panel.png").convert_alpha()
@@ -280,6 +282,7 @@ class Game:
 
         pos = pygame.mouse.get_pos()
         buttons = []
+        
 
         if self.game_state == GameState.SETTINGS_MENU:
             buttons = [self.save_button_rect, self.restore_button_rect, self.discard_button_rect, self.mute_button_rect]
@@ -288,11 +291,19 @@ class Game:
         elif self.game_state == GameState.NAME_MENU:
             buttons = self.simbol_set_icons_rects.copy() #Copio la lista per non modificare l'originale
             del buttons[self.simbols_set_index] #Rimuove l'icona del set di simboli attualmente visualizzato
-        
+        elif self.game_state == GameState.SQUAD_MENU:
+            buttons = [self.squad_menu_cancel_button_rect]
+
         if any(button.collidepoint(pos) for button in buttons):
             self.set_pointer_click()
+            if self.game_state == GameState.SQUAD_MENU: self.squad_menu_cancel_button = self.squad_menu_cancel_button_active
+            self.squad_menu_cancel_button_text_rect = self.squad_menu_cancel_button_active_rect
+            self.squad_menu_cancel_button_text_rect = self.squad_menu_cancel_button_text.get_rect(center = (self.squad_menu_cancel_button_rect.centerx + 30, self.squad_menu_cancel_button_rect.centery))
         else:
             self.set_pointer_normal()
+            if self.game_state == GameState.SQUAD_MENU: self.squad_menu_cancel_button = self.squad_menu_cancel_button_passive
+            self.squad_menu_cancel_button_text_rect = self.squad_menu_cancel_button_passive_rect
+            self.squad_menu_cancel_button_text_rect = self.squad_menu_cancel_button_text.get_rect(center = (self.squad_menu_cancel_button_rect.centerx + 30, self.squad_menu_cancel_button_rect.centery))
 
     def import_frames(self, directory_path): #Importa i frame per una animazione
         images = []

@@ -39,13 +39,14 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.SETTINGS_MENU #Stato di gioco iniziale
+        self.game_state = GameState.SQUAD_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
         #Colors
         self.naming_menu_color = (0,0,0)
+        self.squad_menu_color = (0,0,0)
 
         #Frame oscurato per il menu di pausa e di aiuto
         self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
@@ -139,6 +140,23 @@ class Game:
         self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
         self.name_menu_icon = pygame.image.load("graphics/player/down_frame2.png").convert_alpha() #Icon placed besides the name could be player or a pokèmon
 
+        #Squad menu
+        self.squad_menu_background = pygame.image.load("graphics/menus/squad menu/bg.png").convert_alpha()
+
+        self.squad_menu_overlay_short = pygame.image.load("graphics/menus/squad menu/overlay_short.png").convert_alpha()
+        self.squad_menu_overlay_long = pygame.image.load("graphics/menus/squad menu/overlay_long.png").convert_alpha()
+        self.squad_menu_overlay = self.squad_menu_overlay_long
+
+        overlay_string = f"Choose a Pokèmon or press {pygame.key.name(settings.PAUSE_KEY).capitalize()} to go back"
+        self.squad_menu_overlay_text_normal = menu_font.render(overlay_string, True, self.squad_menu_color)
+        overlay_string = "Choose a Pokèmon to swamp to"
+        self.squad_menu_overlay_text_battle = menu_font.render(overlay_string, True, self.squad_menu_color)
+        self.squad_menu_overlay_text = self.squad_menu_overlay_text_normal
+        del overlay_string
+
+        self.squad_menu_cancel_button = pygame.image.load("graphics/menus/squad menu/icon_cancel.png").convert_alpha()
+        self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button.get_rect(topright = (settings.SCREEN_WIDTH - 10, 400))
+
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
@@ -166,7 +184,10 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == settings.FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
                     if not pygame.display.get_surface().get_flags() & pygame.NOFRAME: #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
-                        self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME, vsync=1)
+                        try:
+                            self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME, vsync=1)
+                        except Exception:
+                            self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags)
                     else:
                         self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags, vsync=1) 
                 if event.key == settings.SCREENSHOT_KEY: pygame.image.save(self.screen, f"screenshots/screenshot_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png")        

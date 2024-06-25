@@ -1,5 +1,4 @@
 import pygame
-import datetime #per debugging da togliere
 from settings import *
 
 class CameraGroup(pygame.sprite.Group):
@@ -14,7 +13,6 @@ class CameraGroup(pygame.sprite.Group):
         #Game variables
         self.level_num = 0
         self.zone_num = 0
-        #self.zone_num_modified = False
 
         #Camera offset
         self.offset = pygame.math.Vector2()
@@ -90,10 +88,8 @@ class CameraGroup(pygame.sprite.Group):
             self.offset_pos_ground = self.ground_rects[i].topleft + self.offset + self.internal_offset
             self.internal_surface.blit(ground_surf, self.offset_pos_ground)
     
-        #Draws the collision maps with half opacity for debugging purposes
-        for i, map_surf in enumerate(self.first_level_maps):
-            offset_pos_maps = self.first_level_maps_rects[i].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(map_surf, offset_pos_maps)
+        #Draws the collision maps for debugging purposes
+        self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def custom_draw(self, player):
 
@@ -102,7 +98,7 @@ class CameraGroup(pygame.sprite.Group):
 
         self.internal_surface.fill(BACKGROUND_COLOR)
 
-        #Terreno
+        #Elementi passivi
         self.draw_ground_zones()
         
         #Elementi attivi
@@ -111,7 +107,7 @@ class CameraGroup(pygame.sprite.Group):
             if sprite == player: self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
             self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
 
-        #print("Zona num", self.zone_num, "has been modified", self.zone_num_modified, "at", datetime.datetime.now())
+        #print("Zona num", self.zone_num, "at", datetime.datetime.now())
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))

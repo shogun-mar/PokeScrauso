@@ -28,19 +28,19 @@ class Game:
         self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags, vsync=1)
         self.fake_screen = self.screen.copy()
         self.clock = pygame.time.Clock()
-        pygame.display.set_caption("PokèScrauso")
         pygame.display.set_icon(pygame.image.load("graphics/menus/logo_small.png"))
         # Allow only specific events
         pygame.event.set_allowed([pygame.MOUSEBUTTONDOWN, pygame.MOUSEWHEEL, pygame.QUIT, pygame.KEYDOWN, pygame.VIDEORESIZE])
-        # Get physical resolution
-        self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
         #Variabili di gioco
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
         self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
-        #Font
+        # Get physical resolution
+        self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
+        
+        #Fonts
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -50,7 +50,7 @@ class Game:
         self.squad_menu_color = (0,0,0)
 
         #Frame oscurato per il menu di pausa e di aiuto
-        self.darkened_surface = None #Vuoto in modo che venga inizializzato solo quando serve
+        self.darkened_surface = pygame.Surface(self.fake_screen.get_size()) #Vuoto in modo che venga inizializzato solo quando serve
 
         #Pointer images
         self.pointer_image = pygame.image.load("graphics/menus/pointers/pointer.png").convert_alpha()
@@ -228,6 +228,7 @@ class Game:
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self, mouse_pos)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self, mouse_pos)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self, mouse_pos)
+                elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_mouse_input(self, mouse_pos)
             
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY
@@ -262,12 +263,16 @@ class Game:
         self.clock.tick(settings.MAX_FPS)
 
     def update_logic(self):
+
+        pygame.display.set_caption(f"PokèScrauso - FPS: {int(self.clock.get_fps())}") #Aggiorna il titolo della finestra con il numero di FPS
+
         if self.game_state == GameState.START_MENU:
             #Cambio frame dello sfondo
             change_frame_values = self.change_frame(current_animation = self.start_background_images, current_frame = self.start_menu_current_frame, current_last_switch_time = self.background_last_switch_time, image_to_update = self.start_background_image, animation_delay = self.background_frame_switch_delay)
             self.start_background_image = change_frame_values[0]
             self.start_menu_current_frame = change_frame_values[1]
             self.background_last_switch_time = change_frame_values[2]
+        
 
     def set_pointer_click(self):
         self.current_pointer = self.pointer_click_image

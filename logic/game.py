@@ -96,7 +96,7 @@ class Game:
             "Move forwards", "Move to the left", 
             "Move backwards", "Move to the right", 
             "Toggle fullscreen", "Open the Pokèdex",
-            "Closes the game", "Interact with objects",
+            "Open the squad menu", "Interact with objects",
             "Open the map", "Open the inventory",
             "Open the help menu", "Pause the game",
             "Zoom in", "Zoom out"
@@ -129,6 +129,7 @@ class Game:
         self.simbols = [
         ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
         ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+        ['è', 'é', 'à', 'ò', 'ù', 'ì'],
         ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ':', ', ', ';', "'", '"', '!', '?', '(', ')', '+', '-', '*', '/', '=']
         ]
         self.rendered_name_menu_texts  = render_name_menu_texts(self.naming_menu_font, (0,0,0), self)
@@ -136,6 +137,7 @@ class Game:
         self.simbols_set_index = 0 #Indice del set di simboli attualmente visualizzato
         self.player_name = "____________" # Iniziale nome del giocatore
         self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
+        self.name_menu_icon = pygame.image.load("graphics/player/down_frame2.png").convert_alpha() #Icon placed besides the name could be player or a pokèmon
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()

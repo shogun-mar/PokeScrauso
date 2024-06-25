@@ -11,12 +11,8 @@ def render_settings_menu(game):
     game.fake_screen.blit(game.mute_button, game.mute_button_rect) if game.current_volume_status else game.fake_screen.blit(game.unmute_button, game.unmute_button_rect)
     for i in range(len(game.keybinds_text)):
         game.fake_screen.blit(game.settings_menu_rendered_texts[i], game.settings_menu_rendered_texts_rects[i])
-        #print("len images values", len(game.settings_menu_images_rects), "len images rects", len(game.settings_menu_rendered_texts_rects))
-        try:
-            game.fake_screen.blit(game.modified_keybinds_images_values[i], game.settings_menu_images_rects[i])
-        except:
-            pass
-            #print("Errore i:", i)
+
+        game.fake_screen.blit(game.modified_keybinds_images_values[i], game.settings_menu_images_rects[i])
 
 def get_configuration_images(keybinds):
         images = {}  # Dictionary with key names as keys and images as values
@@ -37,7 +33,7 @@ def handle_settings_input(game, key):
             game.current_volume_status = not game.current_volume_status #Muta il gioco
     else: 
         if key == settings.CANCEL_KEY: # If the user presses the escape key, the process is interrupted
-            game.modIfying_keybind = False
+            game.modifying_keybind = False
             game.modified_keybinds_images_values[game.last_clicked_index].set_alpha(255)
         elif key in settings.ACCEPTABLE_KEYBINDS:
             desired_dict_key = list(game.modified_keybinds.keys())[game.last_clicked_index] # This line gets the key of the dictionary that corresponds to the last clicked index
@@ -90,12 +86,10 @@ def render_texts(texts, font, color):
 
 def get_settings_menu_texts_rects(game):
     rects = []
-    for i in range(len(game.keybinds_text)):
+    for i in range(len(game.settings_menu_rendered_texts)):
         corresponding_midright = game.settings_menu_images_rects[i].midright
-        print(corresponding_midright)
         new_midleft = (corresponding_midright[0] + 10, corresponding_midright[1])
-        rects.append(game.settings_menu_rendered_texts[i].get_rect(midleft=new_midleft)) 
-        #print(rects[i])
+        rects.append(game.settings_menu_rendered_texts[i].get_rect(midleft=new_midleft))     
     return rects
 
 def update_rects(game):

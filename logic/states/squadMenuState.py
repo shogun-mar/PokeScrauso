@@ -6,4 +6,4 @@ def render_squad_menu(game):
 
 def handle_squad_menu_input(game, key):
     if key == settings.PAUSE_KEY:
-        game.game_state = GameState.START_MENU
+        game.game_state = GameState.GAMEPLAY

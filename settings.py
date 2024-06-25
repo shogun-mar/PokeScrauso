@@ -26,7 +26,7 @@ PLAYER_ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
 #Keybinds
 POKEDEX_KEY = pygame.K_p #Pulsante per aprire il PokèDex
 PAUSE_KEY = pygame.K_ESCAPE #Pulsante per mettere in pausa il gioco ed uscire dal menu delle impostazioni
-EXIT_KEY = pygame.K_n #Pulsante per uscire dal gioco
+EXIT_KEY = pygame.K_n #Pulsante per uscire dal gioco (per debugging)
 INTERACTION_KEY = pygame.K_e #Pulsante per interagire con gli oggetti e confermare durante la battaglia
 MAP_KEY = pygame.K_m #Pulsante per aprire la mappa
 INVENTORY_KEY = pygame.K_i #Pulsante per aprire l'inventario
@@ -34,7 +34,9 @@ MUTE_KEY = pygame.K_m #Pulsante per mutare il gioco (scorciatoia nel menu delle 
 FULLSCREEN_KEY = pygame.K_f #Pulsante per mettere il gioco in fullscreen (scorciatoia nel menu delle impostazioni)
 HELP_KEY = pygame.K_h #Pulsante per aprire il menu di aiuto
 SCREENSHOT_KEY = pygame.K_F12 #Pulsante per fare uno screenshot
-CANCEL_KEY = pygame.K_l #Pulsante per annullare un'azione
+CANCEL_KEY = pygame.K_l #Pulsante per annullare un'azione (scorciatoia nel menu delle impostazioni) (forse da modificare per lasciare libera la l)
+SQUAD_KEY = pygame.K_t #Pulsante per aprire il menu del team
+
 ACCEPTABLE_KEYBINDS = [pygame.K_a, pygame.K_b, pygame.K_c, pygame.K_d, pygame.K_e, pygame.K_f, pygame.K_g, pygame.K_h, pygame.K_i, 
                        pygame.K_j, pygame.K_k, pygame.K_l, pygame.K_m, pygame.K_n, pygame.K_o, pygame.K_p, pygame.K_q, pygame.K_r, 
                        pygame.K_s, pygame.K_t, pygame.K_u, pygame.K_v, pygame.K_w, pygame.K_x, pygame.K_y, pygame.K_z, pygame.K_0, 
@@ -63,7 +65,7 @@ def set_default_configuration():
         "RIGHT_KEY": pygame.K_d,
         "FULLSCREEN_KEY": pygame.K_f,
         "POKEDEX_KEY": pygame.K_p,
-        "EXIT_KEY": pygame.K_n,
+        "SQUAD_KEY": pygame.K_t,
         "INTERACTION_KEY": pygame.K_e,
         "MAP_KEY": pygame.K_m,
         "INVENTORY_KEY": pygame.K_i,
@@ -83,7 +85,7 @@ def save_configuration_to_file():
         f.write(f"RIGHT_KEY = {RIGHT_KEY}\n")
         f.write(f"FULLSCREEN_KEY = {FULLSCREEN_KEY}\n")
         f.write(f"POKEDEX_KEY = {POKEDEX_KEY}\n")
-        f.write(f"EXIT_KEY = {EXIT_KEY}\n")
+        f.write(f"SQUAD_KEY = {SQUAD_KEY}\n")
         f.write(f"INTERACTION_KEY = {INTERACTION_KEY}\n")
         f.write(f"MAP_KEY = {MAP_KEY}\n")
         f.write(f"INVENTORY_KEY = {INVENTORY_KEY}\n")
@@ -96,7 +98,7 @@ def save_configuration(new_configuration):
     global FORWARD_KEY, LEFT_KEY, \
            BACKWARD_KEY, RIGHT_KEY, \
            FULLSCREEN_KEY, POKEDEX_KEY, \
-           EXIT_KEY, INTERACTION_KEY, \
+           SQUAD_KEY, INTERACTION_KEY, \
            MAP_KEY, INVENTORY_KEY, \
            HELP_KEY, PAUSE_KEY, \
            ZOOM_IN_KEY, ZOOM_OUT_KEY
@@ -107,7 +109,7 @@ def save_configuration(new_configuration):
     RIGHT_KEY = new_configuration["RIGHT_KEY"]
     FULLSCREEN_KEY = new_configuration["FULLSCREEN_KEY"]
     POKEDEX_KEY = new_configuration["POKEDEX_KEY"]
-    EXIT_KEY = new_configuration["EXIT_KEY"]
+    SQUAD_KEY = new_configuration["SQUAD_KEY"]
     INTERACTION_KEY = new_configuration["INTERACTION_KEY"]
     MAP_KEY = new_configuration["MAP_KEY"]
     INVENTORY_KEY = new_configuration["INVENTORY_KEY"]
@@ -123,7 +125,7 @@ def load_configuration():
     global FORWARD_KEY, LEFT_KEY, \
            BACKWARD_KEY, RIGHT_KEY, \
            FULLSCREEN_KEY, POKEDEX_KEY, \
-           EXIT_KEY, INTERACTION_KEY, \
+           SQUAD_KEY, INTERACTION_KEY, \
            MAP_KEY, INVENTORY_KEY, \
            HELP_KEY, PAUSE_KEY, \
            ZOOM_IN_KEY, ZOOM_OUT_KEY
@@ -147,8 +149,8 @@ def load_configuration():
                 FULLSCREEN_KEY = keybinds[name] = value
             elif name == "POKEDEX_KEY":
                 POKEDEX_KEY = keybinds[name] = value
-            elif name == "EXIT_KEY":
-                EXIT_KEY = keybinds[name] = value
+            elif name == "SQUAD_KEY":
+                SQUAD_KEY = keybinds[name] = value
             elif name == "INTERACTION_KEY":
                 INTERACTION_KEY = keybinds[name] = value
             elif name == "MAP_KEY":
@@ -173,7 +175,7 @@ def print_configuration():
     print("RIGHT_KEY:", pygame.key.name(RIGHT_KEY))
     print("FULLSCREEN_KEY:", pygame.key.name(FULLSCREEN_KEY))
     print("POKEDEX_KEY:", pygame.key.name(POKEDEX_KEY))
-    print("EXIT_KEY:", pygame.key.name(EXIT_KEY))
+    print("SQUAD_KEY:", pygame.key.name(SQUAD_KEY))
     print("INTERACTION_KEY:", pygame.key.name(INTERACTION_KEY))
     print("MAP_KEY:", pygame.key.name(MAP_KEY))
     print("INVENTORY_KEY:", pygame.key.name(INVENTORY_KEY))
@@ -187,7 +189,7 @@ def get_current_configuration():
         "FORWARD_KEY": FORWARD_KEY, "LEFT_KEY": LEFT_KEY,
         "BACKWARD_KEY": BACKWARD_KEY, "RIGHT_KEY": RIGHT_KEY,
         "FULLSCREEN_KEY": FULLSCREEN_KEY, "POKEDEX_KEY": POKEDEX_KEY,
-        "EXIT_KEY": EXIT_KEY, "INTERACTION_KEY": INTERACTION_KEY,
+        "SQUAD_KEY": SQUAD_KEY, "INTERACTION_KEY": INTERACTION_KEY,
         "MAP_KEY": MAP_KEY, "INVENTORY_KEY": INVENTORY_KEY,
         "HELP_KEY": HELP_KEY, "PAUSE_KEY": PAUSE_KEY,
         "ZOOM_IN_KEY": ZOOM_IN_KEY,

@@ -125,7 +125,7 @@ class Player(pygame.sprite.Sprite):
             for speed in (self.max_speed, 0, -1):
                 if self.collision_controller.allow_movement((self.relative_pos.x - speed, self.relative_pos.y)):
                     self.change_animation_verse("left")
-                    print("Current actual speed:", self.actual_speed)
+                    print("Current actual speed:", self.actual_speed, "\n")
                     self.actual_speed = speed
                     self.change_frame() #Cambia il frame del giocatore
                     self.direction.x = 1

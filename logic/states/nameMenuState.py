@@ -9,6 +9,9 @@ padding_y = 50
 row = 1
 column = 1
 
+MAX_ROW = 2 #Numero di righe per ogni set di caratteri (placeholder arbitrario)
+MAX_COLUMN = 13 #Numero di colonne per ogni riga (placeholder arbitrario)
+
 def handle_name_menu_input(game, key):
     if key == settings.FORWARD_KEY or key == settings.BACKWARD_KEY or key == settings.LEFT_KEY or key == settings.RIGHT_KEY:
         move_cursor(game, key)
@@ -18,67 +21,81 @@ def handle_name_menu_input(game, key):
 
 def handle_name_menu_input_mouse(game):
     mouse_pos = pygame.mouse.get_pos()
-    print(mouse_pos)
+
+    #lower button: topleft 150, 150 bottomright 230, 200
+    if mouse_pos[0] >= 150 and mouse_pos[0] <= 230 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        game.simbols_set_index = 0
+        update_maximums(game)
+
+    #upper button: topleft 30, 150 bottomright 140, 200
+    elif mouse_pos[0] >= 30 and mouse_pos[0] <= 140 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        game.simbols_set_index = 1
+        update_maximums(game)
+
+    #caratteri accentati button: topleft 235, 150 bottomright 315, 200
+    elif mouse_pos[0] >= 235 and mouse_pos[0] <= 315 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        game.simbols_set_index = 2
+        update_maximums(game)
+
+    #simbols button: topleft 325, 150 bottomright 400, 200
+    elif mouse_pos[0] >= 325 and mouse_pos[0] <= 400 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+        game.simbols_set_index = 3
+        update_maximums(game)
 
     #ok button topleft: 555, 150 bottomright: 655, 200
-    if mouse_pos[0] >= 555 and mouse_pos[0] <= 655 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
+    elif mouse_pos[0] >= 555 and mouse_pos[0] <= 655 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
         if is_name_valid(game): #Se l'utente ha inserito almeno un carattere
             game.player_name = game.player_name.replace("_", "")
             game.game_state = GameState.GAMEPLAY
 
-    #caratteri accentati button: topleft 235, 150 bottomright 315, 200
-    elif mouse_pos[0] >= 235 and mouse_pos[0] <= 315 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
-        pass
-
     #back button: topleft 440, 150 bottomright 540, 200
     elif mouse_pos[0] >= 440 and mouse_pos[0] <= 540 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
-        pass
-
-    #upper button: topleft 30, 150 bottomright 140, 200
-    elif mouse_pos[0] >= 30 and mouse_pos[0] <= 140 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
-        pass
-
-    #simbols button: topleft 325, 150 bottomright 400, 200
-    elif mouse_pos[0] >= 325 and mouse_pos[0] <= 400 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
-        pass
-    
+        delete_last_char(game)
 
 def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_background, (0, 0))
     game.fake_screen.blit(game.name_menu_overlay_tab, (22, 190))
     game.fake_screen.blit(game.name_menu_overlay_controls, (22, 120))
-    game.fake_screen.blit(game.player_name_text, (100, 50))
+    game.fake_screen.blit(game.player_name_text, (150, 50))
+    game.fake_screen.blit(game.name_menu_icon, (75, 25))
     for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
         game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
     game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)
 
 def move_cursor(game, key):
     global row, column
-    simbols_set_index = game.simbols_set_index  # Corrected variable name from 'simbols_set_index' to 'symbols_set_index'
+    simbols_set_index = game.simbols_set_index
 
     if key == settings.FORWARD_KEY:
         if row > 1:
             row -= 1
 
     elif key == settings.BACKWARD_KEY:
-        if row < len(game.rendered_name_menu_texts[simbols_set_index]) // 13:
+        if row < MAX_ROW:
             row += 1
 
     elif key == settings.LEFT_KEY:
-        if game.name_menu_cursor_rect.x > start_x:
+        #if game.name_menu_cursor_rect.x > start_x:
+        if column > 1:
             column -= 1
         elif column == 1:
                 row -= 1
                 column = 13
 
     elif key == settings.RIGHT_KEY and (row-1)*13 + (column-1) < len(game.rendered_name_menu_texts[simbols_set_index])-1:
-        if game.name_menu_cursor_rect.x <= settings.SCREEN_WIDTH - start_x - padding_x:
+        #if game.name_menu_cursor_rect.x <= settings.SCREEN_WIDTH - start_x - padding_x:
+        if column < MAX_COLUMN:
             column += 1
         elif column == 13:
             row += 1
             column = 1
 
-    game.name_menu_cursor_rect.center = game.rendered_name_menu_texts_rects[simbols_set_index][(row-1)*13 + (column-1)].center
+    try: #Alcune set di caratteri sono più corti di altri, quindi se si va oltre il limite, si va all'ultimo carattere del set
+        game.name_menu_cursor_rect.center = game.rendered_name_menu_texts_rects[simbols_set_index][(row-1)*13 + (column-1)].center
+    except IndexError:
+        row = len(game.rendered_name_menu_texts[simbols_set_index]) // 13
+        column = len(game.rendered_name_menu_texts[simbols_set_index]) % 13
+        game.name_menu_cursor_rect.center = game.rendered_name_menu_texts_rects[simbols_set_index][len(game.rendered_name_menu_texts[simbols_set_index])-1].center
 
 def render_name_menu_texts(font, color, game):
     rendered_texts = []  # Two-dimensional list containing dictionaries for each category
@@ -129,3 +146,17 @@ def is_name_valid(game):
     blank_spaces_count = game.player_name.count("_")
     if blank_spaces_count < 12: #12 è la lunghezza massima del nome
         return True
+
+def delete_last_char(game):
+    temp_name_list = list(game.player_name)
+    for i in range(11, -1, -1):  #for i in range(len(game.player_name)-1, -1, -1): Sarebbe teoricamente più corretto ma la lunghezza del nome non può superare 12
+        if temp_name_list[i] != "_": #quindi evito calcoli non necessari
+            temp_name_list[i] = "_"
+            break
+    game.player_name = "".join(temp_name_list) #Ricongiunge la lista in una stringa
+    game.player_name_text = game.naming_menu_font.render(game.player_name, True, game.naming_menu_color) #Renderizza il testo aggiornato
+
+def update_maximums(game):
+    global MAX_ROW, MAX_COLUMN
+    MAX_ROW = (len(game.rendered_name_menu_texts[game.simbols_set_index]) // 13) + 1 #+ 1 in modo da renderli uniformi con il trattamento di row e column
+    MAX_COLUMN = (len(game.rendered_name_menu_texts[game.simbols_set_index]) % 13) + 1 

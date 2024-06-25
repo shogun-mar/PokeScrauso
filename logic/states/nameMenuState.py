@@ -21,6 +21,7 @@ def handle_name_menu_input(game, key):
 
 def handle_name_menu_input_mouse(game):
     mouse_pos = pygame.mouse.get_pos()
+    print(mouse_pos)
 
     #lower button: topleft 150, 150 bottomright 230, 200
     if mouse_pos[0] >= 150 and mouse_pos[0] <= 230 and mouse_pos[1] >= 150 and mouse_pos[1] <= 200:
@@ -58,6 +59,8 @@ def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_overlay_controls, (22, 120))
     game.fake_screen.blit(game.player_name_text, (150, 50))
     game.fake_screen.blit(game.name_menu_icon, (75, 25))
+    for i in range(len(game.simbols_set_icons)):
+        if i != simbols_set_index: game.fake.screen.blit(game.simbols_set_icons[i], game.simbols_set_icons_rects[i])
     for i in range(len(game.rendered_name_menu_texts[simbols_set_index])):
         game.fake_screen.blit(game.rendered_name_menu_texts[simbols_set_index][i], game.rendered_name_menu_texts_rects[simbols_set_index][i])
     game.fake_screen.blit(game.name_menu_cursor, game.name_menu_cursor_rect)

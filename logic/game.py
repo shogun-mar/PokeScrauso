@@ -39,7 +39,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.SQUAD_MENU #Stato di gioco iniziale
+        self.game_state = GameState.SETTINGS_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -139,6 +139,8 @@ class Game:
         self.player_name = "____________" # Iniziale nome del giocatore
         self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
         self.name_menu_icon = pygame.image.load("graphics/player/down_frame2.png").convert_alpha() #Icon placed besides the name could be player or a pokèmon
+        self.simbol_set_icons = [pygame.image.load("graphics/menus/naming menu/lower_icon.png"), pygame.image.load("graphics/menus/naming menu/upper_icon.png"), pygame.image.load("graphics/menus/naming menu/accented_icon.png"), pygame.image.load("graphics/menus/naming menu/others_icon.png")]
+        self.simbol_set_icons_rects = [icon.get_rect(center = (settings.SCREEN_WIDTH - 40, 40)) for icon in self.simbol_set_icons]
 
         #Squad menu
         self.squad_menu_background = pygame.image.load("graphics/menus/squad menu/bg.png").convert_alpha()
@@ -154,14 +156,18 @@ class Game:
         self.squad_menu_overlay_text = self.squad_menu_overlay_text_normal
         del overlay_string
 
-        self.squad_menu_cancel_button = pygame.image.load("graphics/menus/squad menu/icon_cancel.png").convert_alpha()
-        self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button.get_rect(topright = (settings.SCREEN_WIDTH - 10, 400))
+        self.squad_menu_cancel_button_passive = pygame.image.load("graphics/menus/squad menu/icon_cancel_passive.png").convert_alpha()
+        self.squad_menu_cancel_button_passive_rect = self.squad_menu_cancel_button_passive.get_rect(midright = (settings.SCREEN_WIDTH - 10, 428))
+        self.squad_menu_cancel_button_active = pygame.image.load("graphics/menus/squad menu/icon_cancel_active.png").convert_alpha()
+        self.squad_menu_cancel_button_active_rect = self.squad_menu_cancel_button_active.get_rect(midright = (settings.SCREEN_WIDTH - 10, 428))
+        self.squad_menu_cancel_button = self.squad_menu_cancel_button_passive
+        self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button_passive_rect
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
         self.map_rect = self.map_image.get_rect(center = self.screen.get_rect().center)
         #Overlay for map
-        self.overlay = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.SRCALPHA) # Create a semi-transparent surface the same size as the screen
+        self.overlay = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.SRCALPHA)# Create a semi-transparent surface the same size as the screen
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
@@ -182,17 +188,21 @@ class Game:
             elif event.type == pygame.VIDEORESIZE:
                 self.screen = pygame.display.set_mode((event.w, event.h), settings.flags, vsync=1) # Ridimensiona la superficie dello schermo
             elif event.type == pygame.KEYDOWN:
-                if event.key == settings.FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen
-                    if not pygame.display.get_surface().get_flags() & pygame.NOFRAME: #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
+                #Miscellaneous events
+                if event.key == settings.FULLSCREEN_KEY:  #Attiva/disattiva la modalità fullscreen (in cima per ridurre lag)
+                    if not(pygame.display.get_surface().get_size() == (self.hw_screen_width, self.hw_screen_height)): #Non vera modalità fullscreen per garantire compabilità e rendere più facile cambiare ad altre finestre
                         try:
-                            self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME, vsync=1)
+                            self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME | pygame.SCALED, vsync=1)
+                        except Exception:
+                            self.screen = pygame.display.set_mode((self.hw_screen_width, self.hw_screen_height), settings.flags | pygame.NOFRAME)
+                    else:
+                        try:
+                            self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags | pygame.SCALED, vsync=1)         
                         except Exception:
                             self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags)
-                    else:
-                        self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags, vsync=1) 
-                if event.key == settings.SCREENSHOT_KEY: pygame.image.save(self.screen, f"screenshots/screenshot_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png")        
+                elif event.key == settings.SCREENSHOT_KEY: pygame.image.save(self.screen, f"screenshots/screenshot_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png")
                 #Game state specific events
-                if event.key == settings.EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
+                elif event.key == settings.EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input(self, event.key)
                 elif self.game_state == GameState.GAMEPLAY: handle_gameplay_input(self, event.key)
                 elif self.game_state == GameState.PAUSE: handle_pause_input(self, event.key)
@@ -203,10 +213,12 @@ class Game:
                 elif self.game_state == GameState.HELP_MENU: handle_help_screen_input(self, event.key)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input(self, event.key)
                 elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_input(self, event.key)
+                
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 if self.game_state == GameState.SETTINGS_MENU: handle_settings_input_mouse(self)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self)
+            
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY
             

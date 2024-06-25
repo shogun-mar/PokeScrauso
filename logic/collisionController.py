@@ -34,19 +34,23 @@ class CollisionController:
 
         pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
 
-        #print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
+        print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
         #Colore che segna il cambio di zona
-        if pixel_color == (0, 183, 239, 255) and self.camera_group.zone_num_modified == False: #Cambio di zona
+        if pixel_color == (0, 183, 239, 255):# and self.camera_group.zone_num_modified == False: #Cambio di zona
             if self.player.verse == "right" or self.player.verse == "down":
+                print("cambio zona")
                 self.camera_group.zone_num += 1
-            else: self.camera_group.zone_num -= 1 
-            self.camera_group.zone_num_modified = True
+                self.camera_group.calculate_new_player_relative_coords()
+            else: 
+                self.camera_group.zone_num -= 1 
+                self.camera_group.calculate_new_player_relative_coords()
+            #self.camera_group.zone_num_modified = True
             
         elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
-            print("Cespuglio")
+            #print("Cespuglio")
             pass
         
-        elif pixel_color == (0,0,0,0) or pixel_color == (0,0,0,255): #Se il pixel è trasparente o nero
+        elif pixel_color == (0,0,0,0): #Se il pixel è trasparente rifiuta il movimento
             return False
-    
+       
         return True

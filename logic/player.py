@@ -148,6 +148,6 @@ class Player(pygame.sprite.Sprite):
             self.image = self.current_animation[0]
             
     def move(self):
+        #self.zone_num_modified = False
         self.input() #Gestisce l'input del giocatore
-        self.rect.center += self.direction * self.actual_speed
-        self.zone_num_modified = False
+        self.rect.center += self.direction * self.actual_speed        

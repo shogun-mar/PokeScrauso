@@ -14,7 +14,7 @@ class CameraGroup(pygame.sprite.Group):
         #Game variables
         self.level_num = 0
         self.zone_num = 0
-        self.zone_num_modified = False
+        #self.zone_num_modified = False
 
         #Camera offset
         self.offset = pygame.math.Vector2()
@@ -48,13 +48,13 @@ class CameraGroup(pygame.sprite.Group):
 
         #Collision maps
         self.first_level_first_zone = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha()
-        self.first_level_first_zone.set_alpha(128)
+        self.first_level_first_zone.set_alpha(192)
         self.first_level_second_zone = pygame.image.load("graphics/collision_maps/1_2.png").convert_alpha()
-        self.first_level_second_zone.set_alpha(128)
+        self.first_level_second_zone.set_alpha(192)
         self.first_level_third_zone = pygame.image.load("graphics/collision_maps/1_3.png").convert_alpha()
-        self.first_level_third_zone.set_alpha(128)
+        self.first_level_third_zone.set_alpha(192)
         self.first_level_fourth_zone = pygame.image.load("graphics/collision_maps/1_4.png").convert_alpha()
-        self.first_level_fourth_zone.set_alpha(128)
+        self.first_level_fourth_zone.set_alpha(192)
         self.first_level_maps = [self.first_level_first_zone, self.first_level_second_zone, self.first_level_third_zone, self.first_level_fourth_zone]
 
         self.first_level_first_zone_rect = self.first_level_first_zone.get_rect(topleft = (0,0))
@@ -111,7 +111,7 @@ class CameraGroup(pygame.sprite.Group):
             if sprite == player: self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
             self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
 
-        print("Zona num", self.zone_num, "has been modified", self.zone_num_modified, "at", datetime.datetime.now())
+        #print("Zona num", self.zone_num, "has been modified", self.zone_num_modified, "at", datetime.datetime.now())
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))

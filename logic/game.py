@@ -39,7 +39,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.SQUAD_MENU #Stato di gioco iniziale
+        self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
@@ -239,7 +239,6 @@ class Game:
         self.update_pointer()
 
     def render(self):
-
         # Pulisce la superficie falsa
         self.fake_screen.fill(settings.BACKGROUND_COLOR)
 

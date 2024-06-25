@@ -14,6 +14,7 @@ class CameraGroup(pygame.sprite.Group):
         #Game variables
         self.level_num = 0
         self.zone_num = 0
+        self.zone_num_modified = False
 
         #Camera offset
         self.offset = pygame.math.Vector2()
@@ -84,12 +85,6 @@ class CameraGroup(pygame.sprite.Group):
     def calculate_new_player_relative_coords(self): #pygame.math.Vector2 - pygame.math.Vector2 
         return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
-    def increase_player_zone_num(self):
-        self.zone_num += 1
-
-    def decrease_player_zone_num(self):
-        self.zone_num -= 1
-
     def draw_ground_zones(self):
         for i, ground_surf in enumerate(self.ground_surfaces):
             self.offset_pos_ground = self.ground_rects[i].topleft + self.offset + self.internal_offset
@@ -115,6 +110,8 @@ class CameraGroup(pygame.sprite.Group):
             self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
             if sprite == player: self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
             self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
+
+        print("Zona num", self.zone_num, "has been modified", self.zone_num_modified, "at", datetime.datetime.now())
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))

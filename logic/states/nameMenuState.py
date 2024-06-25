@@ -57,6 +57,7 @@ def render_name_menu(game, simbols_set_index):
     game.fake_screen.blit(game.name_menu_overlay_tab, (22, 190))
     game.fake_screen.blit(game.name_menu_overlay_controls, (22, 120))
     game.fake_screen.blit(game.player_name_text, (150, 50))
+    game.fake_screen.blit(game.name_menu_icon_shadow, (75, 70))
     game.fake_screen.blit(game.name_menu_icon, (75, 25))
     for i in range(len(game.simbol_set_icons)):
        if i != simbols_set_index: game.fake_screen.blit(game.simbol_set_icons[i], game.simbol_set_icons_rects[i])

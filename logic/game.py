@@ -39,7 +39,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.NAME_MENU #Stato di gioco iniziale
+        self.game_state = GameState.SQUAD_MENU #Stato di gioco iniziale
         #Font
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
@@ -139,11 +139,10 @@ class Game:
         self.player_name = "____________" # Iniziale nome del giocatore
         self.player_name_text = self.naming_menu_font.render(self.player_name, True,  self.naming_menu_color)
         self.name_menu_icon = pygame.image.load("graphics/player/down_frame2.png").convert_alpha() #Icon placed besides the name could be player or a pokèmon
+        self.name_menu_icon_shadow = pygame.image.load("graphics/menus/naming menu/icon_shadow.png").convert_alpha()
         self.simbol_set_icons = [pygame.image.load("graphics/menus/naming menu/upper_icon.png"), pygame.image.load("graphics/menus/naming menu/lower_icon.png"), pygame.image.load("graphics/menus/naming menu/accented_icon.png"), pygame.image.load("graphics/menus/naming menu/others_icon.png")]
-        self.simbol_set_icons_rects = []
-        for i in range(len(self.simbol_set_icons)):
-            if i == 0: self.simbol_set_icons_rects.append(self.simbol_set_icons[i].get_rect(topleft = (63, 148)))
-            else: self.simbol_set_icons_rects.append(self.simbol_set_icons[i].get_rect(topleft = (63 + i*80 + i*8, 148)))
+        self.simbol_set_icons_rects = [self.simbol_set_icons[0].get_rect(topleft = (63, 148)), self.simbol_set_icons[1].get_rect(topleft = (150, 148)), self.simbol_set_icons[2].get_rect(topleft = (237, 148)), self.simbol_set_icons[3].get_rect(topleft = (324, 148))]
+        
         #Squad menu
         self.squad_menu_background = pygame.image.load("graphics/menus/squad menu/bg.png").convert_alpha()
 
@@ -159,11 +158,16 @@ class Game:
         del overlay_string
 
         self.squad_menu_cancel_button_passive = pygame.image.load("graphics/menus/squad menu/icon_cancel_passive.png").convert_alpha()
-        self.squad_menu_cancel_button_passive_rect = self.squad_menu_cancel_button_passive.get_rect(midright = (settings.SCREEN_WIDTH - 10, 428))
+        self.squad_menu_cancel_button_passive_rect = self.squad_menu_cancel_button_passive.get_rect(midright = (settings.SCREEN_WIDTH - 10, 432))
         self.squad_menu_cancel_button_active = pygame.image.load("graphics/menus/squad menu/icon_cancel_active.png").convert_alpha()
-        self.squad_menu_cancel_button_active_rect = self.squad_menu_cancel_button_active.get_rect(midright = (settings.SCREEN_WIDTH - 10, 428))
+        self.squad_menu_cancel_button_active_rect = self.squad_menu_cancel_button_active.get_rect(midright = (settings.SCREEN_WIDTH - 10, 432))
         self.squad_menu_cancel_button = self.squad_menu_cancel_button_passive
         self.squad_menu_cancel_button_rect = self.squad_menu_cancel_button_passive_rect
+
+        self.squad_menu_round_panel = pygame.image.load("graphics/menus/squad menu/panel_round.png").convert_alpha()
+        self.squad_menu_blank_panel = pygame.image.load("graphics/menus/squad menu/panel_blank.png").convert_alpha()
+        self.squad_menu_panel_surf = []
+        self.squad_menu_panel_rects = [self.squad_menu_blank_panel.get_rect(topleft = (25, 50)), self.squad_menu_blank_panel.get_rect(topleft = (10, 110)), self.squad_menu_blank_panel.get_rect(topleft = (10, 210)), self.squad_menu_blank_panel.get_rect(topleft = (10, 310)), self.squad_menu_blank_panel.get_rect(topleft = (10, 410)), self.squad_menu_blank_panel.get_rect(topleft = (10, 510))]
 
         #Map images
         self.map_image = pygame.image.load("graphics/menus/map menu/map.png").convert_alpha()
@@ -280,6 +284,10 @@ class Game:
             buttons = [self.save_button_rect, self.restore_button_rect, self.discard_button_rect, self.mute_button_rect]
         elif self.game_state == GameState.START_MENU:
             buttons = [self.new_game_button_rect, self.load_save_button_rect, self.settings_button_rect]
+        elif self.game_state == GameState.NAME_MENU:
+            buttons = self.simbol_set_icons_rects.copy() #Copio la lista per non modificare l'originale
+            del buttons[self.simbols_set_index] #Rimuove l'icona del set di simboli attualmente visualizzato
+        
         if any(button.collidepoint(pos) for button in buttons):
             self.set_pointer_click()
         else:

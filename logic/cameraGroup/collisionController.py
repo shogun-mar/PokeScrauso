@@ -46,6 +46,7 @@ class CollisionController:
             pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
             
             if pixel_color == (0, 183, 239, 255): #Colore che segna il cambio di zona
+                self.camera_group.is_player_in_bus = False
                 current_time = perf_counter()
                 if current_time - self.last_zone_change_time >= self.zone_change_cooldown: #Cambia la zona solamente se è finito il cooldown
                     if self.player.verse == "right" or self.player.verse == "down": #Il numero può aumentare solamente se il giocatore si muove verso destra o verso il basso
@@ -59,10 +60,10 @@ class CollisionController:
                     self.last_zone_change_time = current_time
                 
             elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
-                #print("Cespuglio")
-                pass
+                self.camera_group.is_player_in_bus = True
             
             elif pixel_color == (0,0,0,0): #Se il pixel è trasparente rifiuta il movimento
+                self.camera_group.is_player_in_bus = False
                 return False
         
             return True

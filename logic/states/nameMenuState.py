@@ -20,7 +20,6 @@ def handle_name_menu_input(game, key):
         update_player_name(game, selected_char)
 
 def handle_name_menu_input_mouse(game, mouse_pos):
-    print(mouse_pos)
 
     #lower button
     if game.simbol_set_icons_rects[0].collidepoint(mouse_pos):

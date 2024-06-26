@@ -45,8 +45,20 @@ class CollisionController:
         try: #Try catch non strettamente necessario, ma utile per evitare crash in caso di errori (se il giocatore appositamente continua ad andare avanti e indietro sulla riga di confine tra due zone)
             pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
             
-            if pixel_color == (0, 183, 239, 255): #Colore che segna il cambio di zona
-                self.camera_group.is_player_in_bus = False
+            if pixel_color == (255, 255, 255, 255): #Colore che segna la presenza di un percorso
+                self.camera_group.is_player_in_grass = False
+                return True 
+
+            elif pixel_color == (0,0,0,0): #Se il pixel è trasparente rifiuta il movimento
+                self.camera_group.is_player_in_grass = False
+                return False
+
+            elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
+                self.camera_group.is_player_in_grass = True
+                return True
+
+            elif pixel_color == (0, 183, 239, 255): #Colore che segna il cambio di zona
+                self.camera_group.is_player_in_grass = False
                 current_time = perf_counter()
                 if current_time - self.last_zone_change_time >= self.zone_change_cooldown: #Cambia la zona solamente se è finito il cooldown
                     if self.player.verse == "right" or self.player.verse == "down": #Il numero può aumentare solamente se il giocatore si muove verso destra o verso il basso
@@ -58,15 +70,7 @@ class CollisionController:
                     
                     self.camera_group.last_player_collision_verse = self.player.verse
                     self.last_zone_change_time = current_time
-                
-            elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
-                self.camera_group.is_player_in_bus = True
-            
-            elif pixel_color == (0,0,0,0): #Se il pixel è trasparente rifiuta il movimento
-                self.camera_group.is_player_in_bus = False
-                return False
-        
-            return True
+                return True
     
         except Exception: #Se il giocatore è fuori dalla mappa rifiuta il movimento
             return False  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza

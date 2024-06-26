@@ -15,8 +15,7 @@ class CameraGroup(pygame.sprite.Group):
         #Game variables
         self.level_num = 0
         self.zone_num = 0
-        self.last_player_collision_verse = "down" #Direzione che aveva il giocatore nell'ultimo cambio di zona
-                                                  #utilizzata per implementare una funzione rudimentale di frustum culling
+        
         #Camera offset
         self.offset = pygame.math.Vector2()
 
@@ -72,6 +71,8 @@ class CameraGroup(pygame.sprite.Group):
         self.last_player_pos_offsetted = pygame.math.Vector2()
         self.bush_half = pygame.image.load("graphics/world_sprites/bush_half.png").convert_alpha()
         self.is_player_in_grass = False
+        self.last_player_collision_verse = "down" #Direzione che aveva il giocatore nell'ultimo cambio di zona
+                                                  #utilizzata per implementare una funzione rudimentale di frustum culling
 
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
@@ -117,8 +118,7 @@ class CameraGroup(pygame.sprite.Group):
                 self.offset_pos_player = sprite.rect.topleft - self.offset + self.internal_offset
                 self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
                 self.internal_surface.blit(sprite.image, self.offset_pos_player) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
-                print(self.is_player_in_grass)
-                if self.is_player_in_grass: self.internal_surface.blit(self.bush_half, self.offset_pos_player)
+                if self.is_player_in_grass: self.internal_surface.blit(self.bush_half, self.offset_pos_player + pygame.math.Vector2(-3, 15))
             elif sprite.zone_num == self.zone_num and sprite.level_num == self.level_num:
                 if self.level_num == 0 and self.zone_num == 0:
                     pos = (sprite.rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.offset.y + self.internal_offset.y)

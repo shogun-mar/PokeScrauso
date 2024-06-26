@@ -43,7 +43,7 @@ class CameraGroup(pygame.sprite.Group):
         self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
         self.ground_rect_1_2 = self.ground_surf_1_2.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
         self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
-        self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
+        self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 290, self.ground_rect_1_3.bottomleft[1] - 720))
         self.ground_rects_1 = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
 
         #Collision maps (per debugging da togliere)
@@ -60,7 +60,7 @@ class CameraGroup(pygame.sprite.Group):
         self.first_level_first_zone_rect = self.first_level_first_zone.get_rect(topleft = (0,0))
         self.first_level_second_zone_rect = self.first_level_second_zone.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
         self.first_level_third_zone_rect = self.first_level_third_zone.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
-        self.first_level_fourth_zone_rect = self.first_level_fourth_zone.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
+        self.first_level_fourth_zone_rect = self.first_level_fourth_zone.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 290, self.ground_rect_1_3.bottomleft[1] - 720))
         self.first_level_maps_rects = [self.first_level_first_zone_rect, self.first_level_second_zone_rect, self.first_level_third_zone_rect, self.first_level_fourth_zone_rect]
 
         #Variabili per rendering

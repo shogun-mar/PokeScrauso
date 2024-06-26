@@ -116,8 +116,16 @@ class CameraGroup(pygame.sprite.Group):
                 self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
                 self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
                 self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
-            else:
-                self.internal_surface.blit(sprite.image, sprite.rect.bottomleft + self.offset + self.internal_offset)
+            elif sprite.zone_num == self.zone_num and sprite.level_num == self.level_num:
+                if self.level_num == 0 and self.zone_num == 0:
+                    pos = (sprite.rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.offset.y + self.internal_offset.y)
+                    self.internal_surface.blit(sprite.image, pos)
+                elif self.level_num == 0 and self.zone_num == 1:
+                    pos = (sprite.rect.topleft[0] + self.first_level_second_zone_rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.first_level_second_zone_rect.topleft[1] + self.offset.y + self.internal_offset.y)
+                    self.internal_surface.blit(sprite.image, pos)
+                elif self.level_num == 0 and self.zone_num == 2:
+                    pos = (sprite.rect.topleft[0] + self.first_level_third_zone_rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.first_level_third_zone_rect.topleft[1] + self.offset.y + self.internal_offset.y)
+                    self.internal_surface.blit(sprite.image, pos)
 
         #print("Zona num", self.zone_num, "at", datetime.datetime.now())
 
@@ -126,7 +134,11 @@ class CameraGroup(pygame.sprite.Group):
         self.display_surface.blit(scaled_surface, scaled_rect)
 
     def load_secondary_sprites(self):
-        #Tree tops
-        self.tree_tops_1 = TreeTop(self, (396, 383))
+        Bush
 
-        self.tree_tops = [self.tree_tops_1]
+        #Primo livello
+        #prima zona
+        TreeTop(self, (396, 384), 0, 0); TreeTop(self, (1740, 528), 0, 0); TreeTop(self, (1836, 576), 0, 0); TreeTop(self, (1932, 528), 0, 0)
+        #seconda zona    
+        TreeTop(self, (1164, 288), 0, 1); TreeTop(self, (1260, 288), 0, 1); TreeTop(self, (1356, 288), 0, 1); TreeTop(self, (1164, 433), 0, 1); TreeTop(self, (1260, 433), 0, 1); TreeTop(self, (1356, 433), 0, 1); TreeTop(self, (300, 672), 0, 1); TreeTop(self, (396, 672), 0, 1); TreeTop(self, (492, 672), 0, 1); TreeTop(self, (588, 672), 0, 1); TreeTop(self, (684, 672), 0, 1); TreeTop(self, (780, 672), 0, 1); TreeTop(self, (876, 672), 0, 1); TreeTop(self, (972, 672), 0, 1); TreeTop(self, (1212, 672), 0, 1); TreeTop(self, (1308, 672), 0, 1); TreeTop(self, (1404, 672), 0, 1); TreeTop(self, (1500, 672), 0, 1); TreeTop(self, (1596, 672), 0, 1); TreeTop(self, (1692, 672), 0, 1); TreeTop(self, (1788, 672), 0, 1); TreeTop(self, (1884, 672), 0, 1); TreeTop(self, (1980, 672), 0, 1)
+        #terza zona

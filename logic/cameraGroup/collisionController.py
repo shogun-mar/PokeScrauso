@@ -1,4 +1,5 @@
 from time import perf_counter
+from settings import ZONE_CHANGE_COOLDOWN
 from PIL import Image
 
 class CollisionController:
@@ -16,9 +17,7 @@ class CollisionController:
 
         #Cooldown per il cambio di zona
         self.last_zone_change_time = perf_counter()             
-        self.zone_change_cooldown = (1000 / MAX_FPS) / 1000 * 20 #Moltiplicato per 10 per avere un cooldown di 0.33s se il gioco gira a 60 fps  
-                                                                #frametimes: 60 fps -> 0.016s circa, 30 fps -> 0.033 s circa
-        print("Cooldown:", self.zone_change_cooldown)
+        self.zone_change_cooldown = ZONE_CHANGE_COOLDOWN
     
     #Check if the player can move to the desired coordinates
     def allow_movement(self, desired_coords):
@@ -45,8 +44,6 @@ class CollisionController:
 
         try: #Try catch non strettamente necessario, ma utile per evitare crash in caso di errori (se il giocatore appositamente continua ad andare avanti e indietro sulla riga di confine tra due zone)
             pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
-
-            #print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
             
             if pixel_color == (0, 183, 239, 255): #Colore che segna il cambio di zona
                 current_time = perf_counter()

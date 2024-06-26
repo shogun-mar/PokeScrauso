@@ -112,9 +112,12 @@ class CameraGroup(pygame.sprite.Group):
         
         #Elementi attivi
         for sprite in sorted(self.sprites(), key = lambda sprite: sprite.rect.centery):
-            self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
-            if sprite == player: self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
-            self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
+            if sprite == player:
+                self.offset_pos_sprites = sprite.rect.topleft - self.offset + self.internal_offset
+                self.last_player_pos_offsetted = sprite.rect.midbottom - self.offset + self.internal_offset #Distinguo il player per poterne calcolare le coordinate relative
+                self.internal_surface.blit(sprite.image, self.offset_pos_sprites) #Calcolo con il punto midbottom per non prendere in considerazione i circa 30 pixel di altezza del player
+            else:
+                self.internal_surface.blit(sprite.image, sprite.rect.bottomleft + self.offset + self.internal_offset)
 
         #print("Zona num", self.zone_num, "at", datetime.datetime.now())
 
@@ -124,7 +127,6 @@ class CameraGroup(pygame.sprite.Group):
 
     def load_secondary_sprites(self):
         #Tree tops
-        self.tree_tops_1 = [
-            [TreeTop(self, (100, 100)), TreeTop(self, (200, 200)), TreeTop(self, (300, 300))],
-            [TreeTop(self, (400, 400)), TreeTop(self, (500, 500)), TreeTop(self, (600, 600))]
-        ]
+        self.tree_tops_1 = TreeTop(self, (396, 383))
+
+        self.tree_tops = [self.tree_tops_1]

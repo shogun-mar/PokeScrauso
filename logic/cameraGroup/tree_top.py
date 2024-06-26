@@ -1,9 +1,8 @@
-from pygame import image, sprite
+import pygame
 
-class TreeTop(sprite.Sprite):
+class TreeTop(pygame.sprite.Sprite):
     def __init__(self, camera_group, pos):
         # Call the parent class (Sprite) constructor
-        super.__init__(camera_group)
-        self.pos = pos
-        self.sprite = image.load("graphics/world_sprites/tree_top.png").convert_alpha()
-        self.rect = self.sprite.get_rect(topleft = pos)
+        super().__init__(camera_group)
+        self.image = pygame.image.load("graphics/world_sprites/tree_top.png").convert_alpha()
+        self.rect = self.image.get_rect(bottomleft = pos)

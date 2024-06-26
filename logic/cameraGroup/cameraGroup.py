@@ -1,6 +1,5 @@
 import pygame
 from settings import *
-from logic.cameraGroup.bush import Bush
 from logic.cameraGroup.tree_top import TreeTop
 
 class CameraGroup(pygame.sprite.Group):
@@ -38,12 +37,14 @@ class CameraGroup(pygame.sprite.Group):
         self.ground_surf_1_2 = pygame.image.load("graphics/world_sprites/1_2.png").convert_alpha()
         self.ground_surf_1_3 = pygame.image.load("graphics/world_sprites/1_3.png").convert_alpha()
         self.ground_surf_1_4 = pygame.image.load("graphics/world_sprites/1_4.png").convert_alpha()
+        self.ground_surf_1_5 = pygame.image.load("graphics/world_sprites/1_5.png").convert_alpha()
         self.ground_surfaces_1 = [self.ground_surf_1_1, self.ground_surf_1_2, self.ground_surf_1_3, self.ground_surf_1_4]  
 
         self.ground_rect_1_1 = self.ground_surf_1_1.get_rect(topleft = (0,0))
         self.ground_rect_1_2 = self.ground_surf_1_2.get_rect(topleft = (self.ground_rect_1_1.bottomleft[0] + 1055, self.ground_rect_1_1.bottomleft[1]))
         self.ground_rect_1_3 = self.ground_surf_1_3.get_rect(topleft = (self.ground_rect_1_2.bottomleft[0] + 95, self.ground_rect_1_2.bottomleft[1]))
         self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 290, self.ground_rect_1_3.bottomleft[1] - 720))
+        self.ground_rects_1_5 = self.ground_surf_1_5.get_rect(center = (self.half_h, self.half_h))
         self.ground_rects_1 = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
 
         #Collision maps (per debugging da togliere)
@@ -129,6 +130,8 @@ class CameraGroup(pygame.sprite.Group):
                 elif self.level_num == 0 and self.zone_num == 2:
                     pos = (sprite.rect.topleft[0] + self.first_level_third_zone_rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.first_level_third_zone_rect.topleft[1] + self.offset.y + self.internal_offset.y)
                     self.internal_surface.blit(sprite.image, pos)
+
+        #print(self.zone_num)
 
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))

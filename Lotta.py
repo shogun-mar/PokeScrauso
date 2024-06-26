@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -21,7 +22,7 @@ font = pygame.font.Font("graphics/fonts/PressStart2P.ttf", 12)
 # Load Pokémon images
 name_gioc = "PIKACHU"
 life_point = 100
-poke_life = 100
+poke_life = 100 #vita totale del pokemon del giocatore
 player_pokemon1_img = pygame.image.load('graphics/Pokemon/Back/PIKACHU.png')
 player_pokemon_rect = player_pokemon1_img.get_rect(center=(130, 400))
 player_riq_img = pygame.image.load('graphics/UI/Battle/databox_normal.png')
@@ -146,7 +147,8 @@ def animate_wild_pokemon_entrance():
         # L'animazione è finita, il Pokémon selvatico è pronto per la battaglia
         screen.blit(enemy_pokemon_img, wild_pokemon_position)
 
-
+# Define enemy actions
+enemy_actions = ["Attack","Heal"]
 
 #stati
 battle_mode=False
@@ -168,9 +170,7 @@ poke6_mode=False
 running=True
 pokemon_drawn = False
 pokeball_drawn=False
-
-
-
+player_turn=True
 
 
 # Main loop
@@ -274,7 +274,7 @@ while running:
         
     #alt+11 = ♂  alt+12 = ♀
         # Disegna i pulsanti
-    if not battle_mode and not pokemon_mode and not bag_mode and not run_mode and not health_mode and not pokeballz_mode and not poke1_mode and not poke2_mode and not poke3_mode and not poke4_mode and not poke5_mode and not poke6_mode:
+    if player_turn and not battle_mode and not pokemon_mode and not bag_mode and not run_mode and not health_mode and not pokeballz_mode and not poke1_mode and not poke2_mode and not poke3_mode and not poke4_mode and not poke5_mode and not poke6_mode:
         draw_button(attack_button, 'FIGHT', (104, 4, 4),128,None,False)
         draw_button(bag_button, 'BAG', (128,69,10),128,None,False)
         draw_button(run_button, 'RUN', (10, 69, 128),128,None,False)
@@ -315,6 +315,7 @@ while running:
             enemy_hp-=10
             move1_mode=False
             battle_mode=False
+            player_turn=False
         elif mov2_mode:
             message = "Pikachu usa Tuono!"
             text=font.render(message,True,(0,0,0))
@@ -326,6 +327,7 @@ while running:
             enemy_hp-=20
             mov2_mode=False
             battle_mode=False
+            player_turn=False
         elif mov3_mode:
             message = "Pikachu usa Fulmine!"
             text=font.render(message,True,(0,0,0))
@@ -337,6 +339,7 @@ while running:
             enemy_hp-=30
             mov3_mode=False
             battle_mode=False
+            player_turn=False
         elif mov4_mode:
             message = "Pikachu usa Fulmine!"
             text=font.render(message,True,(0,0,0))
@@ -348,6 +351,7 @@ while running:
             enemy_hp-=40
             mov4_mode=False
             battle_mode=False
+            player_turn=False
     
     elif pokemon_mode:
         draw_button(pokemon1_button, f"{name_gioc}",(128, 126, 124),None,'graphics/Gen 1-6 Icons/26.png',True)
@@ -369,7 +373,7 @@ while running:
             pygame.time.wait(2000)
             poke1_mode=False
             pokemon_mode=False
-        
+            player_turn=False
 
         elif poke2_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]
@@ -383,7 +387,7 @@ while running:
             pygame.time.wait(2000)
             poke2_mode=False
             pokemon_mode=False
-            
+            player_turn=False
         
         elif poke3_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]
@@ -397,7 +401,7 @@ while running:
             pygame.time.wait(2000)
             poke3_mode=False
             pokemon_mode=False
-            
+            player_turn=False
         
         elif poke4_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]
@@ -411,7 +415,7 @@ while running:
             pygame.time.wait(2000)
             poke4_mode=False
             pokemon_mode=False
-            
+            player_turn=False
         
         elif poke5_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]
@@ -425,6 +429,7 @@ while running:
             pygame.time.wait(2000)
             poke5_mode=False
             pokemon_mode=False
+            player_turn=False
         
         elif poke6_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]
@@ -438,14 +443,39 @@ while running:
             pygame.time.wait(2000)
             poke6_mode=False
             pokemon_mode=False
+            player_turn=False
         
     elif bag_mode:
         draw_button(health_button, 'Health',(71, 82, 99),128,None,False)
         draw_button(pokeballz_button, 'Pokéball',(71, 82, 99),128,None,False)
 
-    #elif health_mode:
+        if health_mode:
+            message = "Pikachu usa Pozione!"
+            text=font.render(message,True,(0,0,0))
+            text_rect=text.get_rect(center=(200,400))
+            screen.blit(message_img,message_rect)
+            screen.blit(text,text_rect)
+            pygame.display.flip()
+            pygame.time.wait(2000)
+            if life_point<poke_life:
+            # Heal enemy
+                life_point+=20
+            
+            health_mode=False
+            player_turn=False
+            bag_mode=False
         
-    #elif pokeballz_mode:
+        elif pokeballz_mode:
+            message = "Pikachu usa Pokéball!"
+            text=font.render(message,True,(0,0,0))
+            text_rect=text.get_rect(center=(200,400))
+            screen.blit(message_img,message_rect)
+            screen.blit(text,text_rect)
+            pygame.display.flip()
+            pygame.time.wait(2000)
+            pokeballz_mode=False
+            player_turn=False
+            bag_mode=False
         
     elif run_mode:
         message = "danger escaped!! ^.^ "
@@ -454,8 +484,70 @@ while running:
         screen.blit(message_img,message_rect)
         screen.blit(text,text_rect)
         running=False 
-            
     
+    elif not player_turn:    
+        enemy_action = random.choice(enemy_actions)
+        if enemy_action == "Attack":
+            enemy_moves=random.randint(1,4)
+            if enemy_moves==1:
+                message = "Enemy Pikachu attacks!"
+                text = font.render(message, True, (0, 0, 0))
+                text_rect = text.get_rect(center=(200, 400))
+                screen.blit(message_img, message_rect)
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                pygame.time.wait(500)
+
+                # Deal damage to player
+                life_point -= 10
+            elif enemy_moves==2:
+                message = "Enemy Pikachu attacks!"
+                text = font.render(message, True, (0, 0, 0))
+                text_rect = text.get_rect(center=(200, 400))
+                screen.blit(message_img, message_rect)
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                pygame.time.wait(500)
+
+                # Deal damage to player
+                life_point -= 20
+            elif enemy_moves==3:
+                message = "Enemy Pikachu attacks!"
+                text = font.render(message, True, (0, 0, 0))
+                text_rect = text.get_rect(center=(200, 400))
+                screen.blit(message_img, message_rect)
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                pygame.time.wait(500)
+
+                # Deal damage to player
+                life_point -= 30
+            elif enemy_moves==4:
+                message = "Enemy Pikachu attacks!"
+                text = font.render(message, True, (0, 0, 0))
+                text_rect = text.get_rect(center=(200, 400))
+                screen.blit(message_img, message_rect)
+                screen.blit(text, text_rect)
+                pygame.display.flip()
+                pygame.time.wait(500)
+
+                # Deal damage to player
+                life_point -= 40
+        
+        elif enemy_action == "Heal":
+            message = "Enemy Pikachu heals!"
+            text = font.render(message, True, (0, 0, 0))
+            text_rect = text.get_rect(center=(200, 400))
+            screen.blit(message_img, message_rect)
+            screen.blit(text, text_rect)
+            pygame.display.flip()
+            pygame.time.wait(500)
+            if enemy_hp<enemy_tot_health:
+            # Heal enemy
+                enemy_hp += 10
+            
+        player_turn=True
+
     #pygame.draw.rect(screen, (0,255,0), (607, 68, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT))
     screen.blit(enemy_pokemon_img,enemy_pokemon_rect)
     screen.blit(enemy_riq_img,enemy_riq_rect)
@@ -479,16 +571,23 @@ while running:
     
     #life_point -= 1
     #enemy_hp-=1
-    if life_point <=0 or enemy_hp<=0:
+    if enemy_hp<=0:
         #life_point = 0
-        message = "DEATH X_X"
+        message = f"{name_enemy} DEATH X_X"
         text=font.render(message,True,(0,0,0))
         text_rect=text.get_rect(center=(200,400))
         screen.blit(message_img,message_rect)
         screen.blit(text,text_rect)
         running = False
         pygame.display.flip()
-    
+    elif life_point<=0:
+        message = f"{name_gioc} DEATH X_X"
+        text=font.render(message,True,(0,0,0))
+        text_rect=text.get_rect(center=(200,400))
+        screen.blit(message_img,message_rect)
+        screen.blit(text,text_rect)
+        running = False
+        pygame.display.flip()
 
 
 pygame.time.delay(1000)

@@ -84,28 +84,17 @@ class CameraGroup(pygame.sprite.Group):
         return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def draw_ground_zones(self):
+        print("zone_num", self.zone_num, "zone_num-- =", self.zone_num - 1, "zone_num++ =", self.zone_num + 1, "last_verse", self.last_player_collision_verse)
         
-        if self.zone_num == 0: #Prima zona
-            self.offset_pos_ground = self.ground_rects[self.zone_num+1].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num+1], self.offset_pos_ground)
-            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
-        elif (self.last_player_collision_verse == "right" or self.last_player_collision_verse == "down") and self.zone_num != 0: #Seconda condizione per evitare che disegni inutilmente l'ultima zona
-            self.offset_pos_ground = self.ground_rects[self.zone_num-1].topleft + self.offset + self.internal_offset           #se zone_num è 0, l'indice diventerebbe -1 quindi quello dell'ultima zona
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num-1], self.offset_pos_ground)
-            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
-        elif (self.last_player_collision_verse == "up" or self.last_player_collision_verse == "left") and self.zone_num != len(self.ground_surfaces): #Seconda condizione scritta in modo che non provi a disegnare una zona non esistente
-            self.offset_pos_ground = self.ground_rects[self.zone_num+1].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num+1], self.offset_pos_ground)
-            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
-        else: #Se nell'ultima zona
-            self.offset_pos_ground = self.ground_rects[self.zone_num-1].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num-1], self.offset_pos_ground)
-            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)  
-    
+        # Determine the range of zones to draw based on conditions
+        start_zone = max(self.zone_num - 1, 0)  # Ensure we don't go below 0
+        end_zone = min(self.zone_num + 1, len(self.ground_surfaces) - 1)  # Ensure we don't go beyond the last index
+        
+        # Loop through the determined range and blit each zone
+        for zone_index in range(start_zone, end_zone + 1):
+            offset_pos_ground = self.ground_rects[zone_index].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[zone_index], offset_pos_ground)  
+        
         #Draws the collision maps for debugging purposes
         self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 

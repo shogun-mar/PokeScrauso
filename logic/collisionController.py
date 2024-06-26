@@ -46,7 +46,7 @@ class CollisionController:
         try: #Try catch non strettamente necessario, ma utile per evitare crash in caso di errori (se il giocatore appositamente continua ad andare avanti e indietro sulla riga di confine tra due zone)
             pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
 
-            print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
+            #print("Desired coords:", desired_coords[0], desired_coords[1], "Pixel color:", pixel_color)
             
             if pixel_color == (0, 183, 239, 255): #Colore che segna il cambio di zona
                 current_time = perf_counter()

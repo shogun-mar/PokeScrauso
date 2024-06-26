@@ -13,7 +13,8 @@ class CameraGroup(pygame.sprite.Group):
         #Game variables
         self.level_num = 0
         self.zone_num = 0
-
+        self.last_player_collision_verse = "down" #Direzione che aveva il giocatore nell'ultimo cambio di zona
+                                                  #utilizzata per implementare una funzione rudimentale di frustum culling
         #Camera offset
         self.offset = pygame.math.Vector2()
 
@@ -68,7 +69,6 @@ class CameraGroup(pygame.sprite.Group):
         #Variabili per collisioni
         self.last_player_pos_offsetted = pygame.math.Vector2()
 
-
     def keyboard_zoom_control(self):
         keys = pygame.key.get_pressed()
         if keys[ZOOM_OUT_KEY] and self.zoom_scale < ZOOM_SCALE_LIMITS[1]:
@@ -84,9 +84,27 @@ class CameraGroup(pygame.sprite.Group):
         return self.last_player_pos_offsetted - (self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def draw_ground_zones(self):
-        for i, ground_surf in enumerate(self.ground_surfaces):
-            self.offset_pos_ground = self.ground_rects[i].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(ground_surf, self.offset_pos_ground)
+        
+        if self.zone_num == 0: #Prima zona
+            self.offset_pos_ground = self.ground_rects[self.zone_num+1].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num+1], self.offset_pos_ground)
+            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
+        elif (self.last_player_collision_verse == "right" or self.last_player_collision_verse == "down") and self.zone_num != 0: #Seconda condizione per evitare che disegni inutilmente l'ultima zona
+            self.offset_pos_ground = self.ground_rects[self.zone_num-1].topleft + self.offset + self.internal_offset           #se zone_num è 0, l'indice diventerebbe -1 quindi quello dell'ultima zona
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num-1], self.offset_pos_ground)
+            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
+        elif (self.last_player_collision_verse == "up" or self.last_player_collision_verse == "left") and self.zone_num != len(self.ground_surfaces): #Seconda condizione scritta in modo che non provi a disegnare una zona non esistente
+            self.offset_pos_ground = self.ground_rects[self.zone_num+1].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num+1], self.offset_pos_ground)
+            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)
+        else: #Se nell'ultima zona
+            self.offset_pos_ground = self.ground_rects[self.zone_num-1].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num-1], self.offset_pos_ground)
+            self.offset_pos_ground = self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset
+            self.internal_surface.blit(self.ground_surfaces[self.zone_num], self.offset_pos_ground)  
     
         #Draws the collision maps for debugging purposes
         self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)

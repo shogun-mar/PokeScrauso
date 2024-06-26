@@ -7,18 +7,13 @@ flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
 MAX_FPS = 60 #60
 BACKGROUND_COLOR = (0,0,0)
 
-#def get_screen_width(): return SCREEN_WIDTH Tutta il gioco è progettato per andare a 720x480 ma sarebbe carino che se il giocatore volesse cambiare la risoluzione potesse farlo
-#def get_screen_height(): return SCREEN_HEIGHT e che quindi tutto il gioco venisse scalato di conseguenza, ed eventualmente scalato una seconda volta se ridimensiona la finestra
-
-#def set_screen_width(width): global SCREEN_WIDTH; SCREEN_WIDTH = width
-#def set_screen_height(height): global SCREEN_HEIGHT; SCREEN_HEIGHT = height
-
 #Camera settings
 ZOOM_SCALING_VELOCITY = 0.1
-ZOOM_SCALE_LIMITS = (0.1, 1.50) #0.75, 1.50
+ZOOM_SCALE_LIMITS = (0.75, 1.25) #0.75, 1.25
 INITIAL_ZOOM = 1.0
-INTERNAL_SURFACE_SIZE = (1920,1080) #2500, 2500
-
+INTERNAL_SURFACE_SIZE = (1080,720) #Superficie interna usata per lo zoom (per garantire un buon risultato deve essere almeno la risoluzione dopo quella del gioco con lo stesso rapporto)
+                                   #720, 480 --> 720/480 = 1.5, 1080--> 1080/720 = 1.5
+                                   #Potrebbe anche essere di dimensioni minori a seconda dei limiti dello zoom
 #Player settings
 PLAYER_SPEED = 3
 PLAYER_ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni

@@ -17,7 +17,7 @@ TRAINER_IMAGE_DELAY = 0.1  # Delay between trainer images in seconds
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(SCREEN_TITLE)
-font = pygame.font.Font("graphics/fonts/PressStart2P.ttf", 12)
+font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 12)
 
 # Load Pokémon images
 name_gioc = "PIKACHU"
@@ -25,7 +25,7 @@ life_point = 100
 poke_life = 100 #vita totale del pokemon del giocatore
 player_pokemon1_img = pygame.image.load('graphics/Pokemon/Back/PIKACHU.png')
 player_pokemon_rect = player_pokemon1_img.get_rect(center=(130, 400))
-player_riq_img = pygame.image.load('graphics/UI/Battle/databox_normal.png')
+player_riq_img = pygame.image.load('graphics/menus/battle/databox_normal.png')
 player_riq_rect = player_riq_img.get_rect(center=(129, 260))
 player_info_text = font.render(f"{name_gioc} Lvl {16} ", True, (0, 0, 0))
 player_sex_img=pygame.image.load('graphics/sex/male.png')
@@ -36,14 +36,14 @@ enemy_hp = 40
 enemy_tot_health = 40
 enemy_pokemon_img = pygame.image.load('graphics/Pokemon/Front/PIKACHU.png')
 enemy_pokemon_rect = enemy_pokemon_img.get_rect(center=(580, 250))
-enemy_riq_img = pygame.image.load('graphics/UI/Battle/databox_normal_foe.png')
+enemy_riq_img = pygame.image.load('graphics/menus/battle/databox_normal_foe.png')
 enemy_riq_rect = enemy_riq_img.get_rect(center=(599, 60))
 enemy_info_text = font.render(f"{name_enemy} Lvl {16} ", True, (0, 0, 0))
 enemy_sex_img=pygame.image.load('graphics/sex/female.png')
 enemy_sex_rect=enemy_sex_img.get_rect(center=(670, 50))
 
 # Load battle background
-battle_background = pygame.image.load('graphics/battle/Background_battle.png')
+battle_background = pygame.image.load('graphics/menus/battle/Background_battle.png')
 pokeball_images = []
 for i in range(18):
     pokeball_image = pygame.image.load(f'graphics/Gen 3 Pinball Pokeballs/Gen3 Pinball Pokeballs {i}.png')
@@ -61,17 +61,17 @@ pokemon_frame = 0
 pokemon_index = 0
 
 trainer_images=[]
-trainer_img=pygame.image.load('graphics/battle/FRLG Trainer Backs 01.png')
+trainer_img=pygame.image.load('graphics/menus/battle/FRLG Trainer Backs 01.png')
 trainer_images.append(trainer_img)
-trainer_img=pygame.image.load('graphics/battle/FRLG Trainer Backs 04.png')
+trainer_img=pygame.image.load('graphics/menus/battle/FRLG Trainer Backs 04.png')
 trainer_images.append(trainer_img)
-trainer_img=pygame.image.load('graphics/battle/FRLG Trainer Backs 05.png')
+trainer_img=pygame.image.load('graphics/menus/battle/FRLG Trainer Backs 05.png')
 trainer_images.append(trainer_img)
 trainer_index=0
 trainer_image_counter = 0
 trainer_image_timer = time.time()
 
-message_img=pygame.image.load('graphics/UI/Battle/overlay_message.png')
+message_img=pygame.image.load('graphics/menus/battle/overlay_message.png')
 message_rect=message_img.get_rect(center=(300,400))
 # Definisci i bottoni
 attack_button = pygame.Rect(400, 360, 150, 50)
@@ -112,7 +112,7 @@ def draw_button(button, text, color, alpha,image_path,ispokemon):
         surface.blit(image, image_rect)  # Assicurati di usare topleft per posizionare l'immagine correttamente
     if not ispokemon:
         # Disegna il testo del pulsante
-        font = pygame.font.Font("graphics/fonts/PressStart2P.ttf", 12)
+        font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 12)
         if color != (255, 255, 255):
             text_surface = font.render(text, True, (255, 255, 255))
         else:
@@ -121,7 +121,7 @@ def draw_button(button, text, color, alpha,image_path,ispokemon):
         surface.blit(text_surface, text_rect.topleft)
     else:
         # Disegna il testo del pulsante
-        font = pygame.font.Font("graphics/fonts/PressStart2P.ttf", 12)
+        font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 12)
         if color != (255, 255, 255):
             text_surface = font.render(text, True, (255, 255, 255))
         else:
@@ -354,12 +354,12 @@ while running:
             player_turn=False
     
     elif pokemon_mode:
-        draw_button(pokemon1_button, f"{name_gioc}",(128, 126, 124),None,'graphics/Gen 1-6 Icons/26.png',True)
-        draw_button(pokemon2_button, "Ditto",(128, 126, 124),None,'graphics/Gen 1-6 Icons/4.png',True)
-        draw_button(pokemon3_button, "Charmender",(128, 126, 124),None,'graphics/Gen 1-6 Icons/292.png',True)
-        draw_button(pokemon4_button, "Infernape",(128, 126, 124),None,'graphics/Gen 1-6 Icons/650.png',True)
-        draw_button(pokemon5_button, "Pichu",(128, 126, 124),None,'graphics/Gen 1-6 Icons/500.png',True)
-        draw_button(pokemon6_button, "Oshawott",(128, 126, 124),None,'graphics/Gen 1-6 Icons/104.png',True)
+        draw_button(pokemon1_button, f"{name_gioc}",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/26.png',True)
+        draw_button(pokemon2_button, "Ditto",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/4.png',True)
+        draw_button(pokemon3_button, "Charmender",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/292.png',True)
+        draw_button(pokemon4_button, "Infernape",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/650.png',True)
+        draw_button(pokemon5_button, "Pichu",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/500.png',True)
+        draw_button(pokemon6_button, "Oshawott",(128, 126, 124),None,'graphics/menus/computer/Gen 1-6 Icons/104.png',True)
         
         if poke1_mode:
             messages = [f"{name_gioc} è il momento di rientrare...", "Pietro I choose you!"]

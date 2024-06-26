@@ -1,5 +1,7 @@
 import pygame
 from settings import *
+from logic.cameraGroup.bush import Bush
+from logic.cameraGroup.tree_top import TreeTop
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self, screen):
@@ -45,7 +47,7 @@ class CameraGroup(pygame.sprite.Group):
         self.ground_rect_1_4 = self.ground_surf_1_4.get_rect(topleft = (self.ground_rect_1_3.bottomleft[0] + 500, self.ground_rect_1_3.bottomleft[1] - 500))
         self.ground_rects_1 = [self.ground_rect_1_1, self.ground_rect_1_2, self.ground_rect_1_3, self.ground_rect_1_4]
 
-        #Collision maps
+        #Collision maps (per debugging da togliere)
         self.first_level_first_zone = pygame.image.load("graphics/collision_maps/1_1.png").convert_alpha()
         self.first_level_first_zone.set_alpha(192)
         self.first_level_second_zone = pygame.image.load("graphics/collision_maps/1_2.png").convert_alpha()
@@ -119,3 +121,10 @@ class CameraGroup(pygame.sprite.Group):
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))
         self.display_surface.blit(scaled_surface, scaled_rect)
+
+    def load_secondary_sprites(self):
+        #Tree tops
+        self.tree_tops_1 = [
+            [TreeTop(self, (100, 100)), TreeTop(self, (200, 200)), TreeTop(self, (300, 300))],
+            [TreeTop(self, (400, 400)), TreeTop(self, (500, 500)), TreeTop(self, (600, 600))]
+        ]

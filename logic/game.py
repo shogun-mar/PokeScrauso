@@ -5,9 +5,9 @@ from random import randint
 from os import listdir, environ, path
 from ctypes import windll
 from datetime import datetime
-from logic.player import Player
-from logic.gameState import GameState
-from logic.cameraGroup import CameraGroup
+from logic.cameraGroup.player import Player
+from logic.states.gameState import GameState
+from logic.cameraGroup.cameraGroup import CameraGroup
 from logic.states.gameplayState import *
 from logic.states.helpMenuState import *
 from logic.states.pokedexState import *
@@ -180,6 +180,7 @@ class Game:
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
+        self.camera_group.load_secondary_sprites() #Carica gli oggetti secondari (non può stare nell'init di camera group per evitare inizializzazione circolare)
         self.player = Player((0, 200), self.camera_group, self.current_keybinds)
 
     def start(self):

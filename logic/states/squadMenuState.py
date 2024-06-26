@@ -1,6 +1,6 @@
 import settings
 import pygame
-from logic.gameState import GameState
+from logic.states.gameState import GameState
 
 previous_gamestate = None #Serve per differenziare i testi da scrivere (se in battaglia non dare l'opzione di uscire dal menù)
 

@@ -1,5 +1,5 @@
 import pygame
-from logic.gameState import GameState
+from logic.states.gameState import GameState
 import settings
 
 def handle_gameplay_input(game, key):

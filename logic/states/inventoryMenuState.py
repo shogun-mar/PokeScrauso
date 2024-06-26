@@ -1,6 +1,6 @@
 import pygame
 import settings
-from logic.gameState import GameState
+from logic.states.gameState import GameState
 
 def render_inventory(game):
         pass

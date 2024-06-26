@@ -1,6 +1,6 @@
 import pygame
 import settings
-from logic.gameState import GameState
+from logic.states.gameState import GameState
 
 start_x = 85
 start_y = 235

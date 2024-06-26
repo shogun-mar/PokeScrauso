@@ -1,11 +1,10 @@
 import pygame
 import time
 import settings #Bisogna importare così perchè from ... import * clona le variabili
-from logic.collisionController import CollisionController
+from logic.cameraGroup.collisionController import CollisionController
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, camera_group, keybinds):
-
         # Call the parent class (Sprite) constructor
         super().__init__(camera_group)
         self.camera_group = camera_group

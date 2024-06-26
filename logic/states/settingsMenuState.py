@@ -1,7 +1,7 @@
 import pygame
 import settings
 from os import path
-from logic.gameState import GameState
+from logic.states.gameState import GameState
 
 def render_settings_menu(game):
     game.fake_screen.blit(game.settings_background_image, (0,0))

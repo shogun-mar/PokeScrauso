@@ -46,8 +46,6 @@ class CollisionController:
         try: #Try catch non strettamente necessario, ma utile per evitare crash in caso di errori (se il giocatore appositamente continua ad andare avanti e indietro sulla riga di confine tra due zone)
             pixel_color = zone.getpixel((desired_coords[0], desired_coords[1]))
             
-            print(pixel_color)
-
             if pixel_color == (255, 255, 255, 255): #Colore che segna la presenza di un percorso
                 self.camera_group.is_player_in_grass = False
                 return True 
@@ -58,7 +56,7 @@ class CollisionController:
 
             elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
                 self.camera_group.is_player_in_grass = True
-                if randint(0, 100) < 25:
+                if randint(0, 100) < 4:
                     print("RANDOM ENCOUNTER")
                 else:
                     return True

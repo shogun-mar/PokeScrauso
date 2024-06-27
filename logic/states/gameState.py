@@ -12,4 +12,5 @@ class GameState(Enum):
     HELP_MENU = 7
     NAME_MENU = 8
     SQUAD_MENU = 9
+    BATTLE = 10
     

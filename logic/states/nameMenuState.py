@@ -1,4 +1,3 @@
-import pygame
 import settings
 from logic.states.gameState import GameState
 

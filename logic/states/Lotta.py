@@ -1,21 +1,4 @@
 import pygame
-import sys
-
-# Inizializza Pygame
-pygame.init()
-
-# Definisci le costanti per lo schermo
-SCREEN_WIDTH = 720
-SCREEN_HEIGHT = 480
-SCREEN_TITLE = "Pokémon Battle Menu" 
-HEALTH_BAR_WIDTH=98
-HEALTH_BAR_HEIGHT=7
-
-# Crea lo schermo
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption(SCREEN_TITLE)
-font=pygame.font.Font("graphics/fonts/standard_font.ttf",12)
-
 
 # Carica le immagini dei Pokémon
 name_gioc="DITTO"
@@ -107,11 +90,6 @@ poke4_mode=False
 poke5_mode=False
 poke6_mode=False
 running=True
-
-
-
-
-
 
 # Main loop
 while running:

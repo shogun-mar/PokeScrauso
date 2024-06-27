@@ -10,7 +10,8 @@ class CollisionController:
         first_level_second_zone = Image.open("graphics/collision_maps/1_2.png")
         first_level_third_zone = Image.open("graphics/collision_maps/1_3.png")
         first_level_fourth_zone = Image.open("graphics/collision_maps/1_4.png")
-        self.first_level_maps = [first_level_first_zone, first_level_second_zone, first_level_third_zone, first_level_fourth_zone]
+        first_level_fifth_zone = Image.open("graphics/collision_maps/1_5.png")
+        self.first_level_maps = [first_level_first_zone, first_level_second_zone, first_level_third_zone, first_level_fourth_zone, first_level_fifth_zone]
 
         #Assigning istances of other classes
         self.camera_group = camera_group
@@ -38,6 +39,7 @@ class CollisionController:
             elif zone_num == 1: zone = maps[1]
             elif zone_num == 2: zone = maps[2]
             elif zone_num == 3: zone = maps[3]
+            elif zone_num == 4: zone = maps[4]
         except Exception:
             if self.player.verse == "right" or self.player.verse == "down": zone = maps[zone_num+1]
             elif self.player.verse == "up" or self.player.verse == "left": zone = maps[zone_num-1] 
@@ -56,7 +58,7 @@ class CollisionController:
 
             elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
                 self.camera_group.is_player_in_grass = True
-                if randint(0, 100) < 4:
+                if randint(0, 100) < 3:
                     print("RANDOM ENCOUNTER")
                 else:
                     return True
@@ -75,6 +77,18 @@ class CollisionController:
                     self.camera_group.last_player_collision_verse = self.player.verse
                     self.last_zone_change_time = current_time
                 return True
-    
+            
+            elif pixel_color == (255, 0, 238, 255): #COlore che segna la presenza di un PokèCenter
+                print("PokèCentre")
+                return False
+            
+            elif pixel_color == (114, 59, 150, 255): #Colore che segna la presenza di una PokèMart
+                print("PokèMart")
+                return False
+            
+            elif pixel_color == (178, 154, 0, 255): #Colore che segna la presenza di una palestra
+                print("Palestra")
+                return False
+                
         except Exception: #Se il giocatore è fuori dalla mappa rifiuta il movimento
             return False  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza

@@ -1,8 +1,8 @@
 import pygame
-import time
 import settings #Bisogna importare così perchè from ... import * clona le variabili
 from random import randint
 from os import listdir, environ, path
+from time import perf_counter
 from ctypes import windll
 from datetime import datetime
 from logic.cameraGroup.player import Player
@@ -18,6 +18,7 @@ from logic.states.settingsMenuState import *
 from logic.states.startMenuState import *
 from logic.states.nameMenuState import *
 from logic.states.squadMenuState import *
+from logic.states.battleState import *
 
 class Game:
     def __init__(self):
@@ -36,7 +37,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
+        self.game_state = GameState.BATTLE #Stato di gioco iniziale
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
@@ -70,7 +71,7 @@ class Game:
         elif randomint == 4: self.background_frame_switch_delay = 0.1
         elif randomint == 5: self.background_frame_switch_delay = 0.2
         elif randomint == 6: self.background_frame_switch_delay = 0.25
-        self.background_last_switch_time = time.time()
+        self.background_last_switch_time = perf_counter()
         self.start_background_image = self.start_background_images[self.start_menu_current_frame]
         self.start_text_image = pygame.image.load("graphics/menus/start menu/start_menu_text.png").convert_alpha()
         self.start_text_image_rect = self.start_text_image.get_rect(center = (self.half_w, self.half_h - 100))
@@ -178,6 +179,14 @@ class Game:
         #Overlay for map
         self.overlay = pygame.Surface((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), pygame.SRCALPHA)# Create a semi-transparent surface the same size as the screen
 
+        #Battle menu
+        self.battle_background = pygame.image.load("graphics/menus/battle menu/background.png").convert_alpha()
+        self.beginning_battle_animation_finished = False
+        self.beginning_battle_animation_frames = self.import_frames("graphics/menus/battle menu/beginning_animation")
+        self.beginning_battle_animation_current_frame = 0
+        self.beginning_battle_animation_last_switch_time = perf_counter()
+        self.beginning_battle_animation_image = self.beginning_battle_animation_frames[self.beginning_battle_animation_current_frame]
+
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.camera_group.load_secondary_sprites() #Carica gli oggetti secondari (non può stare nell'init di camera group per evitare inizializzazione circolare)
@@ -211,6 +220,7 @@ class Game:
                         except Exception:
                             self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT), settings.flags)
                 elif event.key == settings.SCREENSHOT_KEY: pygame.image.save(self.screen, f"screenshots/screenshot_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.png")
+                
                 #Game state specific events
                 elif event.key == settings.EXIT_KEY: self.quit_game() #Chiude il gioco (scritto qui per evitare ripetizioni nelle funzioni più specifiche)
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input(self, event.key)
@@ -223,6 +233,7 @@ class Game:
                 elif self.game_state == GameState.HELP_MENU: handle_help_screen_input(self, event.key)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input(self, event.key)
                 elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_input(self, event.key)
+                elif self.game_state == GameState.BATTLE: handle_battle_input(self, event.key)
                 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: #Non è possibile unire questo if a quello sopra perchè altrimenti python riconosce pygame.event.Event e quindi non può trovare event.key
                 mouse_pos = pygame.mouse.get_pos()
@@ -230,15 +241,13 @@ class Game:
                 elif self.game_state == GameState.START_MENU: handle_start_menu_input_mouse(self, mouse_pos)
                 elif self.game_state == GameState.NAME_MENU: handle_name_menu_input_mouse(self, mouse_pos)
                 elif self.game_state == GameState.SQUAD_MENU: handle_squad_menu_mouse_input(self, mouse_pos)
+                elif self.game_state == GameState.BATTLE: handle_battle_input_mouse(self, mouse_pos)
             
             elif event.type == pygame.MOUSEWHEEL: #Zoom della camera
                 self.camera_group.zoom_scale += event.y * settings.ZOOM_SCALING_VELOCITY
             
         #Player controls related events
         if self.game_state == GameState.GAMEPLAY: self.player.move()
-
-        #Update the pointer image if the mouse is over a button
-        self.update_pointer()
 
     def render(self):
         # Pulisce la superficie falsa
@@ -254,8 +263,9 @@ class Game:
         elif self.game_state == GameState.HELP_MENU: render_help_menu(self)
         elif self.game_state == GameState.NAME_MENU: render_name_menu(self, self.simbols_set_index)
         elif self.game_state == GameState.SQUAD_MENU: render_squad_menu(self)
+        elif self.game_state == GameState.BATTLE: render_battle(self)
         
-        #Disegna il puntatore (solamente se non si è in GAMEPLAY)
+        #Disegna il puntatore
         if self.game_state != GameState.GAMEPLAY and self.game_state != GameState.HELP_MENU: self.fake_screen.blit(self.current_pointer, self.current_pointer_rect)
 
         # Ridimensiona la superficie falsa e la disegna sulla finestra
@@ -273,7 +283,17 @@ class Game:
             self.start_background_image = change_frame_values[0]
             self.start_menu_current_frame = change_frame_values[1]
             self.background_last_switch_time = change_frame_values[2]
-        
+
+        if self.game_state == GameState.BATTLE and self.beginning_battle_animation_finished == False:
+            #Cambio frame dell'animazione di inizio battaglia
+            change_frame_values = self.change_frame(current_animation = self.beginning_battle_animation_frames, current_frame = self.beginning_battle_animation_current_frame, current_last_switch_time = self.beginning_battle_animation_last_switch_time, image_to_update = self.beginning_battle_animation_image, animation_delay = settings.BEGINNING_BATTLE_ANIMATION_DELAY)
+            self.beginning_battle_animation_image = change_frame_values[0]
+            self.beginning_battle_animation_current_frame = change_frame_values[1]
+            self.beginning_battle_animation_last_switch_time = change_frame_values[2]
+            #if self.beginning_battle_animation_current_frame == len(self.beginning_battle_animation_frames) - 1: self.beginning_battle_animation_finished = True
+
+        #Update the pointer image if the mouse is over a button
+        self.update_pointer()
 
     def set_pointer_click(self):
         self.current_pointer = self.pointer_click_image
@@ -313,7 +333,7 @@ class Game:
     def import_frames(self, directory_path): #Importa i frame per una animazione
         images = []
         for filename in listdir(directory_path):
-            if filename.endswith('.png') or filename.endswith('.jpg'):
+            if filename.endswith('.png'):
                 image = pygame.image.load(path.join(directory_path, filename)).convert_alpha()
                 images.append(image)
         return images
@@ -329,7 +349,7 @@ class Game:
 
     def change_frame(self, current_animation, current_frame, current_last_switch_time, image_to_update, animation_delay): 
         #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
-        current_time = time.time() #e quindi avere un return perchè in python i parametri sono passati per assegnamento e non riferimento
+        current_time = perf_counter() #e quindi avere un return perchè in python i parametri sono passati per assegnamento e non riferimento
         
         if current_time - self.background_last_switch_time >= animation_delay: 
             current_frame += 1

@@ -181,11 +181,19 @@ class Game:
 
         #Battle menu
         self.battle_background = pygame.image.load("graphics/menus/battle menu/background.png").convert_alpha()
+            #Animation
         self.beginning_battle_animation_finished = False
         self.beginning_battle_animation_frames = self.import_frames("graphics/menus/battle menu/beginning_animation")
         self.beginning_battle_animation_current_frame = 0
         self.beginning_battle_animation_last_switch_time = perf_counter()
         self.beginning_battle_animation_image = self.beginning_battle_animation_frames[self.beginning_battle_animation_current_frame]
+            #UI
+        self.databox_player = pygame.image.load("graphics/menus/battle menu/databox_player.png").convert_alpha()
+        self.databox_enemy = pygame.image.load("graphics/menus/battle menu/databox_enemy.png").convert_alpha()
+
+            #Pokemon
+        self.player_pokemon = None;
+        self.enemy_pokemon = None            
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
@@ -290,7 +298,7 @@ class Game:
             self.beginning_battle_animation_image = change_frame_values[0]
             self.beginning_battle_animation_current_frame = change_frame_values[1]
             self.beginning_battle_animation_last_switch_time = change_frame_values[2]
-            #if self.beginning_battle_animation_current_frame == len(self.beginning_battle_animation_frames) - 1: self.beginning_battle_animation_finished = True
+            if self.beginning_battle_animation_current_frame == len(self.beginning_battle_animation_frames) - 1: self.beginning_battle_animation_finished = True
 
         #Update the pointer image if the mouse is over a button
         self.update_pointer()
@@ -351,7 +359,7 @@ class Game:
         #Al contrario della funzione omonima in player ha bisogno di avere un return perchè ho voluto renderla generica per poterla riutilizzare solo che per fare ciò devo introdurre dei parametri
         current_time = perf_counter() #e quindi avere un return perchè in python i parametri sono passati per assegnamento e non riferimento
         
-        if current_time - self.background_last_switch_time >= animation_delay: 
+        if current_time - current_last_switch_time >= animation_delay: 
             current_frame += 1
             if current_frame == len(current_animation): 
                 current_frame = 0

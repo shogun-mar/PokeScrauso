@@ -18,7 +18,7 @@ INTERNAL_SURFACE_SIZE = (1080,720) #Superficie interna usata per lo zoom (per ga
 #Player settings
 PLAYER_SPEED = 3
 PLAYER_ANIMATION_DELAY = 0.3 #Secondi tra i frame delle animazioni
-BEGINNING_BATTLE_ANIMATION_DELAY = 1 #Secondi tra i frame delle animazioni
+BEGINNING_BATTLE_ANIMATION_DELAY = 0.5 #Secondi tra i frame delle animazioni
 
 #Keybinds
 POKEDEX_KEY = pygame.K_p #Pulsante per aprire il PokèDex

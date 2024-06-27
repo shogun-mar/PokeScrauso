@@ -1,7 +1,7 @@
 import pygame
 
 class Pokemon:
-    def __init__(self, name, type, sex, pokedex_number, moves, path, level, experience, status, hp, attack, defense, special_attack, special_defense, speed):
+    def __init__(self, name, type, sex, pokedex_number, moves, path, level, experience, status, hp, max_hp, attack, defense, special_attack, special_defense, speed):
         self.name = name
         self.type = type
         self.sex = sex
@@ -13,6 +13,7 @@ class Pokemon:
         self.status = status #'normal', 'paralyzed', 'poisoned', 'burned', 'frozen', 'asleep', 'confused', 'dead', '' 
         self.stats = {
             'hp': hp,
+            'max_hp': max_hp,
             'attack': attack,
             'defense': defense,
             'special_attack': special_attack,
@@ -23,7 +24,7 @@ class Pokemon:
     def get_name(self):
         return self.name
     
-    def get_trype(self):
+    def get_type(self):
         return self.type
     
     def get_sex(self):
@@ -67,6 +68,9 @@ class Pokemon:
     
     def get_hp(self):
         return self.stats['hp']
+    
+    def get_max_hp(self):
+        return self.stats['max_hp']
     
     def get_attack(self):
         return self.stats['attack']

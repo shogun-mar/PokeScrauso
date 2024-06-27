@@ -2,6 +2,8 @@ from time import perf_counter
 from settings import ZONE_CHANGE_COOLDOWN
 from random import randint
 from PIL import Image
+from logic.states.battleState import *
+from logic.pokemon import Pokemon
 
 class CollisionController:
     def __init__(self, camera_group, player, MAX_FPS):
@@ -60,6 +62,8 @@ class CollisionController:
                 self.camera_group.is_player_in_grass = True
                 if randint(0, 100) < 3:
                     print("RANDOM ENCOUNTER")
+                    init_battle(self.camera_group.game, self.generate_random_pokemon())
+                    self.camera_group.game.state = GameState.BATTLE
                 else:
                     return True
 
@@ -92,3 +96,23 @@ class CollisionController:
                 
         except Exception: #Se il giocatore è fuori dalla mappa rifiuta il movimento
             return False  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
+        
+    def generate_random_pokemon(self):
+        return Pokemon(
+            name="Pikachu",
+            type="Electric",
+            sex="Male",
+            pokedex_number=25,
+            moves=["Thunder Shock", "Quick Attack", "Tail Whip", "Thunderbolt"],
+            path="path/to/pikachu_sprite.png",
+            level=5,
+            experience=0,
+            status="normal",
+            hp=35,
+            max_hp=35,
+            attack=55,
+            defense=40,
+            special_attack=50,
+            special_defense=50,
+            speed=90
+        )

@@ -5,7 +5,7 @@ class Pokemon:
     font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
     def __init__(self, name, type, sex, pokedex_number, moves, level, experience, status, hp, max_hp, attack, defense, special_attack, special_defense, speed):
         self.name = name
-        self.battle_name = Pokemon.font.render(name, True, (0, 0, 0))
+        self.rendered_name = Pokemon.font.render(name, True, (0, 0, 0))
         self.type = type
         self.sex = sex
         self.pokedex_number = pokedex_number
@@ -29,3 +29,4 @@ class Pokemon:
         def update_level(self):
             self.level += 1
             self.level_surf = Pokemon.font.render(str(self.level), True, (0, 0, 0))
+            #also update stats

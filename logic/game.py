@@ -45,6 +45,7 @@ class Game:
         #Fonts
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
+        self.battle_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
         #Colors
@@ -191,11 +192,12 @@ class Game:
             #UI
         self.databox_player = pygame.image.load("graphics/menus/battle menu/databox_player.png").convert_alpha()
         self.databox_enemy = pygame.image.load("graphics/menus/battle menu/databox_enemy.png").convert_alpha()
+        self.battle_level_icon = pygame.image.load("graphics/menus/battle menu/level_icon.png").convert_alpha()
         self.health_bars = [pygame.image.load("graphics/menus/battle menu/health_bar_green.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_orange.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_red.png").convert_alpha()]
-        self.current_player_health_bar = self.health_bars[0]
-        self.current_player_health_bar_rect = self.current_player_health_bar.get_rect(topleft = (0+103, 180+37))
-        self.current_enemy_health_bar = self.health_bars[0]
-        self.current_enemy_health_bar_rect = self.current_enemy_health_bar.get_rect(topleft = (485+129, 60+38))
+        self.player_current_health_bar = self.health_bars[0]
+        self.player_current_health_bar_rect = self.player_current_health_bar.get_rect(topleft = (103, 217))
+        self.enemy_current_health_bar = self.health_bars[0]
+        self.enemy_current_health_bar_rect = self.enemy_current_health_bar.get_rect(topleft = (614, 98))
 
             #Pokemon
         self.player_pokemon = None

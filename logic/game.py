@@ -19,6 +19,7 @@ from logic.states.startMenuState import *
 from logic.states.nameMenuState import *
 from logic.states.squadMenuState import *
 from logic.states.battleState import *
+from logic.pokemon import Pokemon #Da togliere messo per debugging
 
 class Game:
     def __init__(self):
@@ -190,15 +191,21 @@ class Game:
             #UI
         self.databox_player = pygame.image.load("graphics/menus/battle menu/databox_player.png").convert_alpha()
         self.databox_enemy = pygame.image.load("graphics/menus/battle menu/databox_enemy.png").convert_alpha()
+        self.health_bars = [pygame.image.load("graphics/menus/battle menu/health_bar_green.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_orange.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_red.png").convert_alpha()]
+        self.current_player_health_bar = self.health_bars[0]
+        self.current_player_health_bar_rect = self.current_player_health_bar.get_rect(topleft = (0+103, 180+37))
+        self.current_enemy_health_bar = self.health_bars[0]
+        self.current_enemy_health_bar_rect = self.current_enemy_health_bar.get_rect(topleft = (485+129, 60+38))
 
             #Pokemon
-        self.player_pokemon = None;
-        self.enemy_pokemon = None            
+        self.player_pokemon = None
+        self.enemy_pokemon = None
+        init_battle(self, self.generate_random_pokemon()) #Inizializza la battaglia (DA TOGLIERE MESSO PER DEBUGGING)            
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera
         self.camera_group.load_secondary_sprites() #Carica gli oggetti secondari (non può stare nell'init di camera group per evitare inizializzazione circolare)
-        self.player = Player((0, 200), self.camera_group, self.current_keybinds)
+        self.player = Player((0, 200), self.camera_group, self.current_keybinds, self)
 
     def start(self):
         while True:
@@ -385,3 +392,22 @@ class Game:
     def quit_game(self):
         pygame.quit()
         quit()
+
+    def generate_random_pokemon(self): #Genera un pokèmon casuale (DA TOGLIERE MESSO PER DEBUGGING)
+        return Pokemon(
+            name="Arcanine",
+            type="Fire",
+            sex="Male",
+            pokedex_number=25,
+            moves=["Thunder Shock", "Quick Attack", "Tail Whip", "Thunderbolt"],
+            level=5,
+            experience=0,
+            status="normal",
+            hp=35,
+            max_hp=35,
+            attack=55,
+            defense=40,
+            special_attack=50,
+            special_defense=50,
+            speed=90
+        )

@@ -13,7 +13,7 @@ class CameraGroup(pygame.sprite.Group):
 
         #Game variables
         self.level_num = 0
-        self.zone_num = 4
+        self.zone_num = 0
         
         #Camera offset
         self.offset = pygame.math.Vector2()

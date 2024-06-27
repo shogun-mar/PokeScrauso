@@ -6,7 +6,8 @@ from logic.states.battleState import *
 from logic.pokemon import Pokemon
 
 class CollisionController:
-    def __init__(self, camera_group, player, MAX_FPS):
+    def __init__(self, camera_group, player, game):
+
         #Load images
         first_level_first_zone = Image.open("graphics/collision_maps/1_1.png")
         first_level_second_zone = Image.open("graphics/collision_maps/1_2.png")
@@ -18,6 +19,7 @@ class CollisionController:
         #Assigning istances of other classes
         self.camera_group = camera_group
         self.player = player
+        self.game = game
 
         #Cooldown per il cambio di zona
         self.last_zone_change_time = perf_counter()             
@@ -62,8 +64,9 @@ class CollisionController:
                 self.camera_group.is_player_in_grass = True
                 if randint(0, 100) < 3:
                     print("RANDOM ENCOUNTER")
-                    init_battle(self.camera_group.game, self.generate_random_pokemon())
-                    self.camera_group.game.state = GameState.BATTLE
+                    init_battle(self.game, self.generate_random_pokemon())
+                    self.game.game_state = GameState.BATTLE
+                    print("BATTLE STATE")
                 else:
                     return True
 
@@ -94,17 +97,16 @@ class CollisionController:
                 print("Palestra")
                 return False
                 
-        except Exception: #Se il giocatore è fuori dalla mappa rifiuta il movimento
-            return False  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
+        except IndexError: #Se il giocatore è fuori dalla mappa rifiuta il movimento
+            print("a")  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
         
     def generate_random_pokemon(self):
         return Pokemon(
-            name="Pikachu",
-            type="Electric",
+            name="Arcanine",
+            type="Fire",
             sex="Male",
             pokedex_number=25,
             moves=["Thunder Shock", "Quick Attack", "Tail Whip", "Thunderbolt"],
-            path="path/to/pikachu_sprite.png",
             level=5,
             experience=0,
             status="normal",

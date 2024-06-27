@@ -1,6 +1,7 @@
 import settings
 import pygame
 from logic.states.gameState import GameState
+from random import randint
 
 PLAYER_POKEMON_MAX_HP = None
 ENEMY_POKEMON_MAX_HP = None
@@ -37,7 +38,32 @@ def handle_battle_input(game, key):
         game.player_interacted_with_dialog_box = True
 
 def handle_battle_input_mouse(game, mouse_pos):
-    pass
+    if game.player_interacted_with_dialog_box == True:
+        if game.fight_button_rect.collidepoint(mouse_pos):
+            if game.player_pokemon.level == game.enemy_pokemon.level:
+                hit_probability = 50
+            elif game.player_pokemon.level > game.enemy_pokemon.level:
+                hit_probability = 75
+            else:
+                hit_probability = 25
+            if randint(1, 100) <= hit_probability:
+                print(str(game.enemy_pokemon.stats['hp']))
+                game.enemy_pokemon.stats['hp'] -= 5#randint(1, 5) * game.player_pokemon.level
+                if game.enemy_pokemon.stats['hp'] <= 0:
+                    print("Enemy fainted")
+                    game.game_state = GameState.GAMEPLAY
+                else:
+                    update_health_bars(game)
+        elif game.flee_button_rect.collidepoint(mouse_pos):
+            if game.player_pokemon.level == game.enemy_pokemon.level:
+                flee_probability = 50
+            elif game.player_pokemon.level > game.enemy_pokemon.level:
+                flee_probability = 75
+            else:
+                flee_probability = 25
+            if randint(1, 100) <= flee_probability:
+                print("Flee successful")
+                game.game_state = GameState.GAMEPLAY
 
 def render_battle(game):
     game.fake_screen.blit(game.battle_background, (0, 0))
@@ -79,10 +105,28 @@ def draw_overlay(game):
         game.fake_screen.blit(game.beginning_battle_text_surf, (60, 420))
     else:
         game.fake_screen.blit(game.battle_overlay_command_surf, (0, 384))
-        game.fake_screen.blit(game.battle_overlay_command_text, (30, 420))
+        game.fake_screen.blit(game.battle_overlay_command_text, (30, 425))
+        game.fake_screen.blit(game.fight_button_surf, game.fight_button_rect)
+        game.fake_screen.blit(game.flee_button_surf, game.flee_button_rect)
 
-def update_health_bar(game): #Funzione per "tirare" indietro la barra di vita del giocatore e del nemico
-    pass                     #Sposta il rettangolo a sinistra o destra a seconda della barra di vita e della differenza della vita corrente rispetto a quella del pokèmon
+def update_health_bars(game): #Funzione per "tirare" indietro la barra di vita del giocatore e del nemico
+                             #Sposta il rettangolo a sinistra o destra a seconda della barra di vita e della differenza della vita corrente rispetto a quella del pokèmon
                              #Cambia anche il colore della barra di vita a seconda della vita del pokèmon (100%-50% verde, 50%-25% arancione, 25%-0% rosso)
+    player_hp_percentage = game.player_pokemon.stats['hp'] / PLAYER_POKEMON_MAX_HP
+    if player_hp_percentage > 0.5:
+        game.player_current_health_bar = game.player_health_bars[0]
+    elif player_hp_percentage > 0.25 and player_hp_percentage <= 0.5:
+        game.player_current_health_bar = game.player_health_bars[1]
+    else:
+        game.player_current_health_bar = game.player_health_bars[2]
+    game.player_current_health_bar_rect.width = 96 * player_hp_percentage
 
+    enemy_hp_percentage = game.enemy_pokemon.stats['hp'] / ENEMY_POKEMON_MAX_HP
+    if enemy_hp_percentage > 0.5:
+        game.enemy_current_health_bar = game.enemy_health_bars[0]
+    elif enemy_hp_percentage > 0.25 and enemy_hp_percentage <= 0.5:
+        game.enemy_current_health_bar = game.enemy_health_bars[1]
+    else:
+        game.enemy_current_health_bar = game.enemy_health_bars[2]
+    game.enemy_current_health_bar_rect.width = 96 * enemy_hp_percentage
                             

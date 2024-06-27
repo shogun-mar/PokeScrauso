@@ -63,10 +63,8 @@ class CollisionController:
             elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
                 self.camera_group.is_player_in_grass = True
                 if randint(0, 100) < 3:
-                    print("RANDOM ENCOUNTER")
                     init_battle(self.game, self.generate_random_pokemon())
                     self.game.game_state = GameState.BATTLE
-                    print("BATTLE STATE")
                 else:
                     return True
 
@@ -102,7 +100,7 @@ class CollisionController:
         
     def generate_random_pokemon(self):
         return Pokemon(
-            name="Garciu",
+            name="Growlithe",
             type="Fire",
             sex="Male",
             pokedex_number=25,

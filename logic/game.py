@@ -45,7 +45,9 @@ class Game:
         #Fonts
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
-        self.battle_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
+        self.battle_ui_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
+        self.battle_dialogue_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 25)
+        self.battle_command_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
         #Colors
@@ -195,10 +197,15 @@ class Game:
         self.battle_level_icon = pygame.image.load("graphics/menus/battle menu/level_icon.png").convert_alpha()
         self.health_bars = [pygame.image.load("graphics/menus/battle menu/health_bar_green.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_orange.png").convert_alpha(), pygame.image.load("graphics/menus/battle menu/health_bar_red.png").convert_alpha()]
         self.player_current_health_bar = self.health_bars[0]
-        self.player_current_health_bar_rect = self.player_current_health_bar.get_rect(topleft = (103, 217))
+        self.player_current_health_bar_rect = self.player_current_health_bar.get_rect(topleft = (102, 121))
         self.enemy_current_health_bar = self.health_bars[0]
-        self.enemy_current_health_bar_rect = self.enemy_current_health_bar.get_rect(topleft = (614, 98))
-
+        self.enemy_current_health_bar_rect = self.enemy_current_health_bar.get_rect(topleft = (613, 98))
+        self.battle_overlay_message_surf = pygame.image.load("graphics/menus/battle menu/overlay_message.png").convert_alpha()
+        self.beginning_battle_text_surf = self.battle_dialogue_font.render("A wild POKèMON appeared!", True, (0,0,0))
+        self.battle_overlay_command_surf = pygame.image.load("graphics/menus/battle menu/overlay_command.png").convert_alpha()
+        self.battle_overlay_command_text = None #Viene inizializzato poi a seconda del nome del Pokèmon
+        self.player_interacted_with_dialog_box = False
+        #Icona del sesso
             #Pokemon
         self.player_pokemon = None
         self.enemy_pokemon = None
@@ -397,7 +404,7 @@ class Game:
 
     def generate_random_pokemon(self): #Genera un pokèmon casuale (DA TOGLIERE MESSO PER DEBUGGING)
         return Pokemon(
-            name="Arcanine",
+            name="Articuno",
             type="Fire",
             sex="Male",
             pokedex_number=25,

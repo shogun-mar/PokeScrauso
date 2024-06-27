@@ -102,7 +102,7 @@ class CollisionController:
         
     def generate_random_pokemon(self):
         return Pokemon(
-            name="Arcanine",
+            name="Garciu",
             type="Fire",
             sex="Male",
             pokedex_number=25,

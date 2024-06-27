@@ -67,6 +67,7 @@ class CameraGroup(pygame.sprite.Group):
         #Variabili per rendering
         self.ground_surfaces = self.ground_surfaces_1
         self.ground_rects = self.ground_rects_1
+        self.dark_mask = pygame.image.load("graphics/world_sprites/dark_mask.png").convert_alpha()
 
         #Variabili per collisioni
         self.last_player_pos_offsetted = pygame.math.Vector2()
@@ -98,8 +99,8 @@ class CameraGroup(pygame.sprite.Group):
         # Loop through the determined range and blit each zone
         for zone_index in range(start_zone, end_zone + 1):
             offset_pos_ground = self.ground_rects[zone_index].topleft + self.offset + self.internal_offset
-            self.internal_surface.blit(self.ground_surfaces[zone_index], offset_pos_ground)  
-        
+            self.internal_surface.blit(self.ground_surfaces[zone_index], offset_pos_ground)
+             
         #Draws the collision maps for debugging purposes
         self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
@@ -131,10 +132,9 @@ class CameraGroup(pygame.sprite.Group):
                     pos = (sprite.rect.topleft[0] + self.first_level_third_zone_rect.topleft[0] + self.offset.x + self.internal_offset.x, sprite.rect.topleft[1] + self.first_level_third_zone_rect.topleft[1] + self.offset.y + self.internal_offset.y)
                     self.internal_surface.blit(sprite.image, pos)
 
-        #print(self.zone_num)
-
         scaled_surface = pygame.transform.scale(self.internal_surface, self.internal_surface_size_vector * self.zoom_scale)
         scaled_rect = scaled_surface.get_rect(center = (self.half_w, self.half_h))
+        if self.zone_num == 1: scaled_surface = self.darken_surface(scaled_surface, 100)
         self.display_surface.blit(scaled_surface, scaled_rect)
 
     def load_secondary_sprites(self):
@@ -145,3 +145,12 @@ class CameraGroup(pygame.sprite.Group):
             #seconda zona    
         TreeTop(self, (1164, 288), 0, 1); TreeTop(self, (1260, 288), 0, 1); TreeTop(self, (1356, 288), 0, 1); TreeTop(self, (1164, 433), 0, 1); TreeTop(self, (1260, 433), 0, 1); TreeTop(self, (1356, 433), 0, 1); TreeTop(self, (300, 672), 0, 1); TreeTop(self, (396, 672), 0, 1); TreeTop(self, (492, 672), 0, 1); TreeTop(self, (588, 672), 0, 1); TreeTop(self, (684, 672), 0, 1); TreeTop(self, (780, 672), 0, 1); TreeTop(self, (876, 672), 0, 1); TreeTop(self, (972, 672), 0, 1); TreeTop(self, (1212, 672), 0, 1); TreeTop(self, (1308, 672), 0, 1); TreeTop(self, (1404, 672), 0, 1); TreeTop(self, (1500, 672), 0, 1); TreeTop(self, (1596, 672), 0, 1); TreeTop(self, (1692, 672), 0, 1); TreeTop(self, (1788, 672), 0, 1); TreeTop(self, (1884, 672), 0, 1); TreeTop(self, (1980, 672), 0, 1)
             #terza zona
+
+    def darken_surface(self, original_surface, darken_factor):
+        # Create a new surface with the same size as the original
+        dark_surface = pygame.Surface(original_surface.get_size(), pygame.SRCALPHA)
+        # Fill the new surface with a shade of grey based on the darken_factor
+        dark_surface.fill((darken_factor, darken_factor, darken_factor, 255))
+        # Blend the original surface with the dark surface
+        original_surface.blit(dark_surface, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+        return original_surface

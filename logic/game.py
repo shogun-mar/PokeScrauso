@@ -38,7 +38,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
+        self.game_state = GameState.START_MENU #Stato di gioco iniziale
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
@@ -201,13 +201,23 @@ class Game:
         self.enemy_health_bars = self.player_health_bars.copy()
         self.enemy_current_health_bar = self.enemy_health_bars[0]
         self.enemy_current_health_bar_rect = self.enemy_current_health_bar.get_rect(topleft = (613, 98))
+        
+        self.battle_overlay_message_surf = pygame.image.load("graphics/menus/battle menu/overlay_message.png").convert_alpha()
         self.beginning_battle_text_surf = self.battle_dialogue_font.render("A wild POKèMON appeared!", True, (0,0,0))
         self.end_battle_text_surf = self.battle_dialogue_font.render("You defeated the wild POKèMON!", True, (0,0,0))
-        self.battle_overlay_message_surf = pygame.image.load("graphics/menus/battle menu/overlay_message.png").convert_alpha()
-        self.battle_overlay_command_surf = pygame.image.load("graphics/menus/battle menu/overlay_command.png").convert_alpha()
-        self.battle_overlay_command_text = None #Viene inizializzato poi a seconda del nome del Pokèmon
-        self.player_interacted_with_dialogue_box = False
+        self.current_battle_dialogue_text = self.beginning_battle_text_surf
+        self.interacted_with_beginning_dialogue = False
         self.show_end_dialogue = False
+        
+        self.battle_overlay_command_surf = pygame.image.load("graphics/menus/battle menu/overlay_command.png").convert_alpha()
+        self.battle_overlay_failed_flee_text = self.battle_command_font.render("The escape failed!", True, (0,0,0))
+        self.battle_overlay_successful_flee_text = self.battle_command_font.render("You successfully fled!", True, (0,0,0))
+        self.battle_overlay_command_successful_hit_text = self.battle_command_font.render("Successful hit!", True, (0,0,0))
+        self.battle_overlay_command_failed_hit_text = self.battle_command_font.render("The attack missed!", True, (0,0,0))
+        self.battle_overlay_command_text = None #Viene inizializzato poi a seconda del nome del Pokèmon
+        
+        self.current_battle_command_text = self.battle_overlay_command_text
+        
         self.fight_button_surf = pygame.image.load("graphics/menus/battle menu/fight_button.png").convert_alpha()
         self.fight_button_rect = self.fight_button_surf.get_rect(topleft = (370, 395))
         self.flee_button_surf = pygame.image.load("graphics/menus/battle menu/flee_button.png").convert_alpha()

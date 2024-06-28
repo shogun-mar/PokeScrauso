@@ -106,7 +106,7 @@ class CameraGroup(pygame.sprite.Group):
             self.internal_surface.blit(self.ground_surfaces[zone_index], offset_pos_ground)
              
         #Draws the collision maps for debugging purposes
-        self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
+        #self.internal_surface.blit(self.first_level_maps[self.zone_num], self.ground_rects[self.zone_num].topleft + self.offset + self.internal_offset)
 
     def custom_draw(self, player):
 

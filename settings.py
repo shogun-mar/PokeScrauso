@@ -6,7 +6,7 @@ SCREEN_HEIGHT = 480
 flags = pygame.RESIZABLE | pygame.DOUBLEBUF | pygame.HWSURFACE
 MAX_FPS = 60 #60
 ZONE_CHANGE_COOLDOWN = (1000 / MAX_FPS) / 1000 * 25 #Numero di frame di cooldown per il cambio di zona (default 25 frame)
-BACKGROUND_COLOR = (0,0,0)
+BACKGROUND_COLOR = (72,120,216) #rgb(72, 120, 216) = mare, rgb(0, 0, 0) = nero, rgb(255, 255, 255) = bianco
 
 #Camera settings
 ZOOM_SCALING_VELOCITY = 0.1

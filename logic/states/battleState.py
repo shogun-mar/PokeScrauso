@@ -24,6 +24,7 @@ def init_battle(game, player_pokemon, enemy_pokemon):
     #game.player_pokemon = game.players.squad[0]
     game.enemy_pokemon = enemy_pokemon
     game.battle_overlay_command_text = game.battle_command_font.render("What will " + game.player_pokemon.name + " do?", True, (0, 0, 0))
+    game.current_battle_command_text = game.battle_overlay_command_text
     PLAYER_POKEMON_MAX_HP = game.player_pokemon.stats['max_hp']
     ENEMY_POKEMON_MAX_HP = game.enemy_pokemon.stats['max_hp']
     hp_text = game.battle_ui_font.render(str(game.player_pokemon.stats['hp']) + "/" + str(PLAYER_POKEMON_MAX_HP), True, (0, 0, 0))
@@ -34,14 +35,14 @@ def init_battle(game, player_pokemon, enemy_pokemon):
     enemy_level_text_relative_pos = (enemy_level_icon_relative_pos[0] + 30, enemy_level_icon_relative_pos[1] + 2) 
 
 def handle_battle_input(game, key):
-    if game.player_interacted_with_dialogue_box == False and key == settings.INTERACTION_KEY and game.beginning_battle_animation_finished == True: #Ultima condizione solamente per evitare che venga soddisfatto l'if prima della fine dell'animazione
-        game.player_interacted_with_dialogue_box = True
+    if game.interacted_with_beginning_dialogue == False and key == settings.INTERACTION_KEY and game.beginning_battle_animation_finished == True: #Ultima condizione solamente per evitare che venga soddisfatto l'if prima della fine dell'animazione
+        game.interacted_with_beginning_dialogue = True
     elif game.show_end_dialogue == True and key == settings.INTERACTION_KEY:
         game.game_state = GameState.GAMEPLAY
         game.show_end_dialogue = False
 
 def handle_battle_input_mouse(game, mouse_pos):
-    if game.player_interacted_with_dialogue_box == True:
+    if game.interacted_with_beginning_dialogue == True:
         if game.fight_button_rect.collidepoint(mouse_pos):
             if game.player_pokemon.level == game.enemy_pokemon.level:
                 hit_probability = 50
@@ -53,6 +54,7 @@ def handle_battle_input_mouse(game, mouse_pos):
                 print("Hit successful")
                 game.enemy_pokemon.stats['hp'] -= 10 #randint(1, 5) * game.player_pokemon.level
                 if game.enemy_pokemon.stats['hp'] <= 0:
+                    game.current_battle_dialogue_text = game.end_battle_text_surf
                     game.show_end_dialogue = True
                 else:
                     update_health_bars(game)
@@ -66,14 +68,16 @@ def handle_battle_input_mouse(game, mouse_pos):
             if randint(1, 100) <= flee_probability:
                 print("Flee successful")
                 game.game_state = GameState.GAMEPLAY
+            else:
+                game.current_battle_command_text = game.battle_overlay_failed_flee_text
 
 def render_battle(game):
     game.fake_screen.blit(game.battle_background, (0, 0))
     render_enemy_pokemon(game)
-    if game.beginning_battle_animation_finished == False and game.show_end_dialogue == False: game.fake_screen.blit(game.beginning_battle_animation_image, (25, 244))
+    if game.beginning_battle_animation_finished == False: game.fake_screen.blit(game.beginning_battle_animation_image, (25, 244))
     else: 
         render_player_pokemon(game)
-        if game.player_interacted_with_dialogue_box == True : render_ui(game)
+        if game.interacted_with_beginning_dialogue == True : render_ui(game)
     draw_dialogue(game)
 
 def render_player_pokemon(game):
@@ -104,7 +108,13 @@ def draw_pokemon_info(game):
     game.fake_screen.blit(hp_text, hp_text_rect)
 
 def draw_dialogue(game):
-    if game.player_interacted_with_dialogue_box == False: 
+    if game.interacted_with_beginning_dialogue == False or game.show_end_dialogue == True:
+        game.fake_screen.blit(game.battle_overlay_message_surf, (0, 384))
+        game.fake_screen.blit(game.current_battle_dialogue_text, (60, 420))
+    else:
+        game.fake_screen.blit(game.battle_overlay_command_surf, (0, 384))
+        game.fake_screen.blit(game.current_battle_command_text, (30, 425))
+    """ if game.interacted_with_beginning_dialogue == False: 
         game.fake_screen.blit(game.battle_overlay_message_surf, (0, 384))
         game.fake_screen.blit(game.beginning_battle_text_surf, (60, 420))
     else:
@@ -113,7 +123,7 @@ def draw_dialogue(game):
 
     if game.show_end_dialogue == True: 
         game.fake_screen.blit(game.battle_overlay_message_surf, (0, 384))
-        game.fake_screen.blit(game.end_battle_text_surf, (60, 420))      
+        game.fake_screen.blit(game.end_battle_text_surf, (60, 420)) """      
         
 
 def update_health_bars(game): #Funzione per "tirare" indietro la barra di vita del giocatore e del nemico

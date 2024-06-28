@@ -103,17 +103,18 @@ class CollisionController:
             return False #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
         
     def generate_pokemon_object(self, name):
+        random_life = 5 * randint(1, 10)
         return Pokemon(
             name=name,
             type="Fire",
             sex="Male",
             pokedex_number=25,
             moves=["Thunder Shock", "Quick Attack", "Tail Whip", "Thunderbolt"],
-            level=5,
+            level=5 * randint(1, 10),
             experience=0,
             status="normal",
-            hp=35,
-            max_hp=35,
+            hp=random_life,
+            max_hp= random_life,
             attack=55,
             defense=40,
             special_attack=50,

@@ -14,15 +14,15 @@ enemy_level_text_relative_pos = (0, 0)
 hp_text = None
 hp_rect = None
 
-def init_battle(game, random_pokemon):
+def init_battle(game, player_pokemon, enemy_pokemon):
     pygame.font.init() #Da togliere messo per debugging
     global PLAYER_POKEMON_MAX_HP, ENEMY_POKEMON_MAX_HP, \
     player_level_icon_relative_pos, enemy_level_icon_relative_pos, \
     player_level_text_relative_pos, enemy_level_text_relative_pos, \
     hp_text, hp_text_rect
-    game.player_pokemon = random_pokemon[0]
+    game.player_pokemon = player_pokemon
     #game.player_pokemon = game.players.squad[0]
-    game.enemy_pokemon = random_pokemon[1]
+    game.enemy_pokemon = enemy_pokemon
     game.battle_overlay_command_text = game.battle_command_font.render("What will " + game.player_pokemon.name + " do?", True, (0, 0, 0))
     PLAYER_POKEMON_MAX_HP = game.player_pokemon.stats['max_hp']
     ENEMY_POKEMON_MAX_HP = game.enemy_pokemon.stats['max_hp']

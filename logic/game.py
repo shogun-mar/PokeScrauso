@@ -38,7 +38,7 @@ class Game:
         self.half_w = settings.SCREEN_WIDTH // 2 #Metà della larghezza dello schermo
         self.half_h = settings.SCREEN_HEIGHT // 2
         self.current_volume_status = True #Stato attuale del volume (True = ON, False = OFF)
-        self.game_state = GameState.BATTLE #Stato di gioco iniziale
+        self.game_state = GameState.GAMEPLAY #Stato di gioco iniziale
         # Get physical resolution
         self.hw_screen_width, self.hw_screen_height  = self.get_hw_resolution()
         
@@ -215,8 +215,7 @@ class Game:
         #Icona del sesso
             #Pokemon
         self.player_pokemon = None
-        self.enemy_pokemon = None
-        init_battle(self, self.generate_random_pokemon()) #Inizializza la battaglia (DA TOGLIERE MESSO PER DEBUGGING)            
+        self.enemy_pokemon = None            
 
         #Objects initialization
         self.camera_group = CameraGroup(self.fake_screen) #Gruppo per gli oggetti che seguono la camera

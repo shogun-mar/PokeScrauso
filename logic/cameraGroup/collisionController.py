@@ -24,7 +24,11 @@ class CollisionController:
         #Cooldown per il cambio di zona
         self.last_zone_change_time = perf_counter()             
         self.zone_change_cooldown = ZONE_CHANGE_COOLDOWN
-    
+
+        #Array con i nomi dei possibili pokèmon che si possono trovare (per ora è un array monodimensionale)
+        self.possible_pokemon_names = read_names_from_file('data/possible_pokemon_front_names.txt')
+        self.num_possible_pokemon = len(self.possible_pokemon_names)
+
     #Check if the player can move to the desired coordinates
     def allow_movement(self, desired_coords):
 
@@ -63,7 +67,7 @@ class CollisionController:
             elif pixel_color == (34, 177, 76, 255): #Colore che segna la presenza di un cespuglio
                 self.camera_group.is_player_in_grass = True
                 if randint(0, 100) < 3:
-                    init_battle(self.game, self.generate_random_pokemon())
+                    init_battle(self.game, self.generate_pokemon_object(self.possible_pokemon_names[randint(0, self.num_possible_pokemon)]), self.generate_pokemon_object(self.possible_pokemon_names[randint(0, self.num_possible_pokemon)]))
                     self.game.game_state = GameState.BATTLE
                 else:
                     return True
@@ -98,9 +102,9 @@ class CollisionController:
         except IndexError: #Se il giocatore è fuori dalla mappa rifiuta il movimento
             return False #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
         
-    def generate_random_pokemon(self):
+    def generate_pokemon_object(self, name):
         return Pokemon(
-            name="Growlithe",
+            name=name,
             type="Fire",
             sex="Male",
             pokedex_number=25,
@@ -117,28 +121,25 @@ class CollisionController:
             speed=90
         )
     
-#Generazione randomica di pokèmon (avvia di nuovo se aggiungi o togli pokèmon)
+#Generazione randomica di pokèmon
 import os
 
 def write_file_names_to_file(directory_path, output_file_path):
-    # Ensure the directory exists
-    if not os.path.exists(directory_path):
-        print(f"The directory {directory_path} does not exist.")
-        return
-
     # Get a list of file names in the directory
     file_names = os.listdir(directory_path)
 
     # Open the output file in write mode
     with open(output_file_path, 'w') as file:
         for name in file_names:
-            # Write each file name to a new line in the output file
-            file.write(name + '\n')
+            # Remove the file extension
+            name_without_extension = os.path.splitext(name)[0]
+            # Write each file name without its extension to a new line in the output file
+            file.write(name_without_extension + '\n')
 
-    print(f"File names from {directory_path} have been written to {output_file_path}.")
+    print(f"File names from {directory_path} have been written to {output_file_path} without extensions.")
 
 # Example usage
-#write_file_names_to_file('graphics/Pokemon/Front', 'logic/possible_pokemon_front_names.txt')
+#write_file_names_to_file('graphics/Pokemon/Front', 'data/possible_pokemon_front_names.txt')
 
 def read_names_from_file(file_path):
     names = []

@@ -46,7 +46,7 @@ class Game:
         menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
         menu_button_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 15)
         self.battle_ui_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 10)
-        self.battle_dialogue_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 25)
+        self.battle_dialogue_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
         self.battle_command_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 13)
         self.naming_menu_font = pygame.font.Font("graphics/menus/fonts/standard_font.ttf", 20)
 
@@ -201,11 +201,13 @@ class Game:
         self.enemy_health_bars = self.player_health_bars.copy()
         self.enemy_current_health_bar = self.enemy_health_bars[0]
         self.enemy_current_health_bar_rect = self.enemy_current_health_bar.get_rect(topleft = (613, 98))
-        self.battle_overlay_message_surf = pygame.image.load("graphics/menus/battle menu/overlay_message.png").convert_alpha()
         self.beginning_battle_text_surf = self.battle_dialogue_font.render("A wild POKèMON appeared!", True, (0,0,0))
+        self.end_battle_text_surf = self.battle_dialogue_font.render("You defeated the wild POKèMON!", True, (0,0,0))
+        self.battle_overlay_message_surf = pygame.image.load("graphics/menus/battle menu/overlay_message.png").convert_alpha()
         self.battle_overlay_command_surf = pygame.image.load("graphics/menus/battle menu/overlay_command.png").convert_alpha()
         self.battle_overlay_command_text = None #Viene inizializzato poi a seconda del nome del Pokèmon
-        self.player_interacted_with_dialog_box = False
+        self.player_interacted_with_dialogue_box = False
+        self.show_end_dialogue = False
         self.fight_button_surf = pygame.image.load("graphics/menus/battle menu/fight_button.png").convert_alpha()
         self.fight_button_rect = self.fight_button_surf.get_rect(topleft = (370, 395))
         self.flee_button_surf = pygame.image.load("graphics/menus/battle menu/flee_button.png").convert_alpha()
@@ -410,6 +412,22 @@ class Game:
     def generate_random_pokemon(self): #Genera un pokèmon casuale (DA TOGLIERE MESSO PER DEBUGGING)
         return Pokemon(
             name="Farfetchd",
+            type="Fire",
+            sex="Male",
+            pokedex_number=25,
+            moves=["Thunder Shock", "Quick Attack", "Tail Whip", "Thunderbolt"],
+            level=5,
+            experience=0,
+            status="normal",
+            hp=35,
+            max_hp=35,
+            attack=55,
+            defense=40,
+            special_attack=50,
+            special_defense=50,
+            speed=90
+        ), Pokemon(
+            name="Abra",
             type="Fire",
             sex="Male",
             pokedex_number=25,

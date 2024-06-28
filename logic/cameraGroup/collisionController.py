@@ -96,7 +96,7 @@ class CollisionController:
                 return False
                 
         except IndexError: #Se il giocatore è fuori dalla mappa rifiuta il movimento
-            print("a")  #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
+            return False #In teoria può generare solamente IndexError e UnboundLocalError ma metto Exception per sicurezza
         
     def generate_random_pokemon(self):
         return Pokemon(
@@ -116,3 +116,35 @@ class CollisionController:
             special_defense=50,
             speed=90
         )
+    
+#Generazione randomica di pokèmon (avvia di nuovo se aggiungi o togli pokèmon)
+import os
+
+def write_file_names_to_file(directory_path, output_file_path):
+    # Ensure the directory exists
+    if not os.path.exists(directory_path):
+        print(f"The directory {directory_path} does not exist.")
+        return
+
+    # Get a list of file names in the directory
+    file_names = os.listdir(directory_path)
+
+    # Open the output file in write mode
+    with open(output_file_path, 'w') as file:
+        for name in file_names:
+            # Write each file name to a new line in the output file
+            file.write(name + '\n')
+
+    print(f"File names from {directory_path} have been written to {output_file_path}.")
+
+# Example usage
+#write_file_names_to_file('graphics/Pokemon/Front', 'logic/possible_pokemon_front_names.txt')
+
+def read_names_from_file(file_path):
+    names = []
+    # Open the file in read mode
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Strip the newline character and append to the names list
+            names.append(line.strip())
+    return names

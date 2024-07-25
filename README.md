@@ -1,10 +1,3 @@
-# PokèScrauso
-[ENG](./README_ENG.md)
-
-PokèScrauso è un un progetto realizzato da 5 studenti di 4° superiore durate l'esperienza di pcto presso l'azienda AddValue.
-Questo consiste in un gioco fortemente ispirato ai giochi Pokemon realizati da GameFreak, ma con aggiunte delle personalizzazioni.
-
-
 ## Installazione
 
 Usa il gestore di pacchetti [pip](https://pip.pypa.io/en/stable/) per installare i pacchetti necessari attraverso il seguente comando eseguibile tramite cmd.

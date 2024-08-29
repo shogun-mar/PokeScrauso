@@ -1,28 +1,41 @@
-## Installazione
+# PokèScrauso
 
-Usa il gestore di pacchetti [pip](https://pip.pypa.io/en/stable/) per installare i pacchetti necessari attraverso il seguente comando eseguibile tramite cmd.
+Small reproduction of PokèMon Heart Gold made in Pygame.
+
+## Installation
 
 ```bash
-pip install numba pygame 
+pip install pygame 
 ```
 
-## Metodi di utilizzo
+NOTE: Python 3+ required.
 
-Attualmente è possibile giocare solamente tramite l'avvio del programma main.py, è però in programma la realizzazione di un file eseguibile (.exe) per permettere un avvio più semplice.
-Per modificare le impostazioni è possibile aprire il file settings.txt, ma stiamo lavorando alla realizzazione di un'interfaccia grafica che permette di modificare le impostazioni direttamente dal gioco.
+## Usage
 
-## !ATTENZIONE!
+You can start the game by starting main.py in any IDE or CLI environment.
 
-In caso l'avvio del file main dia l'errore  
-```bash
-ImportError: cannot import name 'Game' from 'game'
-```
-per risolverlo è possibile spostare i file main.py e settings.py nella cartella classes e modificare il file game.py in questo modo:
+## Controls
 
-![before](./data/screen_before.png)
-![after](./data/screen_after.png)
+Default controls: 
 
-## Crediti
-Noi non possediamo alcun elemento di questo gioco, tutti gli asset utilizzati per la realizzazione di questo gioco appartengono ai rispettivi possessori.
+* P &rarr; Open PokèDex
+* ESCAPE &rarr; Pause
+* N &rarr; Close program
+* E &rarr; Interact
+* M &rarr; Open map (while in gameplay)
+* I &rarr; Open inventory
+* M &rarr; Mute game (shortcut in settings menu)
+* F &rarr; Toggle fullscreen
+* H &rarr; Open help menu (reminder of current keybinds)
+* F12 &rarr; Take screenshot
+* L &rarr; Cancel change (shortcut in settings menu)
+* T &rarr; Open squad menu
 
-## In quanto questo progetto è stato realizzato puramente per sfidare noi stessi e senza lo scopo di lucro, dichiariamo che la distribuzione di PokeScrauso è assolutamente vietata.
+Controls can be modified in the settings menu accessible by pressing the cog icon in the start menu, pressing the key icon of the settings that has to be modified and then pressing the new keybind.  
+Any changes will be saved only once the floppy disk icon in the lower center of the screen is pressed.
+The red x icon allows the user to quickly delete any changes made to the keybinds, and the orange arrow allows the user to quickly revert to default keybinds if wished.  
+At last, the musical notes icons allows the user to quickly enable or disable in game audio.
+
+## Assets credits
+
+All sprites have been taken from the original inspiration, please consult original PokèMon Heart Gold license.

@@ -4,9 +4,11 @@ Small reproduction of PokèMon Heart Gold made in Pygame.
 
 ## Installation
 
-```bash
-pip install pygame 
+Run this command:
+```sh
+pip install -r requirements.txt
 ```
+while in the directory folder.
 
 NOTE: Python 3+ required.
 

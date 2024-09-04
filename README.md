@@ -60,5 +60,5 @@ Help menu:
 
 ## Assets credits
 
-All sprites have been taken from the original inspiration, please consult original PokèMon Heart Gold license.
+All sprites have been taken from the original inspiration, please consult original PokèMon Heart Gold license.  
 Some assets such as the world sprite or some elements of the menus have been created by modifying original PokèMon Heart Gold assets. 
